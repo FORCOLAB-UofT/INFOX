@@ -32,8 +32,8 @@ def compare(project_full_name):
         diff_num += 1
 
         # TODO(Luyao Ren)If the changed is too large, the result from github will
-		# not show diff code first.Need more work to get diff files name/codes.
-		try:
+        # not show diff code first.Need more work to get diff files name/codes.
+        try:
             diff_info = diff.find_element_by_class_name('file-info')
             changed_line, file = diff_info.text.split(' ')
             changed_file_list.append(file)
