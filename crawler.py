@@ -1,9 +1,9 @@
-import requests
-import json
 import os
+import json
+import requests
 
-author_name = 'Smoothieware'
-project_name = 'Smoothieware'
+author_name = 'shuiblue'
+project_name = 'INFOX'
 save_path = './tmp/%s_%s'
 access_token = 'input_your_personal_access_token_here'
 commits_page_limit = 1
@@ -16,41 +16,41 @@ def write_to_file(file, obj):
     path = os.path.dirname(file)
     if not os.path.exists(path):
         os.makedirs(path)
-    print ('start write %s to file....' % file)
-    with open(file, 'w') as f:
-        f.write(json.dumps(obj))
-    print ('finish writing!')
+    print 'start write %s to file....' % file
+    with open(file, 'w') as write_file:
+        write_file.write(json.dumps(obj))
+    print 'finish writing!'
 
 # type contains: forks, branches, commits.
 # page_iter means it will get all the items.
-def get_api(author, repo, type = "", page_iter = True):
-    if(not page_iter):
+def get_api(author, repo, type="", page_iter=True):
+    if not page_iter:
         try:
             response = requests.get(base_url % (author, repo, access_token))
-            if(api_limit_error in response.text):
+            if api_limit_error in response.text:
                 raise Exception(api_limit_error)
-        except requests.RequestException as e:
-            print(e)
+        except requests.RequestException as error:
+            print(error)
         return response.json()
     page_num = 0
     result = []
-    while (True):
+    while True:
         page_num += 1
-        if(type == "commits" and page_num > commits_page_limit):
+        if type == "commits" and page_num > commits_page_limit:
             break
         # print('page_num = %d' % page_num)
         try:
             response = requests.get(base_url_with_page % (author, repo, type, page_num, access_token))
-            if (api_limit_error in response.text):
+            if api_limit_error in response.text:
                 raise Exception(api_limit_error)
-        except requests.RequestException as e:
-            print(e)
-        list = response.json()
-        if (len(list) == 0):
+        except requests.RequestException as error:
+            print(error)
+        json_result = response.json()
+        if not json_result:
             break
-        for item in list:
+        for item in json_result:
             result.append(item)
-    print ('finish crawling! Get %d %s !' % (len(result), type))
+    print 'finish crawling! Get %d %s !' % (len(result), type)
     return result
 
 def main():
