@@ -5,7 +5,7 @@ import os
 author_name = 'Smoothieware'
 project_name = 'Smoothieware'
 save_path = './tmp/%s_%s'
-access_token = 'f500c5756d411d4441bcfa7d1ace0d11ff182ce0'
+access_token = 'input_your_personal_access_token_here'
 commits_page_limit = 1
 
 base_url = 'https://api.github.com/repos/%s/%s?access_token=%s'
