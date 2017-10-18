@@ -5,3 +5,5 @@ crawler.py is to get the information of the project and the forks of it. Now, th
 
 analyser.py is to do analysis from local data and show the result.
 
+compare_changes_crawler.py is used for comparing the diff bewteen two repos.
+
