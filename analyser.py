@@ -4,14 +4,19 @@ import crawler
 import compare_changes_crawler
 
 def main():
+    crawler.author_name = 'Smoothieware'
+    crawler.project_name = 'Smoothieware'
+
     main_path = crawler.save_path % (crawler.author_name, crawler.project_name)
     print '---------------------------------------'
     with open(main_path + '/repo_info.json') as read_file:
         repo_info = json.load(read_file)
-        print 'language: %s' % repo_info["language"]
-        print 'description: %s' % repo_info["description"]
-        print 'forks number: %d' % repo_info["forks"]
-
+        for type in ["language", "description", "forks"]:
+            out_result = type + " : " + str(repo_info[type]) + "\n"
+            print out_result
+            with open('sorted_result.txt', 'a') as write_file:
+                write_file.write(out_result)
+    print '---------------------------------------'
     forks_info = {}
     with open(main_path + '/forks.json') as read_file:
         forks_list = json.load(read_file)
@@ -31,17 +36,17 @@ def main():
                 except:
                     print "missing commit on %s" % dir
 
-    forks.sort(key=lambda x: x[1]) # sort fork by last committed time
+    forks.sort(key=lambda x: x[1], reverse=True) # sort fork by last committed time
 
     print "---------------------------------------"
     for (author, last_committed_time) in forks:
         created_time = forks_info[author]["created_at"]
         forks_full_name = forks_info[author]["full_name"]
         if last_committed_time > created_time:
-            compare_result = compare_changes_crawler.compare(forks_full_name)
-            out_result = "fork_author: %20s, last committed time : %20s, " \
-                         "created time: %20s, changed line: %d\n" % \
-                         (author, last_committed_time, created_time, compare_result)
+            changed_file_number, total_changed_line = compare_changes_crawler.compare(forks_full_name)
+            out_result = "fork_author: %15s, last committed time : %15s, " \
+                         "created time: %15s, changed file: %6d, changed code line: %6d\n" % \
+                         (author, last_committed_time, created_time, changed_file_number, total_changed_line)
             print out_result
             with open('sorted_result.txt', 'a') as write_file:
                 write_file.write(out_result)
