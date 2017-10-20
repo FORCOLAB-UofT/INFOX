@@ -1,7 +1,7 @@
 # INFOX
 Redesign for https://github.com/shuiblue/INFOX
 
-Your can see the example of result in /data/result.txt . 
+Your can see the example of result in /data/result_example.txt . 
 
 crawler.py is to get the information of the project and the forks of it. Now, the data is storing in local.
 
