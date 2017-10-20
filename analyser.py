@@ -2,12 +2,9 @@ import os
 import json
 import crawler
 import compare_changes_crawler
+from collections import Counter
 
-def main():
-    crawler.author_name = 'Smoothieware'
-    crawler.project_name = 'Smoothieware'
-
-    main_path = crawler.save_path % (crawler.author_name, crawler.project_name)
+def get_repo_info(main_path):
     print '---------------------------------------'
     with open(main_path + '/repo_info.json') as read_file:
         repo_info = json.load(read_file)
@@ -16,6 +13,8 @@ def main():
             print out_result
             with open('sorted_result.txt', 'a') as write_file:
                 write_file.write(out_result)
+
+def get_forks_info_dict(main_path):
     print '---------------------------------------'
     forks_info = {}
     with open(main_path + '/forks.json') as read_file:
@@ -23,7 +22,9 @@ def main():
         for fork in forks_list:
             fork_name = fork["full_name"].split('/')[0]
             forks_info[fork_name] = fork
+    return forks_info
 
+def get_forks_list(main_path):
     forks = []
     dir_list = os.listdir(main_path)
     for dir in dir_list:
@@ -34,7 +35,29 @@ def main():
                     date = commits[0]["commit"]["committer"]["date"]
                     forks.append((dir, date))
                 except:
-                    print "missing commit on %s" % dir
+                    pass
+                    # print "missing commit on %s" % dir
+    return forks
+
+def word_filter(word):
+    word = word.replace(',','').replace('+','').replace('-','').replace('0x','')
+    if(word.isdigit()):
+        return False
+    if(len(word) <= 2):
+        return False
+    return True
+
+def main():
+    crawler.author_name = 'Smoothieware'
+    crawler.project_name = 'Smoothieware'
+
+    main_path = crawler.save_path % (crawler.author_name, crawler.project_name)
+
+    get_repo_info(main_path)
+
+    forks_info = get_forks_info_dict(main_path)
+
+    forks = get_forks_list(main_path)
 
     forks.sort(key=lambda x: x[1], reverse=True) # sort fork by last committed time
 
@@ -43,13 +66,30 @@ def main():
         created_time = forks_info[author]["created_at"]
         forks_full_name = forks_info[author]["full_name"]
         if last_committed_time > created_time:
-            changed_file_number, total_changed_line = compare_changes_crawler.compare(forks_full_name)
-            out_result = "fork_author: %15s, last committed time : %15s, " \
-                         "created time: %15s, changed file: %6d, changed code line: %6d\n" % \
-                         (author, last_committed_time, created_time, changed_file_number, total_changed_line)
-            print out_result
-            with open('sorted_result.txt', 'a') as write_file:
-                write_file.write(out_result)
+            result_path = main_path + '/' + author + '/result.json'
+            if os.path.exists(result_path):
+                with open(result_path) as read_file:
+                    compare_result = json.load(read_file)
+            else:
+                '''
+                compare_result = compare_changes_crawler.compare(forks_full_name)
+                with open(result_path, 'w') as write_file:
+                    write_file.write(json.dumps(compare_result))
+                '''
+                continue
+            out_result = "fork_author: %18s, last committed time : %15s, " \
+                         "created time: %15s, changed file: %3d, changed code line: %4d\n" % \
+                         (author, last_committed_time, created_time, \
+                          compare_result["changed_file_number"], \
+                          compare_result["changed_line"])
+
+            print out_result.strip()
+            for file in compare_result["file_list"]:
+                print file["file_full_name"] , ":", Counter(filter(word_filter, file["stemmed_tokens"])).most_common(10)
+            print ""
+
+            # with open('sorted_result.txt', 'a') as write_file:
+            #     write_file.write(out_result)
 
 if __name__ == '__main__':
     main()

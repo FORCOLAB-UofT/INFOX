@@ -1,0 +1,327 @@
+---------------------------------------
+language : C++
+
+description : Modular, opensource, high performance G-code interpreter and CNC controller written in Object-Oriented C++
+
+forks : 593
+
+---------------------------------------
+---------------------------------------
+fork_author:            klcjr89, last committed time : 2017-10-18T02:16:02Z, created time: 2017-09-04T01:25:21Z, changed file:   6, changed code line:  548
+src/modules/tools/endstops/Endstops.cpp : [(u'buf', 4), (u'Endstop', 2), (u'axis_bitmap_t', 1), (u'snprintf', 1), (u'move', 1), (u'compens', 1), (u'ani', 1), (u'empti', 1), (u'home', 1), (u':process_home_command', 1)]
+src/modules/utils/panel/Panel.cpp : [(u'buzz', 4), (u'this-', 2), (u'uint32_t', 2), (u'lcd-', 2), (u'50m', 1), (u'idle_tim', 1), (u'click_chang', 1), (u'that', 1), (u'18000Hz', 1), (u'src/modules/utils/panel/Panel.cpp', 1)]
+src/modules/utils/panel/screens/3dprinter/WatchScreen.cpp : [(u'THEPANEL-', 2), (u'.c_str', 1), (u'NULL', 1), (u':set_spe', 1), (u'WatchScreen', 1), (u'get_network', 1), (u':get_statu', 1), (u'get_playing_fil', 1), (u'*WatchScreen', 1), (u'Smoothi', 1)]
+
+fork_author:    DouglasPearless, last committed time : 2017-10-16T13:34:12Z, created time: 2017-08-07T08:19:43Z, changed file:  27, changed code line:   -1
+
+fork_author:     humansthatmake, last committed time : 2017-10-13T16:14:36Z, created time: 2017-02-08T22:24:48Z, changed file:   8, changed code line:  355
+src/modules/utils/panel/Button.cpp : [(u'chang', 1), (u'src/modules/utils/panel/Button.cpp', 1), (u'View', 1)]
+src/modules/utils/panel/Button.h : [(u'chang', 1), (u'src/modules/utils/panel/Button.h', 1), (u'View', 1)]
+
+fork_author:         NeilBetham, last committed time : 2017-10-11T05:19:25Z, created time: 2017-10-08T15:39:58Z, changed file:   3, changed code line:   33
+src/modules/robot/Conveyor.cpp : [(u'THEKERNEL-', 6), (u'Conveyor', 5), (u'driver_delay_act', 4), (u'not', 4), (u'driver_enable_delay_time_', 4), (u'as_numb', 3), (u'valu', 3), (u'CHECKSUM', 3), (u'queue', 3), (u'block', 3)]
+src/modules/robot/Conveyor.h : [(u'Conveyor', 1), (u'current_feedr', 1), (u'mm/sec', 1), (u'driver_enable_delay_time_', 1), (u'driver_delay_act', 1), (u'struct', 1), (u'nomin', 1), (u'doubl', 1), (u'current', 1), (u'volatil', 1)]
+
+fork_author:           newt80ns, last committed time : 2017-10-10T22:06:15Z, created time: 2017-08-15T15:54:14Z, changed file:   8, changed code line:  151
+src/modules/tools/endstops/Endstops.cpp : [(u'gcode-', 7), (u'h.axi', 4), (u'enabl', 4), (u'limit_en', 3), (u'auto', 3), (u'h.pin_info-', 3), (u'homing_axi', 3), (u'h.home_direct', 3), (u'disabl', 2), (u'get_valu', 2)]
+src/modules/tools/temperaturecontrol/TempSensor.h : [(u'virtual', 4), (u'option', 2), (u'sensor_options_t', 2), (u'set_opt', 1), (u'get_opt', 1), (u'src/modules/tools/temperaturecontrol/TempSensor.h', 1), (u'get_raw', 1), (u'TempSensor', 1), (u'on_idl', 1), (u'class', 1)]
+src/modules/tools/temperaturecontrol/TemperatureControl.cpp : [(u'TemperatureControl', 5), (u'includ', 5), (u'sensor', 5), (u'this-', 5), (u'new', 4), (u'register_for_ev', 4), (u'sensor_type.compar', 4), (u'*arg', 2), (u'max31855.h', 1), (u'Max31855', 1)]
+src/modules/tools/temperaturecontrol/TemperatureControl.h : [(u'void*', 4), (u'argument', 4), (u'on_halt', 1), (u'src/modules/tools/temperaturecontrol/TemperatureControl.h', 1), (u'TemperatureControl', 1), (u'Modul', 1), (u'desired_temperatur', 1), (u'set_desired_temperatur', 1), (u'on_idl', 1), (u'on_set_public_data', 1)]
+src/modules/tools/temperaturecontrol/max31855.cpp : [(u'readings.s', 8), (u'Max31855', 7), (u'this-', 6), (u'temperatur', 6), (u'sum', 5), (u'read', 5), (u'spi-', 4), (u'write', 4), (u'bit', 4), (u'Read', 3)]
+src/modules/tools/temperaturecontrol/max31855.h : [(u'read', 2), (u'on_idl', 2), (u'read_temp', 1), (u'float,16', 1), (u'src/modules/tools/temperaturecontrol/max31855.h', 1), (u'struct', 1), (u'module_checksum', 1), (u'next', 1), (u'spi_cs_pin', 1), (u'call', 1)]
+
+fork_author:          OpenTrons, last committed time : 2017-10-06T23:35:15Z, created time: 2015-03-11T14:22:53Z, changed file:  10, changed code line:   -1
+
+fork_author:         OpenBuilds, last committed time : 2017-10-06T20:46:34Z, created time: 2017-06-29T18:41:28Z, changed file:   3, changed code line:   67
+src/modules/utils/panel/Panel.cpp : [(u'this-', 29), (u'lcd-', 25), (u'setCursor', 10), (u'CHECKSUM', 6), (u'.c_str', 5), (u'lcd', 5), (u'ohw_logo_antipixel_height', 4), (u'new', 4), (u'Panel', 4), (u'build.substr', 3)]
+src/modules/utils/panel/panels/ST7565.cpp : [(u'framebuff', 13), (u'this-', 13), (u'ST7565', 12), (u'revers', 8), (u'glcd_font', 8), (u'variant', 8), (u'FB_SIZE', 5), (u'shift', 5), (u'THEKERNEL-', 5), (u'LCDWIDTH', 5)]
+src/modules/utils/panel/panels/ST7565.h : [(u'use_pause:1', 1), (u'is_ssd1306:1', 1), (u'LcdBase', 1), (u'is_mini_viki2:1', 1), (u'use_back:1', 1), (u'is_sh1106:1', 1), (u'is_viki2:1', 1), (u'ST7565', 1), (u'src/modules/utils/panel/panels/ST7565.h', 1), (u'class', 1)]
+
+fork_author:       buchananmatt, last committed time : 2017-10-03T01:42:18Z, created time: 2017-07-13T21:02:18Z, changed file:  25, changed code line:   -1
+
+fork_author:            tkurbad, last committed time : 2017-09-30T09:13:27Z, created time: 2016-09-06T11:30:02Z, changed file:   3, changed code line:   -1
+
+fork_author:    DavidJRobertson, last committed time : 2017-09-23T20:27:11Z, created time: 2017-09-01T15:46:02Z, changed file:   0, changed code line:    0
+
+fork_author:               arhi, last committed time : 2017-09-22T20:56:33Z, created time: 2017-01-03T05:07:58Z, changed file:   5, changed code line:  249
+src/modules/tools/temperaturecontrol/TemperatureControl.cpp : [(u'includ', 5), (u'new', 4), (u'sensor', 4), (u'sensor_type.compar', 2), (u'pt100', 1), (u'PT100', 1), (u'max31855.h', 1), (u'MRI_Hooks.h', 1), (u'TemperatureControl', 1), (u'PT100_E3D.h', 1)]
+src/modules/tools/temperaturecontrol/pt100.cpp : [(u'this-', 56), (u'valu', 18), (u'THEKERNEL-', 18), (u'name_checksum', 14), (u'RTD', 14), (u'module_checksum', 14), (u'CHECKSUM', 13), (u'PT100', 13), (u'config-', 13), (u'by_default', 12)]
+src/modules/tools/temperaturecontrol/pt100.h : [(u'Pin', 3), (u'+class', 2), (u'includ', 2), (u'TempSensor', 2), (u'PT100_H', 2), (u'PT100', 2), (u'//reus', 1), (u'not', 1), (u'min_temp', 1), (u'~PT100', 1)]
+
+fork_author:   JeffreyRodriguez, last committed time : 2017-09-19T09:36:57Z, created time: 2017-09-17T02:45:21Z, changed file:   0, changed code line:    0
+
+fork_author:            dawsqeq, last committed time : 2017-09-02T18:39:01Z, created time: 2017-08-21T15:16:48Z, changed file:   0, changed code line:   -1
+
+fork_author:             Nutz95, last committed time : 2017-09-01T19:14:31Z, created time: 2017-03-14T19:57:53Z, changed file:  11, changed code line:   89
+src/libs/AutoPushPop.h : [(u'THEROBOT-', 2), (u'AutoPushPop', 2), (u'~AutoPushPop', 1), (u'pop_stat', 1), (u'push_stat', 1), (u'onc', 1), (u'Robot.h', 1), (u'src/libs/AutoPushPop.h', 1), (u'+public', 1), (u'includ', 1)]
+
+fork_author:               3DMS, last committed time : 2017-09-01T18:48:35Z, created time: 2017-09-01T13:35:30Z, changed file:   5, changed code line:  161
+src/libs/StepperMotor.h : [(u'step', 6), (u'inlin', 6), (u'Pin', 6), (u'virtual', 5), (u'StepperMotor', 4), (u'state', 4), (u'step_pin.set', 4), (u'dir', 4), (u'ISR', 3), (u'direct', 3)]
+src/libs/StepperMotorSlave.cpp : [(u'this-', 9), (u'dir', 8), (u'includ', 7), (u'Pin', 6), (u'step', 5), (u'Smoothi', 4), (u'Licens', 4), (u'Public', 3), (u'direct', 3), (u'use', 3)]
+src/libs/StepperMotorSlave.h : [(u'Pin', 9), (u'virtual', 5), (u'Smoothi', 4), (u'Licens', 4), (u'Public', 3), (u'state', 3), (u'step', 3), (u'inlin', 3), (u'GNU', 3), (u'Gener', 3)]
+src/modules/robot/Robot.cpp : [(u'CHECKSUM', 15), (u'pin', 14), (u'checksum', 13), (u'valu', 12), (u'by_default', 12), (u'THEKERNEL-', 12), (u'config-', 12), (u'as_numb', 7), (u'actuat', 7), (u'includ', 7)]
+src/modules/tools/extruder/Extruder.cpp : [(u'this-', 14), (u'by_default', 12), (u'config-', 12), (u'identifi', 12), (u'THEKERNEL-', 12), (u'extruder_checksum', 12), (u'valu', 12), (u'as_str', 9), (u'CHECKSUM', 9), (u'includ', 7)]
+
+fork_author:             mwr666, last committed time : 2017-09-01T16:07:03Z, created time: 2017-09-01T10:53:42Z, changed file:   2, changed code line:   85
+src/modules/utils/currentcontrol/CurrentControl.cpp : [(u'CHECKSUM', 8), (u'new', 5), (u'digipot', 5), (u'includ', 4), (u'mcp4728_adress', 3), (u'mcp4726_adress', 3), (u'by_default', 2), (u'config-', 2), (u'as_numb', 2), (u'digipot_max_curr', 2)]
+src/modules/utils/currentcontrol/mcp4728.h : [(u'this-', 14), (u'i2c-', 12), (u'current', 10), (u'channel', 10), (u'write', 7), (u'includ', 6), (u'lower', 4), (u'adress_MCP4728', 3), (u'adress_MCP4726', 3), (u'i2c', 3)]
+
+fork_author:              Ottia, last committed time : 2017-08-26T23:53:30Z, created time: 2017-07-09T04:56:12Z, changed file:   2, changed code line:   17
+
+fork_author:    ChristianLerche, last committed time : 2017-08-18T05:16:06Z, created time: 2015-07-31T15:22:49Z, changed file:   6, changed code line:  160
+src/modules/robot/Robot.cpp : [(u'includ', 7), (u'Robot', 4), (u'CHECKSUM', 4), (u'precis', 4), (u'solution_checksum', 4), (u'THEKERNEL-', 4), (u'new', 3), (u'this-', 3), (u'arm_solut', 3), (u'config', 3)]
+src/modules/robot/arm_solutions/YgantrySolution.cpp : [(u'cartesian_mm', 9), (u'actuator_mm', 9), (u'Y_AXI', 3), (u'BETA_STEPP', 3), (u'includ', 3), (u'YgantrySolut', 2), (u'+void', 2), (u'Z_AXI', 2), (u'ALPHA_STEPP', 2), (u'ActuatorCoordin', 2)]
+src/modules/robot/arm_solutions/YgantrySolution.h : [(u'includ', 5), (u'YgantrySolut', 3), (u'ActuatorCoordin', 2), (u'overrid', 2), (u'libs/Module.h', 1), (u'Config*', 1), (u'+class', 1), (u'actuator_to_cartesian', 1), (u'BaseSolution.h', 1), (u'BaseSolut', 1)]
+src/modules/utils/currentcontrol/CurrentControl.cpp : [(u'new', 5), (u'digipot', 5), (u'includ', 4), (u'use', 3), (u'CHECKSUM', 3), (u'CurrentControl', 2), (u'namespac', 2), (u'mcp4728_checksum', 2), (u'MCP4451', 2), (u'ad5206_checksum', 2)]
+src/modules/utils/currentcontrol/mcp4728.h : [(u'current', 13), (u'this-', 12), (u'channel', 9), (u'i2c-', 7), (u'includ', 6), (u'write', 4), (u'MCP4728', 4), (u'addr', 3), (u'current_set', 3), (u'address', 3)]
+src/modules/utils/currentcontrol/mcp4822.h : [(u'current', 13), (u'this-', 11), (u'channel', 9), (u'includ', 6), (u'i2c-', 6), (u'address', 4), (u'write', 4), (u'Taken', 3), (u'ad5206', 3), (u'addr', 3)]
+
+fork_author:            noderat, last committed time : 2017-08-18T03:45:48Z, created time: 2017-08-17T22:55:31Z, changed file:   9, changed code line:   -1
+
+fork_author:            imrahil, last committed time : 2017-08-17T18:18:18Z, created time: 2014-10-17T11:37:54Z, changed file:   4, changed code line:  123
+src/modules/utils/currentcontrol/CurrentControl.cpp : [(u'digipot', 8), (u'CHECKSUM', 7), (u'new', 6), (u'use', 4), (u'includ', 4), (u'chip_checksum', 3), (u'mcp4728_adress', 3), (u'mcp4726_adress', 3), (u'by_default', 2), (u'config-', 2)]
+src/modules/utils/currentcontrol/ad5206.h : [(u'AD5206', 1), (u'src/modules/utils/currentcontrol/ad5206.h', 1), (u'Pin', 1), (u'DigipotBas', 1), (u'current', 1), (u'class', 1), (u'channel', 1), (u'View', 1)]
+src/modules/utils/currentcontrol/mcp4451.h : [(u'src/modules/utils/currentcontrol/mcp4451.h', 1), (u'DigipotBas', 1), (u'MCP4451', 1), (u':I2C*', 1), (u'current', 1), (u'i2c', 1), (u'class', 1), (u'mbed', 1), (u'View', 1)]
+src/modules/utils/currentcontrol/mcp4728.h : [(u'this-', 21), (u'i2c-', 18), (u'write', 11), (u'current', 10), (u'channel', 10), (u'includ', 6), (u'valu', 4), (u'lower', 4), (u'start', 3), (u'stop', 3)]
+
+fork_author:         bullestock, last committed time : 2017-07-27T10:26:39Z, created time: 2017-07-08T15:44:12Z, changed file:   5, changed code line:  152
+src/main.cpp : [(u'includ', 7), (u'rpp', 2), (u'new', 2), (u'load_tool', 1), (u'USB', 1), (u'src/main.cpp', 1), (u'ReadPinPool', 1), (u'modules/utils/panel/Panel.h', 1), (u'checksumm.h', 1), (u'modules/utils/killbutton/KillButton.h', 1)]
+src/modules/utils/readpin/ReadPin.cpp : [(u'includ', 11), (u'ReadPin', 5), (u'THEKERNEL-', 5), (u'gcode-', 4), (u'my_gcode-', 4), (u'name_checksum', 3), (u'state', 3), (u'+void', 3), (u'by_default', 2), (u'config-', 2)]
+src/modules/utils/readpin/ReadPin.h : [(u'smoothi', 4), (u'licens', 4), (u'gener', 3), (u'includ', 3), (u'gnu', 3), (u'http', 3), (u'ReadPin', 3), (u'not', 2), (u'overrid', 2), (u'void*', 2)]
+src/modules/utils/readpin/ReadPinPool.cpp : [(u'includ', 9), (u'Smoothi', 4), (u'Licens', 4), (u'Public', 3), (u'modul', 3), (u'THEKERNEL-', 3), (u'control', 3), (u'GNU', 3), (u'Gener', 3), (u'http', 3)]
+src/modules/utils/readpin/ReadPinPool.h : [(u'licens', 4), (u'smoothi', 4), (u'http', 3), (u'gener', 3), (u'gnu', 3), (u'softwar', 2), (u'warranti', 2), (u'version', 2), (u'you', 2), (u'free', 2)]
+
+fork_author:             sareph, last committed time : 2017-07-09T11:21:30Z, created time: 2016-06-22T15:49:12Z, changed file:  10, changed code line:  229
+src/libs/SerialMessage.h : [(u'stream-', 3), (u'includ', 2), (u'std', 1), (u'\\r\\n', 1), (u'src/libs/SerialMessage.h', 1), (u'-class', 1), (u'stream', 1), (u'ack', 1), (u'struct', 1), (u'messag', 1)]
+src/main.cpp : [(u'TemperatureControlPool', 2), (u'new', 2), (u'load_tool', 1), (u'execut', 1), (u'src/main.cpp', 1), (u'Note', 1), (u'NO_TOOLS_LAS', 1), (u'paramet', 1), (u'extrud', 1), (u'add_modul', 1)]
+src/modules/communication/GcodeDispatch.cpp : [(u'new_message.stream-', 18), (u'new_message.ack', 13), (u':on_console_line_receiv', 9), (u'GcodeDispatch', 9), (u'*line', 9), (u'ok\\r\\n', 8), (u'delet', 8), (u'THEKERNEL-', 7), (u'file', 7), (u'this-', 6)]
+src/modules/robot/Robot.cpp : [(u'this-', 22), (u'X_AXI', 16), (u'target', 15), (u'Y_AXI', 12), (u'Z_AXI', 12), (u'CHECKSUM', 10), (u'valu', 9), (u'soft_limits_max', 9), (u'soft_limits_min', 9), (u'by_default', 8)]
+src/modules/robot/Robot.h : [(u'Set', 7), (u'class', 5), (u'axi', 5), (u'friend', 4), (u'Planner', 4), (u'allow', 4), (u'each', 4), (u'comput', 3), (u'arc', 3), (u'max', 3)]
+src/modules/tools/endstops/Endstops.cpp : [(u'robot-', 6), (u'THEKERNEL-', 6), (u'homing_don', 6), (u'X_AXI', 3), (u'Y_AXI', 3), (u'Z_AXI', 3), (u'Endstop', 2), (u'axis_bitmap_t', 1), (u'done', 1), (u'home', 1)]
+src/modules/tools/idletimer/IdleTimer.cpp : [(u'includ', 10), (u'+void', 5), (u'IdleTim', 5), (u'Smoothi', 4), (u'Licens', 4), (u'Public', 3), (u'*argument', 3), (u'GNU', 3), (u'Gener', 3), (u'http', 3)]
+
+fork_author:          pyjamasam, last committed time : 2017-07-04T14:43:19Z, created time: 2017-01-10T16:11:06Z, changed file:   4, changed code line:  110
+src/modules/tools/temperaturecontrol/PT100_E3D.cpp : [(u'PT100_E3D', 6), (u'module_checksum', 3), (u'THEKERNEL-', 3), (u'name_checksum', 3), (u'this-', 3), (u'config-', 2), (u'use', 2), (u'adjust', 2), (u'e3d_amplifier_pin_checksum', 2), (u'read', 2)]
+src/modules/tools/temperaturecontrol/PT100_E3D.h : [(u'Pin', 2), (u'amplifier_pin', 2), (u'adc_valu', 1), (u'src/modules/tools/temperaturecontrol/PT100_E3D.h', 1), (u'PT100_E3D', 1), (u'adc_value_to_temperatur', 1), (u'adjust', 1), (u'uint32_t', 1), (u'new_pt100_read', 1), (u'min_temp', 1)]
+src/modules/tools/zprobe/DeltaGridStrategy.cpp : [(u'grid', 29), (u'gcode-', 20), (u'file_numb', 17), (u'stream-', 16), (u'file_number_str', 15), (u'DeltaGridStrategi', 13), (u'gridfil', 9), (u'/sd/delta.grid', 8), (u'GRIDFIL', 8), (u'file', 8)]
+src/modules/tools/zprobe/DeltaGridStrategy.h : [(u'*stream', 8), (u'StreamOutput', 8), (u'fileNumb', 3), (u'radiu', 2), (u'save_grid', 2), (u'load_grid', 2), (u'*target', 1), (u'DeltaGridStrategi', 1), (u'LevelingStrategi', 1), (u'initial_height', 1)]
+
+fork_author:        lilltroll77, last committed time : 2017-07-02T20:47:49Z, created time: 2017-07-01T16:06:19Z, changed file:   3, changed code line:   31
+src/modules/utils/motordrivercontrol/MotorDriverControl.cpp : [(u'MotorDriverControl', 14), (u'AMIS30543', 13), (u'TMC2660', 10), (u'tmc26x-', 9), (u'chip', 7), (u'StreamOutput', 6), (u'DRV8711', 5), (u'max_current=', 4), (u':NullStream', 4), (u'includ', 4)]
+src/modules/utils/motordrivercontrol/MotorDriverControl.h : [(u'class', 5), (u'AMIS30543DRV', 2), (u'CHIP_TYP', 2), (u'DRV8711DRV', 2), (u'TMC2660', 2), (u'TMC26X', 2), (u'chip', 1), (u'one', 1), (u'*tmc26x', 1), (u'+class', 1)]
+
+fork_author:          wolfmanjm, last committed time : 2017-06-23T07:40:29Z, created time: 2013-01-18T01:21:58Z, changed file:   1, changed code line:    3
+src/modules/robot/Robot.cpp : [(u'segment', 4), (u'queue', 3), (u'block', 2), (u'segment_delta', 2), (u'n_motor', 2), (u'segment_end', 2), (u'feed', 1), (u':append_lin', 1), (u'point', 1), (u'ani', 1)]
+
+fork_author:            MDPirie, last committed time : 2017-06-11T00:33:01Z, created time: 2017-06-10T20:25:36Z, changed file:   1, changed code line:   37
+
+fork_author:            dot-bob, last committed time : 2017-06-05T04:34:55Z, created time: 2017-04-06T01:26:30Z, changed file:   0, changed code line:    0
+
+fork_author:          Hobbs1210, last committed time : 2017-05-26T22:10:39Z, created time: 2016-10-11T03:19:22Z, changed file:   5, changed code line:  121
+
+fork_author:             Lweath, last committed time : 2017-05-25T23:18:21Z, created time: 2017-05-24T17:04:48Z, changed file:   1, changed code line:    5
+
+fork_author:            cprezzi, last committed time : 2017-05-19T20:09:02Z, created time: 2016-11-03T14:10:11Z, changed file:   0, changed code line:    0
+
+fork_author:             payala, last committed time : 2017-05-12T21:58:17Z, created time: 2015-11-29T20:18:13Z, changed file:   1, changed code line:    3
+
+fork_author:    tylerkalinowicz, last committed time : 2017-05-03T03:20:16Z, created time: 2017-05-03T03:13:01Z, changed file:   3, changed code line:  410
+
+fork_author:           ashinsel, last committed time : 2017-05-02T03:38:22Z, created time: 2014-11-26T06:31:30Z, changed file:   0, changed code line:   -1
+
+fork_author:         vbolshakov, last committed time : 2017-04-28T04:44:08Z, created time: 2017-02-13T06:22:52Z, changed file:   0, changed code line:    0
+
+fork_author:            hmflash, last committed time : 2017-04-17T23:28:08Z, created time: 2016-04-08T03:26:31Z, changed file:   0, changed code line:    0
+
+fork_author:  JesperKrogPoulsen, last committed time : 2017-04-17T13:37:35Z, created time: 2015-03-27T20:03:29Z, changed file:   1, changed code line:   29
+src/modules/tools/temperaturecontrol/TemperatureControl.cpp : [(u'this-', 16), (u'gcode-', 13), (u'UNDEFIN', 7), (u'target_temperatur', 5), (u'has_lett', 5), (u'0.0', 4), (u'wait', 4), (u'THEKERNEL-', 4), (u'set_and_wait_m_cod', 3), (u'get_valu', 3)]
+
+fork_author:               Fulg, last committed time : 2017-04-13T22:16:04Z, created time: 2017-03-08T22:07:59Z, changed file:   0, changed code line:   -1
+
+fork_author:            nebbian, last committed time : 2017-04-12T23:56:16Z, created time: 2017-03-27T23:35:38Z, changed file:   0, changed code line:    0
+
+fork_author:            Zaaphod, last committed time : 2017-03-30T20:23:58Z, created time: 2016-06-30T12:00:24Z, changed file:  13, changed code line:   -1
+
+fork_author:            notxarb, last committed time : 2017-03-08T22:50:21Z, created time: 2016-03-07T20:27:56Z, changed file:   0, changed code line:    0
+
+fork_author:         DyzeDesign, last committed time : 2017-03-01T14:06:23Z, created time: 2016-08-09T15:44:21Z, changed file:   0, changed code line:   -1
+
+fork_author:           BasJohan, last committed time : 2017-03-01T06:11:05Z, created time: 2017-01-23T14:58:39Z, changed file:   0, changed code line:    0
+
+fork_author:             2wice2, last committed time : 2017-02-26T19:45:40Z, created time: 2017-02-09T16:57:37Z, changed file:   0, changed code line:   -1
+
+fork_author:               dsau, last committed time : 2017-02-22T00:17:38Z, created time: 2017-02-21T04:22:29Z, changed file:   2, changed code line:    2
+src/modules/tools/zprobe/ThreePointStrategy.cpp : [(u'zprobe-', 6), (u'probe', 4), (u'NAN', 4), (u'start', 3), (u'move', 3), (u'posit', 3), (u'coordinated_mov', 2), (u'Z_AXI', 2), (u'getProbeHeight', 2), (u'point', 1)]
+src/modules/tools/zprobe/ZProbe.h : [(u'getReturnFeedr', 1), (u'getSlowFeedr', 1), (u'pin.get', 1), (u'getFastFeedr', 1), (u'Modul', 1), (u'fast_feedr', 1), (u'this-', 1), (u'probe_height', 1), (u'src/modules/tools/zprobe/ZProbe.h', 1), (u'max_z', 1)]
+
+fork_author:    RTimothyEdwards, last committed time : 2017-02-20T21:41:47Z, created time: 2015-05-28T14:59:43Z, changed file:   0, changed code line:    0
+
+fork_author:          angsuarez, last committed time : 2017-02-10T08:42:40Z, created time: 2017-02-07T21:09:36Z, changed file:   1, changed code line:    5
+
+fork_author:            pluggee, last committed time : 2017-02-08T23:50:08Z, created time: 2016-09-11T04:07:43Z, changed file:  29, changed code line:   -1
+
+fork_author:          Meizirkki, last committed time : 2017-01-31T10:01:48Z, created time: 2017-01-31T07:47:30Z, changed file:   1, changed code line:   11
+src/modules/utils/killbutton/KillButton.cpp : [(u'kill', 8), (u'THEKERNEL-', 7), (u'state=', 7), (u'button', 5), (u'unkill_en', 4), (u'uint32_t', 4), (u'KILLED_BUTTON_UP', 3), (u'this-', 3), (u'state', 3), (u'streams-', 3)]
+
+fork_author:            lciscon, last committed time : 2017-01-27T23:18:53Z, created time: 2017-01-27T22:06:57Z, changed file:   5, changed code line:   45
+src/modules/robot/ActuatorCoordinates.h : [(u'MAX_ROBOT_ACTU', 3), (u'extrud', 2), (u'includ', 2), (u'plu', 1), (u'one', 1), (u'src/modules/robot/ActuatorCoordinates.h', 1), (u'lifter', 1), (u'View', 1), (u'CNC', 1)]
+src/modules/tools/zprobe/DeltaGridStrategy.cpp : [(u'gcode-', 13), (u'stream-', 7), (u'DeltaGridStrategi', 5), (u'slope_correct', 5), (u'measured_z', 4), (u'save', 4), (u'grid', 4), (u'delta_grid_leveling_strategy_checksum', 4), (u'valu', 4), (u'Slope', 4)]
+src/modules/tools/zprobe/DeltaGridStrategy.h : [(u'std', 1), (u'slope_correct', 1), (u'grid_siz', 1), (u'src/modules/tools/zprobe/DeltaGridStrategy.h', 1), (u':tupl', 1), (u'*grid', 1), (u'DeltaGridStrategi', 1), (u'probe_offset', 1), (u'LevelingStrategi', 1), (u'grid_radiu', 1)]
+src/modules/tools/zprobe/ZProbe.cpp : [(u'this-', 21), (u'gcode-', 15), (u'1.2f', 9), (u'home_offset', 6), (u'max_z', 6), (u'THEKERNEL-', 6), (u'has_lett', 6), (u'get_valu', 5), (u'valu', 5), (u'CHECKSUM', 5)]
+src/modules/tools/zprobe/ZProbe.h : [(u'std', 1), (u':vector', 1), (u'home_offset', 1), (u'pin', 1), (u'Pin', 1), (u'LevelingStrategy*', 1), (u'Modul', 1), (u'probe_height', 1), (u'src/modules/tools/zprobe/ZProbe.h', 1), (u'ZProbe', 1)]
+
+fork_author:      exmachina-dev, last committed time : 2017-01-19T19:45:32Z, created time: 2017-01-19T19:38:41Z, changed file:   2, changed code line:   16
+src/modules/robot/arm_solutions/RotaryDeltaSolution.cpp : [(u'cartesian_mm', 12), (u'Z_AXI', 5), (u'zero', 4), (u'z_with_offset', 4), (u'RotaryDeltaSolut', 3), (u'statu', 3), (u'X_AXI', 3), (u'Y_AXI', 3), (u'CHECKSUM', 3), (u'mirror_z', 3)]
+src/modules/robot/arm_solutions/RotaryDeltaSolution.h : [(u'BaseSolut', 1), (u'struct', 1), (u'RotaryDeltaSolut', 1), (u'debug_flag:1', 1), (u'mirror_xy:1', 1), (u'src/modules/robot/arm_solutions/RotaryDeltaSolution.h', 1), (u'mirror_z:1', 1), (u'class', 1), (u'View', 1)]
+
+fork_author:         FluffyKaon, last committed time : 2017-01-16T20:48:38Z, created time: 2017-01-16T20:43:04Z, changed file:   0, changed code line:    0
+
+fork_author:            acurana, last committed time : 2017-01-03T07:51:18Z, created time: 2016-01-07T12:55:10Z, changed file:   0, changed code line:    0
+
+fork_author:          Speedy64i, last committed time : 2016-12-21T00:47:18Z, created time: 2016-09-07T14:14:24Z, changed file:   1, changed code line:    3
+src/modules/robot/Planner.cpp : [(u'cos_theta', 5), (u'junction', 5), (u'1.0F', 3), (u'vmax_junct', 3), (u'sin_theta_d2', 3), (u'acceler', 2), (u'speed', 2), (u'sqrtf', 2), (u':min', 2), (u'std', 2)]
+
+fork_author:           norpchen, last committed time : 2016-12-14T02:59:53Z, created time: 2016-12-14T02:38:59Z, changed file:   5, changed code line:  249
+src/modules/tools/temperaturecontrol/TemperatureControl.cpp : [(u'includ', 5), (u'new', 4), (u'sensor', 4), (u'sensor_type.compar', 2), (u'pt100', 1), (u'PT100', 1), (u'max31855.h', 1), (u'implement', 1), (u'MRI_Hooks.h', 1), (u'TemperatureControl', 1)]
+src/modules/tools/temperaturecontrol/pt100.cpp : [(u'this-', 56), (u'valu', 18), (u'THEKERNEL-', 18), (u'name_checksum', 14), (u'RTD', 14), (u'module_checksum', 14), (u'CHECKSUM', 13), (u'PT100', 13), (u'config-', 13), (u'by_default', 12)]
+src/modules/tools/temperaturecontrol/pt100.h : [(u'Pin', 3), (u'+class', 2), (u'includ', 2), (u'TempSensor', 2), (u'PT100_H', 2), (u'PT100', 2), (u'//reus', 1), (u'not', 1), (u'min_temp', 1), (u'~PT100', 1)]
+
+fork_author:               Apsu, last committed time : 2016-12-05T20:38:51Z, created time: 2016-11-29T05:54:23Z, changed file:   3, changed code line:  106
+src/modules/robot/Robot.cpp : [(u'includ', 7), (u'CHECKSUM', 7), (u'new', 3), (u'config', 3), (u'THEKERNEL-', 3), (u'this-', 3), (u'arm_solut', 3), (u'solution_checksum', 2), (u'CartesianSolut', 2), (u'colinear_tripteron_checksum', 2)]
+src/modules/robot/arm_solutions/ColinearTripteronSolution.cpp : [(u'actuator_mm', 14), (u'this-', 13), (u'cartesian_mm', 8), (u'a_t', 7), (u'a_x', 7), (u'g_x', 7), (u'b_x', 7), (u'a_i', 5), (u'g_i', 5), (u'matrix', 5)]
+src/modules/robot/arm_solutions/ColinearTripteronSolution.h : [(u'includ', 4), (u'overrid', 2), (u'ColinearTripteronSolut', 2), (u'ActuatorCoordin', 2), (u'BaseSolut', 1), (u'pragma', 1), (u'onc', 1), (u'g_r', 1), (u'g_i', 1), (u'src/modules/robot/arm_solutions/ColinearTripteronSolution.h', 1)]
+
+fork_author:        LasVegasOle, last committed time : 2016-11-27T22:18:44Z, created time: 2016-02-04T03:12:41Z, changed file:   0, changed code line:    0
+
+fork_author:     landodragon141, last committed time : 2016-11-14T22:29:18Z, created time: 2016-11-11T23:16:07Z, changed file:   1, changed code line:    9
+src/modules/robot/Robot.cpp : [(u'ACTUATOR_CHECKSUM', 6), (u'CHECKSUM', 5), (u'alpha', 3), (u'beta', 3), (u'gamma', 3), (u'Make', 2), (u'set', 2), (u'laser_module_default_power_checksum', 2), (u'StepperMotor', 2), (u'our', 2)]
+
+fork_author:          nmaggioni, last committed time : 2016-11-11T07:49:29Z, created time: 2016-11-08T18:49:07Z, changed file:   0, changed code line:    0
+
+fork_author:         felixekman, last committed time : 2016-11-09T21:01:37Z, created time: 2014-11-27T01:09:56Z, changed file:   0, changed code line:   -1
+
+fork_author:             AHHams, last committed time : 2016-11-06T13:44:36Z, created time: 2016-10-28T19:42:22Z, changed file:   3, changed code line:   -1
+
+fork_author:     michael-moore0, last committed time : 2016-10-25T22:00:51Z, created time: 2016-10-06T14:04:38Z, changed file:   0, changed code line:    0
+
+fork_author:         purplefabr, last committed time : 2016-10-25T19:12:01Z, created time: 2016-01-05T12:46:31Z, changed file:   7, changed code line:   -1
+
+fork_author:        DavidMFlynn, last committed time : 2016-10-24T23:22:15Z, created time: 2016-06-06T23:07:15Z, changed file:  18, changed code line:   -1
+
+fork_author:           ytkachov, last committed time : 2016-10-05T01:07:18Z, created time: 2016-08-22T04:36:26Z, changed file:   3, changed code line:  506
+
+fork_author:         trayracing, last committed time : 2016-09-22T20:36:57Z, created time: 2015-10-13T01:36:25Z, changed file:   0, changed code line:   -1
+
+fork_author:              SebDE, last committed time : 2016-09-20T05:13:35Z, created time: 2016-07-30T19:05:47Z, changed file:   0, changed code line:   -1
+
+fork_author:             Viproz, last committed time : 2016-09-12T20:55:03Z, created time: 2016-07-14T10:33:30Z, changed file:   5, changed code line:  254
+src/modules/robot/Robot.cpp : [(u'includ', 7), (u'CHECKSUM', 4), (u'this-', 3), (u'new', 3), (u'config', 3), (u'solution_checksum', 3), (u'THEKERNEL-', 3), (u'arm_solut', 3), (u'use', 2), (u':string', 2)]
+src/modules/robot/arm_solutions/GUSDeltaSolution.cpp : [(u'base_length', 11), (u'includ', 10), (u'actuator_mm', 10), (u'cartesian_mm', 8), (u'z_squar', 5), (u'SIN60_ON_3', 4), (u'ALPHA_STEPP', 4), (u'X_AXI', 4), (u'COS60', 4), (u'sqrtf', 4)]
+src/modules/robot/arm_solutions/GUSDeltaSolution.h : [(u'GUSDELTASOLUTION_H', 3), (u'step', 2), (u'ActuatorCoordin', 2), (u'overrid', 2), (u'includ', 2), (u'millimet', 2), (u'+class', 2), (u'GUSDeltaSolut', 2), (u'libs/Module.h', 1), (u'BaseSolut', 1)]
+src/modules/tools/endstops/Endstops.cpp : [(u'this-', 28), (u'actuat', 12), (u'ideal_posit', 11), (u'posit', 11), (u'homing_posit', 10), (u'home_offset', 8), (u'THEKERNEL-', 8), (u'robot-', 8), (u'X_AXI', 6), (u'Z_AXI', 6)]
+src/modules/tools/zprobe/ZProbe.cpp : [(u'THEKERNEL-', 18), (u'move', 17), (u'STEPPER', 17), (u'robot-', 13), (u'step', 12), (u'includ', 12), (u'Z_AXI', 11), (u'gcode-', 9), (u'actuat', 9), (u'this-', 8)]
+
+fork_author:            OpenEHS, last committed time : 2016-09-07T07:51:40Z, created time: 2016-08-25T15:40:52Z, changed file:   6, changed code line:  112
+src/modules/utils/panel/Panel.cpp : [(u'this-', 47), (u'msl', 10), (u'line', 10), (u'menu_row', 7), (u'Panel', 7), (u'menu_offset', 7), (u'screen', 6), (u'CHECKSUM', 6), (u'menu_selected_lin', 6), (u'menu_current_lin', 6)]
+src/modules/utils/panel/Panel.h : [(u'volatil', 2), (u'encoder_click_resolution:3', 1), (u'src/modules/utils/panel/Panel.h', 1), (u'Modul', 1), (u'menu_offset:3', 1), (u'mode:2', 1), (u'do_encoder:1', 1), (u'View', 1), (u'class', 1), (u'do_buttons:1', 1)]
+src/modules/utils/panel/panels/ReprapDiscountGLCD.cpp : [(u'this-', 11), (u'old_AB', 10), (u'state', 6), (u'by_default', 5), (u'config-', 5), (u'panel_checksum', 5), (u'THEKERNEL-', 5), (u'valu', 5), (u'current_A', 5), (u'returnValu', 4)]
+src/modules/utils/panel/panels/ReprapDiscountGLCD.h : [(u'Pin', 3), (u'pause_pin', 1), (u'buzz_pin', 1), (u'LcdBase', 1), (u'back_pin', 1), (u'menu_offset', 1), (u'ReprapDiscountGLCD', 1), (u'class', 1), (u'src/modules/utils/panel/panels/ReprapDiscountGLCD.h', 1), (u'View', 1)]
+src/modules/utils/panel/panels/ST7565.cpp : [(u'old_AB', 10), (u'state', 6), (u'this-', 6), (u'current_A', 5), (u'ST7565', 4), (u'returnValu', 4), (u'CHECKSUM', 4), (u'high', 3), (u'//rememb', 3), (u'//add', 3)]
+src/modules/utils/panel/panels/ST7565.h : [(u'ST7565_H_', 1), (u'LcdBase', 1), (u'menu_offset', 1), (u'use_back:1', 1), (u'use_pause:1', 1), (u'ST7565', 1), (u'src/modules/utils/panel/panels/ST7565.h', 1), (u'class', 1), (u'View', 1)]
+
+fork_author:           opiesche, last committed time : 2016-09-03T02:46:06Z, created time: 2016-09-03T02:31:19Z, changed file:   2, changed code line:   10
+src/libs/utils.cpp : [(u'alpha', 4), (u'std', 2), (u'1.0f-alpha', 1), (u'alpha=0.0', 1), (u'+float', 1), (u':max', 1), (u'linear', 1), (u'call_ev', 1), (u'alpha=1.0', 1), (u'between', 1)]
+src/libs/utils.h : [(u'valu', 4), (u'min', 3), (u'max', 3), (u'LPC_GPIO2-', 3), (u'delay', 2), (u'0xffff', 2), (u'uint32_t', 2), (u'FIOCLR', 1), (u'__VA_ARGS__', 1), (u'+float', 1)]
+
+fork_author:       johnkingsley, last committed time : 2016-08-26T17:30:57Z, created time: 2016-08-08T14:52:11Z, changed file:   1, changed code line:    1
+src/libs/Kernel.cpp : [(u'run', 2), (u'actuat', 2), (u'std', 1), (u'Kernel', 1), (u'Run', 1), (u'src/libs/Kernel.cpp', 1), (u'get', 1), (u'get_current_posit', 1), (u'time', 1), (u'ActuatorCoordin', 1)]
+
+fork_author:            dumle29, last committed time : 2016-08-17T22:15:15Z, created time: 2016-05-28T19:02:55Z, changed file:   3, changed code line:   25
+
+fork_author:          fgeissler, last committed time : 2016-08-16T14:35:19Z, created time: 2015-04-24T09:18:51Z, changed file:   0, changed code line:   -1
+
+fork_author:              95A31, last committed time : 2016-08-16T06:13:26Z, created time: 2016-08-16T04:17:00Z, changed file:   3, changed code line:  123
+
+fork_author:         FredMurphy, last committed time : 2016-08-16T00:43:16Z, created time: 2016-02-12T17:46:16Z, changed file:   0, changed code line:    0
+
+fork_author:          milkowski, last committed time : 2016-08-06T18:43:15Z, created time: 2016-08-06T18:41:01Z, changed file:   1, changed code line:    0
+src/modules/tools/zprobe/DeltaCalibrationStrategy.cpp : [(u'includ', 3), (u'CHECKSUM', 2), (u'algorithm', 1), (u'tupl', 1), (u'initial_height_checksum', 1), (u'radiu', 1), (u'radius_checksum', 1), (u'cmath', 1), (u'src/modules/tools/zprobe/DeltaCalibrationStrategy.cpp', 1), (u'initial_height', 1)]
+
+fork_author:           rparrett, last committed time : 2016-07-22T21:27:11Z, created time: 2015-12-18T04:36:21Z, changed file:   0, changed code line:    0
+
+fork_author:              Bouni, last committed time : 2016-07-11T19:39:48Z, created time: 2015-02-10T11:31:07Z, changed file:   0, changed code line:    0
+
+fork_author:         chrisbrent, last committed time : 2016-07-06T22:26:47Z, created time: 2015-11-24T00:59:42Z, changed file:   3, changed code line:  182
+src/main.cpp : [(u'add_modul', 6), (u'includ', 6), (u'new', 6), (u'kernel-', 6), (u'AHB0', 3), (u'Panel', 2), (u'src/main.cpp', 1), (u'Spindl', 1), (u'modules/tools/reporter/Reporter.h', 1), (u'NO_UTILS_REPORT', 1)]
+src/modules/tools/reporter/Reporter.cpp : [(u'gcode-', 26), (u'stream-', 22), (u'includ', 19), (u'control', 9), (u'controllers.s', 7), (u':get_valu', 4), (u'Smoothi', 4), (u'PublicData', 4), (u'THEKERNEL-', 4), (u'Licens', 4)]
+src/modules/tools/reporter/Reporter.h : [(u'licens', 4), (u'smoothi', 4), (u'http', 3), (u'gener', 3), (u'gnu', 3), (u'softwar', 2), (u'warranti', 2), (u'REPORTER_H', 2), (u'version', 2), (u'without', 2)]
+
+fork_author:            openpnp, last committed time : 2016-06-17T03:17:47Z, created time: 2016-06-17T02:10:38Z, changed file:   2, changed code line:   40
+src/modules/tools/endstops/Endstops.cpp : [(u'rp_axi', 12), (u'this-', 9), (u'home', 5), (u'move', 4), (u'trigger', 4), (u'debounc', 3), (u'home_direct', 3), (u'check', 3), (u'STEPPER', 3), (u'THEKERNEL-', 3)]
+
+fork_author:           EliteEng, last committed time : 2016-06-12T07:45:43Z, created time: 2016-05-20T11:40:15Z, changed file:   2, changed code line:   86
+src/modules/tools/extruder/Extruder.cpp : [(u'gcode-', 133), (u'this-', 121), (u'has_lett', 52), (u'enabl', 39), (u'get_valu', 27), (u'Extrud', 24), (u'mixer', 23), (u'*argument', 18), (u'identifi', 15), (u'THEKERNEL-', 10)]
+src/modules/tools/extruder/Extruder.h : [(u'rate', 5), (u'move', 3), (u'calcul', 3), (u'includ', 3), (u'SOLO', 3), (u'acceler', 3), (u'use', 3), (u'Extrud', 2), (u'set', 2), (u'mm\xb3', 2)]
+
+fork_author:         BillBucket, last committed time : 2016-06-07T23:37:57Z, created time: 2016-06-07T23:36:03Z, changed file:   2, changed code line:  346
+src/modules/tools/nesjog/NesJog.cpp : [(u'this-', 40), (u'CHECKSUM', 33), (u'THEKERNEL-', 27), (u'includ', 26), (u'valu', 24), (u'by_default', 24), (u'config-', 24), (u'as_numb', 18), (u'move', 14), (u'pin', 12)]
+src/modules/tools/nesjog/NesJog.h : [(u'+class', 3), (u'includ', 3), (u'uint32_t', 3), (u'NES_Jog', 2), (u'pin', 2), (u'ENDSTOPS_MODULE_H', 2), (u'fast_rat', 1), (u'on_module_load', 1), (u'load_config', 1), (u'debounced_get', 1)]
+
+fork_author:            greyltc, last committed time : 2016-06-06T12:55:05Z, created time: 2016-03-29T10:25:42Z, changed file:   0, changed code line:   -1
+
+fork_author:            fengz41, last committed time : 2016-06-04T15:23:57Z, created time: 2016-06-02T09:41:13Z, changed file:   4, changed code line:   13
+src/modules/utils/panel/Panel.cpp : [(u'lcd-', 11), (u'this-', 11), (u'setCursor', 5), (u'.c_str', 2), (u'build.substr', 1), (u'Welcom', 1), (u'v.get_build_d', 1), (u'Smoothi', 1), (u'Smoothiewar', 1), (u'*argument', 1)]
+
+fork_author:       AuroraLabs3d, last committed time : 2016-05-20T11:30:48Z, created time: 2016-04-24T10:26:17Z, changed file:   2, changed code line:   86
+src/modules/tools/extruder/Extruder.cpp : [(u'gcode-', 133), (u'this-', 121), (u'has_lett', 52), (u'enabl', 39), (u'get_valu', 27), (u'Extrud', 24), (u'mixer', 23), (u'*argument', 18), (u'identifi', 15), (u'THEKERNEL-', 10)]
+src/modules/tools/extruder/Extruder.h : [(u'rate', 5), (u'move', 3), (u'calcul', 3), (u'includ', 3), (u'SOLO', 3), (u'acceler', 3), (u'use', 3), (u'Extrud', 2), (u'set', 2), (u'mm\xb3', 2)]
+
+fork_author:      SerhiiSemenov, last committed time : 2016-05-11T16:36:16Z, created time: 2016-04-06T07:13:20Z, changed file:  -1, changed code line:   -1
+
+fork_author:            TkkrLab, last committed time : 2016-05-10T16:01:03Z, created time: 2016-05-10T15:49:55Z, changed file:   8, changed code line:  256
+src/modules/communication/GcodeDispatch.cpp : [(u'first_char', 12), (u'src/modules/communication/GcodeDispatch.cpp', 1), (u'linenumb', 1), (u'//Get', 1), (u':on_console_line_receiv', 1), (u'*line', 1), (u'View', 1), (u'GcodeDispatch', 1)]
+src/modules/tools/endstops/Endstops.cpp : [(u'this-', 15), (u'THEKERNEL-', 13), (u'soft_max', 5), (u'endstop', 5), (u'minmax', 4), (u'LIMIT_TRIGG', 4), (u'nullptr', 4), (u'ON_HALT', 4), (u'statu', 4), (u'valu', 4)]
+src/modules/tools/endstops/Endstops.h : [(u'Endstop', 2), (u'pin', 2), (u'Pin', 2), (u'Modul', 2), (u'volatil', 2), (u'class', 2), (u'bounce_cnt:4', 1), (u'status:3', 1), (u'soft_max', 1), (u'struct', 1)]
+src/modules/tools/laser/Laser.cpp : [(u'this-', 8), (u'includ', 6), (u'set', 3), (u'ttl_pin-', 3), (u'gcode-', 2), (u'laser_pow', 2), (u'time', 2), (u'wait_api.h', 1), (u'ttl_use', 1), (u'argument', 1)]
+src/modules/utils/PlayLed/PlayLed.cpp : [(u'ledpin', 10), (u'THEKERNEL-', 7), (u'led.set', 5), (u'by_default', 4), (u'config-', 4), (u'valu', 4), (u'as_str', 4), (u'PlayL', 3), (u'led2pin', 3), (u'set', 2)]
+src/modules/utils/PlayLed/PlayLed.h : [(u'Pin', 2), (u'uint32_t', 2), (u'led2', 1), (u'led', 1), (u'struct', 1), (u'Modul', 1), (u'src/modules/utils/PlayLed/PlayLed.h', 1), (u'led_tick', 1), (u'cnt:4', 1), (u'PlayL', 1)]
+src/modules/utils/killbutton/KillButton.cpp : [(u'this-', 34), (u'kill', 25), (u'IDL', 22), (u'THEKERNEL-', 17), (u'state=', 12), (u'state1=', 11), (u'state2=', 11), (u'button', 10), (u'kill_button.get', 10), (u'UNKILL_FIR', 10)]
+
+fork_author:          MX-Master, last committed time : 2016-05-09T08:32:12Z, created time: 2015-12-19T14:04:13Z, changed file:  23, changed code line:   -1
+
+fork_author:          chrisrusk, last committed time : 2016-05-06T19:56:48Z, created time: 2016-05-06T13:24:17Z, changed file:   2, changed code line:   60
+src/modules/tools/spindle/Spindle.cpp : [(u'Spindl', 14), (u'THEKERNEL-', 13), (u'valu', 11), (u'by_default', 10), (u'new_pwm', 10), (u'config-', 10), (u'error', 9), (u'UPDATE_FREQ', 8), (u'CHECKSUM', 7), (u'as_numb', 7)]
+src/modules/tools/spindle/Spindle.h : [(u'Spindl', 2), (u'class', 2), (u'uint32_t', 2), (u'Modul', 2), (u'control_D_term', 1), (u'prev_error', 1), (u'new_rpm', 1), (u'src/modules/tools/spindle/Spindle.h', 1), (u'max_pwm_dutycycl', 1), (u'min_pwm_dutycycl', 1)]
+
+fork_author:             Sciumo, last committed time : 2016-04-25T19:47:10Z, created time: 2015-02-26T16:04:23Z, changed file:   1, changed code line:    0
+
+fork_author:       RepRapMorgan, last committed time : 2016-04-23T10:37:12Z, created time: 2014-06-08T05:37:49Z, changed file:   6, changed code line:  173
+src/modules/robot/Robot.cpp : [(u'this-', 27), (u'letter', 20), (u'last_mileston', 12), (u'softlimit', 12), (u'valu', 10), (u'by_default', 10), (u'THEKERNEL-', 10), (u'target', 10), (u'config-', 10), (u'CHECKSUM', 9)]
+src/modules/robot/Robot.h : [(u'gener', 3), (u'arc', 3), (u'speed', 2), (u'Robot', 2), (u'class', 2), (u'default', 2), (u'Modul', 2), (u'limit', 2), (u'softwar', 1), (u'Use', 1)]
+src/modules/tools/endstops/Endstops.cpp : [(u'gcode-', 13), (u'THEKERNEL-', 12), (u'this-', 10), (u'robot-', 10), (u'home_offset', 9), (u'move', 8), (u'gcode_buf', 8), (u'params.push_back', 7), (u'get_valu', 6), (u'set', 5)]
+src/modules/tools/endstops/Endstops.h : [(u'Gcode*', 3), (u'gcode', 3), (u'Endstop', 1), (u'home_offset', 1), (u'pin', 1), (u'Modul', 1), (u'src/modules/tools/endstops/Endstops.h', 1), (u'homing_posit', 1), (u'debounced_get', 1), (u'set_relative_homing_offset', 1)]
+src/modules/tools/zprobe/ZGridStrategy.cpp : [(u'ZGridStrategi', 4), (u'+//void', 2), (u':setAdjustFunct', 1), (u':grid2circl', 1), (u'src/modules/tools/zprobe/ZGridStrategy.cpp', 1), (u':circle2grid', 1), (u':next_cal', 1), (u'View', 1)]
+
+fork_author:          TopherMan, last committed time : 2016-04-09T23:00:47Z, created time: 2015-11-28T16:09:14Z, changed file:   7, changed code line:   -1
+
+fork_author:              Skeen, last committed time : 2016-04-03T13:18:42Z, created time: 2016-04-02T16:36:38Z, changed file:   8, changed code line:  312
+src/main.cpp : [(u'kernel-', 8), (u'streams-', 7), (u'AHBSRAM0', 5), (u'section', 5), (u'__attribute__', 5), (u'select', 4), (u'NO_SDCARD', 4), (u'disabled\\r\\n', 4), (u'sdok', 4), (u'sdcard', 3)]
+src/modules/utils/player/Player.cpp : [(u'gcode-', 6), (u'arg', 3), (u'filenam', 2), (u'file', 2), (u'select', 2), (u'Gcode', 2), (u'NO_SDCARD', 2), (u'card', 2), (u'CHECKSUM', 2), (u'this-', 2)]
+
+fork_author:         MoonCactus, last committed time : 2016-04-01T13:27:49Z, created time: 2016-04-01T13:14:59Z, changed file:  -1, changed code line:   -1
+
+fork_author:           firepick, last committed time : 2016-03-27T05:31:05Z, created time: 2016-03-26T10:33:40Z, changed file:   4, changed code line:  222
+src/modules/robot/Robot.cpp : [(u'includ', 7), (u'CHECKSUM', 4), (u'this-', 3), (u'new', 3), (u'config', 3), (u'solution_checksum', 3), (u'THEKERNEL-', 3), (u'arm_solut', 3), (u'use', 2), (u'SCARA_checksum', 2)]
+src/modules/robot/arm_solutions/SCARASolution.cpp : [(u'this-', 29), (u'cartesian_mm', 15), (u'X_AXI', 14), (u'includ', 14), (u'Y_AXI', 12), (u'option', 11), (u'actuator_rad', 9), (u'options.find', 9), (u'SCARA_po', 9), (u'options.end', 9)]
+src/modules/robot/arm_solutions/SCARASolution.h : [(u'overrid', 4), (u'SCARASOLUTION_H', 3), (u'+class', 2), (u'arm_options_t', 2), (u'includ', 2), (u'option', 2), (u'ActuatorCoordin', 2), (u'SCARASolut', 2), (u'BaseSolut', 1), (u'to_degre', 1)]
+
+fork_author:              nivos, last committed time : 2016-03-23T11:25:37Z, created time: 2014-01-16T16:34:23Z, changed file:   0, changed code line:   -1
+
+fork_author:           626Pilot, last committed time : 2016-03-20T07:22:42Z, created time: 2014-10-20T09:02:58Z, changed file:  20, changed code line:   -1
+
+fork_author:        doer3Dprint, last committed time : 2016-03-03T19:56:39Z, created time: 2016-01-08T01:07:42Z, changed file:   1, changed code line:    1
+
+fork_author:             arms22, last committed time : 2016-02-28T02:27:18Z, created time: 2014-02-06T13:45:53Z, changed file:   4, changed code line:   -1
+
+fork_author:            ipcalit, last committed time : 2016-02-26T01:34:02Z, created time: 2015-08-07T20:29:56Z, changed file:   0, changed code line:    0
+
