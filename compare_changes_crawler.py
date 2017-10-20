@@ -50,15 +50,9 @@ def compare(project_full_name):
                 "changed_file_number": -1,
                 "file_list": []}
 
-    # TODO(Luyao Ren) some page is loading dynamic
-    # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...Nutz95:edge
-
-    # If the changed is too large, the result from github will
-    # not show diff code first.
-    # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...briand:edge
-
     try:
-        # flag_too_large = True
+        # If the changed is too large, the result from github will not show diff code first.
+        # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...briand:edge
         repo_overall_info = repo_content.find_element_by_class_name("tabnav")
         commits, changed_files, comments = repo_overall_info.find_elements_by_class_name('Counter')
         changed_file_number = int(changed_files.text)
@@ -67,7 +61,6 @@ def compare(project_full_name):
                 "file_list": []}
         # repo_content = driver.find_element_by_class_name('repository-content')
     except:
-        # flag_too_large = False
         pass
 
     file_list = []
@@ -83,16 +76,26 @@ def compare(project_full_name):
     total_changed_line_number = 0
     diff_num = 0
     # TODO(Luyao Ren) change to get the list of diff.
+    # TODO(Luyao Ren) change analysis part using Beautiful Soup to speed up.
     while True:
         try:
             diff = diff_list.find_element_by_id('diff-' + str(diff_num))
             diff_num += 1
         except:
-            break
+            try:
+                # Some page is loading dynamic, so we need to get more diff.
+                # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...Nutz95:edge
+                load_url = diff_list.find_element_by_tag_name('include-fragment').get_attribute('src')
+                driver.get(load_url)
+                diff_list = driver.find_element_by_tag_name('body')
+                continue
+            except:
+                break
+
         diff_info = diff.find_element_by_class_name('file-info')
         changed_line = diff_info.text.split(' ')[0]
         file_full_name = diff_info.text.split(' ')[1]
-        print changed_line, file_full_name
+        print diff_num, changed_line, file_full_name
         try:
             total_changed_line_of_source_code += int(changed_line)
             changed_file_number += 1
