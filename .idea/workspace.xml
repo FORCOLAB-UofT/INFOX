@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09a0a221-aee5-405d-9389-9847dcb395bb" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/cplusplus_stopwords.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/sorted_result.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/result.txt" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/Smoothieware_Smoothieware/0x23/commits.json" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/Smoothieware_Smoothieware/2thetop/commits.json" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/tmp/Smoothieware_Smoothieware/2wice2/commits.json" afterPath="" />
@@ -583,8 +586,8 @@
       <file leaf-file-name="analyser.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/analyser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-806">
-              <caret line="13" column="23" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+            <state relative-caret-position="169">
+              <caret line="78" column="19" selection-start-line="78" selection-start-column="19" selection-end-line="78" selection-end-column="19" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -1126,8 +1129,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/analyser.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-806">
-          <caret line="13" column="23" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+        <state relative-caret-position="169">
+          <caret line="78" column="19" selection-start-line="78" selection-start-column="19" selection-end-line="78" selection-end-column="19" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
