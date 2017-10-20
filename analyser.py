@@ -1,8 +1,10 @@
 import os
 import json
-import crawler
 import compare_changes_crawler
 from collections import Counter
+import ConfigParser
+
+result_file = './data/result.txt'
 
 def get_repo_info(main_path):
     print '---------------------------------------'
@@ -11,7 +13,7 @@ def get_repo_info(main_path):
         for type in ["language", "description", "forks"]:
             out_result = type + " : " + str(repo_info[type]) + "\n"
             print out_result
-            with open('sorted_result.txt', 'a') as write_file:
+            with open(result_file, 'a') as write_file:
                 write_file.write(out_result)
 
 def get_forks_info_dict(main_path):
@@ -48,10 +50,9 @@ def word_filter(word):
     return True
 
 def main():
-    crawler.author_name = 'Smoothieware'
-    crawler.project_name = 'Smoothieware'
-
-    main_path = crawler.save_path % (crawler.author_name, crawler.project_name)
+    conf = ConfigParser.ConfigParser()
+    conf.read('./config.conf')
+    main_path = './tmp/%s_%s' % (conf.get("repo_info", "owner"), conf.get("repo_info", "repo"))
 
     get_repo_info(main_path)
 
@@ -71,12 +72,11 @@ def main():
                 with open(result_path) as read_file:
                     compare_result = json.load(read_file)
             else:
-                '''
                 compare_result = compare_changes_crawler.compare(forks_full_name)
                 with open(result_path, 'w') as write_file:
-                    write_file.write(json.dumps(compare_result))
-                '''
-                continue
+                   write_file.write(json.dumps(compare_result))
+                # continue
+
             out_result = "fork_author: %18s, last committed time : %15s, " \
                          "created time: %15s, changed file: %3d, changed code line: %4d\n" % \
                          (author, last_committed_time, created_time, \
@@ -88,8 +88,8 @@ def main():
                 print file["file_full_name"] , ":", Counter(filter(word_filter, file["stemmed_tokens"])).most_common(10)
             print ""
 
-            # with open('sorted_result.txt', 'a') as write_file:
-            #     write_file.write(out_result)
+            with open(result_file, 'a') as write_file:
+                 write_file.write(out_result)
 
 if __name__ == '__main__':
     main()

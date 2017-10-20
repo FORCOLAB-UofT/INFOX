@@ -4,7 +4,7 @@ import requests
 import nltk
 from nltk.stem.porter import PorterStemmer
 
-language_file_suffix = ['.h', '.c', '.cc', '.cpp']
+language_file_suffix = ['.h', '.c', '.cc', '.cpp', '.hpp']
 stop_words = []
 
 '''

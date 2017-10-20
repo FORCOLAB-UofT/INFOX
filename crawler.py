@@ -5,7 +5,7 @@ import requests
 author_name = 'shuiblue'
 project_name = 'INFOX'
 save_path = './tmp/%s_%s'
-access_token = 'input_your_personal_access_token_here'
+access_token = 'your_personal_access_token'
 commits_page_limit = 1
 
 base_url = 'https://api.github.com/repos/%s/%s?access_token=%s'
