@@ -8,6 +8,10 @@ How to run:
 >
 > python run.py
 
+The results are stored in ./result.
+
+You can also set config.conf and run manually.
+
 The crawler part & analyser part are separated, you can run individually.
 
 Your can see the example of result in /data/result_example.txt . 
