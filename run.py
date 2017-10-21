@@ -27,10 +27,10 @@ crawler.access_token = access_token
 
 print "Set config successfully!"
 
-print "Start crawler!"
+print "Start running crawler!"
 crawler.main()
-print "finish crawler!"
+print "Finish runningcrawler!"
 
-print "Start analyser"
+print "Start running analyser"
 analyser.main()
-print "finish analyser!"
+print "Finish running analyser!"

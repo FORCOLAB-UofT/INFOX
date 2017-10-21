@@ -93,13 +93,14 @@ def compare(project_full_name):
                 break
 
         diff_info = diff.find_element_by_class_name('file-info')
-        changed_line = diff_info.text.split(' ')[0]
-        file_full_name = diff_info.text.split(' ')[1]
+        changed_line = diff_info.text.split(' ')[0].strip().replace(',','')
+        file_full_name = diff_info.text.split(' ')[1].strip()
         print diff_num, changed_line, file_full_name
         try:
             total_changed_line_of_source_code += int(changed_line)
             changed_file_number += 1
         except:
+            changed_line = 0
             pass
         file_name, file_suffix = os.path.splitext(file_full_name)
 
