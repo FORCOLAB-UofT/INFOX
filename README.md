@@ -3,7 +3,9 @@ Redesign for https://github.com/shuiblue/INFOX
 
 How to run: 
 > git clone git@github.com:FancyCoder0/INFOX.git
+>
 > cd INFOX
+>
 > python run.py
 
 The crawler part & analyser part are separated, you can run individually.
