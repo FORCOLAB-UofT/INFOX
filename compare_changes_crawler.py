@@ -7,18 +7,6 @@ from nltk.stem.porter import PorterStemmer
 language_file_suffix = ['.h', '.c', '.cc', '.cpp', '.hpp']
 stop_words = []
 
-def do_stemming(filtered):
-    """Do stemming on words.
-    Args:
-        list of filtered word
-    Return:
-        list of word after doing stemming.
-    """
-    stemmed = []
-    for f in filtered:
-        stemmed.append(PorterStemmer().stem(f))
-    return stemmed
-
 def compare(project_full_name):
     """Compare the fork with the main branch.
     Args:
@@ -128,9 +116,10 @@ def compare(project_full_name):
             except:
                 pass
             # process on changed code
-            tokens = nltk.word_tokenize(changed_code)
-            tokens = filter(lambda x: (len(x) > 1) and (x not in stop_words), tokens)
-            stemmed_tokens = do_stemming(tokens)
+            # get the tokens from changed code
+            tokens = filter(lambda x: (len(x) > 1) and (x not in stop_words), nltk.word_tokenize(changed_code))
+            # do stem on the tokens
+            stemmed_tokens = [PorterStemmer().stem(word) for word in tokens]
             file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
                               "changed_line": changed_line, "changed_code": changed_code,
                               "tokens": tokens, "stemmed_tokens": stemmed_tokens})
