@@ -1,0 +1,1 @@
+{"changed_file_number": 1, "file_list": [{"file_suffix": ".cc", "changed_code": "View\n1 test.cc\n@@ -0,0 +1 @@\n+test my crawler.", "stemmed_tokens": ["View", "test.cc", "-0,0", "+1", "+test", "my", "crawler"], "file_full_name": "test.cc", "tokens": ["View", "test.cc", "-0,0", "+1", "+test", "my", "crawler"], "changed_line": "1"}], "changed_line": 1}

@@ -1,0 +1,9 @@
+shuiblue/INFOX
+language : Java
+description : Identifying Features in Forks
+forks : 2
+fork_author:        FancyCoder0, last committed time : 2017-10-21T08:36:32Z, created time: 2017-10-21T08:35:44Z, changed file:   1, changed code line:    1
+test.cc:
+                    common tokens: [["crawler", 1], ["test.cc", 1], ["+test", 1], ["View", 1]]
+     common tokens after stemming: [["crawler", 1], ["test.cc", 1], ["+test", 1], ["View", 1]]
+

@@ -1,28 +1,28 @@
-'''
+"""
 This crawler is used for get the data of the repo from Github's API.
-'''
+"""
 
 import os
 import json
 import requests
+import ConfigParser
 
-# Following three lines can be setting by config
-author_name = 'shuiblue'
-project_name = 'INFOX'
-# Github's API has limit, so it need your personal access token.
-access_token = 'your_personal_access_token'
+commits_page_limit = 1 # 1 is just for checking the status, if you need more commits set it larger.
 
-save_path = './tmp/%s_%s' # The data store in tmp/author_repo/
-commits_page_limit = 1 # 1 is just for checking the status, if you need more commits set it larger. 
-
-base_url = 'https://api.github.com/repos/%s/%s?access_token=%s'
-base_url_with_page = 'https://api.github.com/repos/%s/%s/%s?page=%d&access_token=%s'
-
+base_url = 'https://api.github.com/repos/%s/%s'
+base_url_with_page = 'https://api.github.com/repos/%s/%s/%s?page=%d'
 api_limit_error = 'API rate limit exceeded'
 
-# Write the obj as json to file (overwrite if it exist).
-# It will create the folder if it doesn't exist.
 def write_to_file(file, obj):
+    """ Write the obj as json to file.
+    It will overwrite the file if it exist
+    It will create the folder if it doesn't exist.
+    Args:
+        file: the file's path, like : ./tmp/INFOX/repo_info.json
+        obj: the instance to be written into file (can be list, dict)
+    Return:
+        none
+    """
     path = os.path.dirname(file)
     if not os.path.exists(path):
         os.makedirs(path)
@@ -31,24 +31,40 @@ def write_to_file(file, obj):
         write_file.write(json.dumps(obj))
     print 'finish writing!'
 
-# get_api is the general function to get the data using Github's API.
-# You can set author(like FancyCoder0), repo(like INFOX), type(forks, branches, commits).
-# page_iter is need when type is not empty, which means whether the data is iterated(like get all the forks for the repo), this function will get all the items.
-# Example:
-#     get_api('FancyCoder0', 'INFOX', "", False)
-#     get_api('FancyCoder0', 'INFOX', "forks", True)
+def get_api(author, repo, type="", access_token=""):
+    """The general function to get the data using Github's API.
+    There is two cases:
+    when type is not empty, iterator for page is need which means the data is iterated(like get all the forks for the repo),
+    this function will get all the items.
+    Args:
+        author: like FancyCoder0
+        repo: like INFOX
+        type: one of [forks, branches, commits]
+        access_token: your personal access token for limit of Github's API.
+        For example:
+            get_api('FancyCoder0', 'INFOX', "")
+            get_api('FancyCoder0', 'INFOX', "forks")
+    Return:
+        If the type is not set, return a json object for response.
+        If the type is set, return a list of json objects for all the items.
+    """
 
-def get_api(author, repo, type="", page_iter=True):
-    if not page_iter:
+    if not type:
         try:
-            response = requests.get(base_url % (author, repo, access_token))
+            url = base_url % (author, repo)
+            if access_token:
+                url.append('?access_token=%s' % access_token)
+            response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
         except requests.RequestException as error:
             print(error)
+        print 'finish crawling!'
         return response.json()
+
     page_num = 0
     result = []
+    # Do the loop until getting the empty response.
     while True:
         page_num += 1
 
@@ -58,7 +74,10 @@ def get_api(author, repo, type="", page_iter=True):
 
         # print('page_num = %d' % page_num)
         try:
-            response = requests.get(base_url_with_page % (author, repo, type, page_num, access_token))
+            url = base_url_with_page % (author, repo, type, page_num)
+            if access_token:
+                url.append('&access_token=%s' % access_token)
+            response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
         except requests.RequestException as error:
@@ -66,6 +85,7 @@ def get_api(author, repo, type="", page_iter=True):
 
         json_result = response.json()
 
+        # If the response is empty, then break the loop.
         if not json_result:
             break
 
@@ -76,9 +96,17 @@ def get_api(author, repo, type="", page_iter=True):
     return result
 
 def main():
-    main_pain = save_path % (author_name, project_name)
+    conf = ConfigParser.ConfigParser()
+    conf.read('./config.conf')
+    # Following args is set by config
+    author_name = conf.get("repo_info", "owner")
+    project_name = conf.get("repo_info", "repo")
+    save_path = conf.get("location", "save_path")
+    access_token = conf.get("token", "access_token")
 
-    repo_info = get_api(author_name, project_name, "", False)
+    main_pain = save_path + '/' + author_name + '_' + project_name
+    
+    repo_info = get_api(author_name, project_name)
     write_to_file(main_pain + '/repo_info.json', repo_info)
 
     forks_list = get_api(author_name, project_name, 'forks')

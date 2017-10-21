@@ -7,30 +7,36 @@ from nltk.stem.porter import PorterStemmer
 language_file_suffix = ['.h', '.c', '.cc', '.cpp', '.hpp']
 stop_words = []
 
-'''
-Example:
-    compare('NeilBetham/Smoothieware')
-    It will return compare_result which looks like:
-    compare_result {
-    changed_file_number,
-    total_changed_line_number,
-    file_list {
-      file_full_name,
-      file_suffix,
-      changed_line,
-      changed_code,
-      tokens,
-      stemmed_tokens,
-    }
-'''
-
 def do_stemming(filtered):
-	stemmed = []
-	for f in filtered:
-		stemmed.append(PorterStemmer().stem(f))
-	return stemmed
+    """Do stemming on words.
+    Args:
+        list of filtered word
+    Return:
+        list of word after doing stemming.
+    """
+    stemmed = []
+    for f in filtered:
+        stemmed.append(PorterStemmer().stem(f))
+    return stemmed
 
 def compare(project_full_name):
+    """Compare the fork with the main branch.
+    Args:
+        project_full_name: for example: 'NeilBetham/Smoothieware'
+    Return:
+        A dict contains this :
+        compare_result {
+            changed_file_number,
+            total_changed_line_number,
+            file_list {
+                file_full_name,
+                file_suffix,
+                changed_line,
+                changed_code,
+                tokens,
+                stemmed_tokens,
+            }
+    """
     # load stop words
     with open('./data/cplusplus_stopwords.txt') as f:
         for line in f.readlines():
@@ -38,10 +44,11 @@ def compare(project_full_name):
             stop_words.append(word)
 
     print "start : ", project_full_name
-    # It will jump to https://github.com/author/repo/compare/version...author:repo
     url = 'https://github.com/%s/compare' % project_full_name
+
     driver = webdriver.PhantomJS()
     try:
+        # It will jump to https://github.com/author/repo/compare/version...author:repo
         driver.get(url)
         repo_content = driver.find_element_by_class_name("repository-content")
     except:
@@ -73,7 +80,7 @@ def compare(project_full_name):
                 "file_list": []}
 
     changed_file_number = 0
-    total_changed_line_number = 0
+    total_changed_line_of_source_code = 0
     diff_num = 0
     # TODO(Luyao Ren) change to get the list of diff.
     # TODO(Luyao Ren) change analysis part using Beautiful Soup to speed up.
@@ -124,11 +131,9 @@ def compare(project_full_name):
             tokens = nltk.word_tokenize(changed_code)
             tokens = filter(lambda x: (len(x) > 1) and (x not in stop_words), tokens)
             stemmed_tokens = do_stemming(tokens)
-
             file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
                               "changed_line": changed_line, "changed_code": changed_code,
                               "tokens": tokens, "stemmed_tokens": stemmed_tokens})
-
     # print "changed file list:", changed_file_list
     # print("total changed line = %d" % total_changed_line_of_source_code)
     return {"changed_line": total_changed_line_of_source_code,
