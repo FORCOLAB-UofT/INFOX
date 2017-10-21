@@ -8,13 +8,11 @@ How to run:
 >
 > python run.py
 
-The results are stored in ./result.
+The results are stored in ./result. There is an example of result in ./data/result.
 
 You can also set config.conf and run manually.
 
 The crawler part & analyser part are separated, you can run individually.
-
-Your can see the example of result in /data/result_example.txt . 
 
 crawler.py is to get the information of the project and the forks of it. Now, the data is storing in local.
 
