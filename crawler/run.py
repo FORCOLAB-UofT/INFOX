@@ -1,6 +1,5 @@
 import ConfigParser
 import crawler
-import analyser
 
 conf = ConfigParser.ConfigParser()
 conf.read('./config.conf')
@@ -32,7 +31,3 @@ print "Set config successfully!"
 print "Start running crawler!"
 crawler.main()
 print "Finish runningcrawler!"
-
-print "Start running analyser"
-analyser.main()
-print "Finish running analyser!"

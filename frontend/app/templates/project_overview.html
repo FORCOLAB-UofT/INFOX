@@ -10,10 +10,12 @@
         </div>
     </div>
     <h3>Forks of {{ project.project_name }}</h3>
-    <div class="projects-tabs">
+    <div class="forks-tabs">
         {% include "_forks.html" %}
     </div>
+    {#
     <div class="pagination">
-        {{ render_pagination(pagination, '.project_overview', project_name = project.name) }}
+        {{ render_pagination(pagination, '.project_overview', projectname = project.project_name) }}
     </div>
+    #}
 {% endblock %}
