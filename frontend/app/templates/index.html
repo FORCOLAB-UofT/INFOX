@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h1>INFOX</h1>
+    </div>
+    <div class="col-md-6">
+        {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+    </div>
+    <div class="row"></div>
+    <hr>
+    
+    <div class="projects-tabs">
+        {% include '_projects.html' %}
+    </div>
+    <div class="pagination">
+        {{ render_pagination(pagination, '.index') }}
+    </div>
+{% endblock %}}

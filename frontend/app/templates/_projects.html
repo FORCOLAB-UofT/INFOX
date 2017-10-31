@@ -1,0 +1,16 @@
+<ul class="projects">
+    {% for project in projects %}
+        <li class="project">
+            <div class="project-content">
+                <div class="project-name">
+                    <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
+                        {{ project.project_name }}
+                    </a>
+                </div>
+                <div class="project-body">{{ {"language": project.language,
+                                              "fork number": project.fork_number,
+                                              "feature number": project.feature_number } }}</div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
