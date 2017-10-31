@@ -4,6 +4,9 @@ import compare_changes_crawler
 from collections import Counter
 import ConfigParser
 import codecs
+import re
+import nltk
+from nltk.stem.porter import PorterStemmer
 
 def get_repo_info(main_path):
     """ Get the info of repo.
@@ -63,14 +66,15 @@ def get_forks_list(main_path):
 def word_filter(word):
     """ The filter used for deleting the noisy words in changed code.
     Here is the method:
-        1. Delete ',', '+', '-', '0x' 
+        1. Delete character except for digit, alphabet, '_'.
+        2. the word shouldn't be all digit.
         2. the length should large than 2.
     Args:
         word
     Return:
         True for not filtering, False for filtering.
     """
-    word = word.replace(',','').replace('+','').replace('-','').replace('0x','')
+    word = re.sub("[^0-9A-Za-z_]", "", word)
     if(word.isdigit()):
         return False
     if(len(word) <= 2):
@@ -142,8 +146,12 @@ def main():
 
         # Output & Save the changed file list of this fork.
         for file in compare_result["file_list"]:
-            common_tokens = Counter(filter(word_filter, file["tokens"])).most_common(10)
-            common_stemmed_tokens = Counter(filter(word_filter, file["stemmed_tokens"])).most_common(10)
+            tokens = filter(word_filter, file["tokens"])
+            common_tokens = Counter(tokens).most_common(10)
+            # do stem on the tokens
+            stemmed_tokens = [PorterStemmer().stem(word) for word in tokens]
+            common_stemmed_tokens = Counter(stemmed_tokens).most_common(10)
+
             print file["file_full_name"] , ":", common_tokens
             with codecs.open(result_file, 'a', 'utf-8') as write_file:
                 write_file.write(file["file_full_name"] + ":\n")

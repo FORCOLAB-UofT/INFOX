@@ -2,7 +2,6 @@ import os
 from selenium import webdriver
 import requests
 import nltk
-from nltk.stem.porter import PorterStemmer
 
 language_file_suffix = ['.h', '.c', '.cc', '.cpp', '.hpp']
 stop_words = []
@@ -19,10 +18,10 @@ def compare(project_full_name):
             file_list {
                 file_full_name,
                 file_suffix,
-                changed_line,
-                changed_code,
+                changed_line
+                added_line,
+                added_code,
                 tokens,
-                stemmed_tokens,
             }
     """
     # load stop words
@@ -118,11 +117,8 @@ def compare(project_full_name):
             # process on changed code
             # get the tokens from changed code
             tokens = filter(lambda x: (len(x) > 1) and (x not in stop_words), nltk.word_tokenize(changed_code))
-            # do stem on the tokens
-            stemmed_tokens = [PorterStemmer().stem(word) for word in tokens]
             file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
-                              "changed_line": changed_line, "changed_code": changed_code,
-                              "tokens": tokens, "stemmed_tokens": stemmed_tokens})
+                              "changed_line": changed_line, "changed_code": changed_code, "tokens": tokens})
     # print "changed file list:", changed_file_list
     # print("total changed line = %d" % total_changed_line_of_source_code)
     return {"changed_line": total_changed_line_of_source_code,
