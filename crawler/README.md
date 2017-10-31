@@ -1,5 +1,4 @@
-# INFOX
-Redesign for https://github.com/shuiblue/INFOX
+# INFOX/crawler
 
 How to run: 
 > git clone git@github.com:FancyCoder0/INFOX.git
