@@ -112,12 +112,14 @@ def main():
     forks_list = get_api(author_name, project_name, 'forks', access_token)
     write_to_file(main_pain + '/forks.json', forks_list)
 
+    """
     # get all forks' commits
     for fork in forks_list:
         author, repo = fork["full_name"].split('/')
         commits_list = get_api(author, repo, "commits", access_token)
         write_to_file(main_pain + '/' + author + '/commits.json', commits_list)
-
+    """
+    
 if __name__ == '__main__':
     main()
 
