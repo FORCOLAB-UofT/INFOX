@@ -53,7 +53,7 @@ def get_api(author, repo, type="", access_token=""):
         try:
             url = base_url % (author, repo)
             if access_token:
-                url.append('?access_token=%s' % access_token)
+                url = url + ('?access_token=%s' % access_token)
             response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
@@ -76,7 +76,7 @@ def get_api(author, repo, type="", access_token=""):
         try:
             url = base_url_with_page % (author, repo, type, page_num)
             if access_token:
-                url.append('&access_token=%s' % access_token)
+                url = url + ('&access_token=%s' % access_token)
             response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
@@ -92,7 +92,7 @@ def get_api(author, repo, type="", access_token=""):
         for item in json_result:
             result.append(item)
 
-    print 'finish crawling! Get %d %s !' % (len(result), type)
+    print 'finish crawling! Get all the %s !' % (type)
     return result
 
 def main():
@@ -106,16 +106,16 @@ def main():
 
     main_pain = save_path + '/' + author_name + '_' + project_name
     
-    repo_info = get_api(author_name, project_name)
+    repo_info = get_api(author_name, project_name, '', access_token)
     write_to_file(main_pain + '/repo_info.json', repo_info)
 
-    forks_list = get_api(author_name, project_name, 'forks')
+    forks_list = get_api(author_name, project_name, 'forks', access_token)
     write_to_file(main_pain + '/forks.json', forks_list)
 
     # get all forks' commits
     for fork in forks_list:
         author, repo = fork["full_name"].split('/')
-        commits_list = get_api(author, repo, "commits")
+        commits_list = get_api(author, repo, "commits", access_token)
         write_to_file(main_pain + '/' + author + '/commits.json', commits_list)
 
 if __name__ == '__main__':

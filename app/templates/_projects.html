@@ -7,9 +7,10 @@
                         {{ project.project_name }}
                     </a>
                 </div>
-                <div class="project-body">{{ {"language": project.language,
-                                              "fork number": project.fork_number,
-                                              "feature number": project.feature_number } }}</div>
+                <div class="project-body">
+                    <div class="language"> {{ "Language: %s" % project.language.encode('utf-8') }} </div>
+                    <div class="fork_number"> {{ "Fork Number: %d" % project.fork_number }} </div>
+                    {# <div class="feature_number"> {{ "Feature Number: %d" % project.feature_number }} </div> #}
             </div>
         </li>
     {% endfor %}
