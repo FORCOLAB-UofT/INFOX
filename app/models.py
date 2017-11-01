@@ -30,8 +30,8 @@ class ProjectFork(db.Document):
 class Project(db.Document):
     project_name 		= db.StringField(required=True, primary_key=True)
     language 			= db.StringField()
-    fork_number         = db.IntField(default=-1)
-    feature_number      = db.IntField(default=-1)
-    description         = db.StringField()
-    # finish_crawlered    = db.BooleanField(default = False)
+    fork_number               = db.IntField(default=-1)
+    feature_number            = db.IntField(default=-1)
+    description               = db.StringField()
+    # finish_crawlered          = db.BooleanField(default = False)
     

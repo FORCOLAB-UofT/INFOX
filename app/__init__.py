@@ -21,9 +21,9 @@ def create_app(config_name):
     db.init_app(app)
 
     from .main import main as main_blueprint # main blue print
-    from .api import api as api_blueprint # api_v1.0 blue print
+    # from .api import api as api_blueprint # api blue print
     app.register_blueprint(main_blueprint)
-    app.register_blueprint(api_blueprint, url_prefix='/api/v1.0')
+    # app.register_blueprint(api_blueprint, url_prefix='/api/v1.0')
 
     return app
 

@@ -9,13 +9,10 @@ from nltk.stem.porter import PorterStemmer
 
 import compare_changes_crawler
 
-FLAGS_CRAWLER_MODE = False
-
+FLAGS_CRAWLER_MODE = False # If you need crawler offline, change it true and run analyser individually.
 if not FLAGS_CRAWLER_MODE:
     from ..models import Project, ProjectFork, ChangedFile
 
-FLAGS_load = not FLAGS_CRAWLER_MODE
-FLAGS_compare = FLAGS_CRAWLER_MODE
 
 language_list = []
 language_file_suffix = {}
@@ -97,7 +94,7 @@ def word_filter(word):
     Here is the method:
         1. Delete character except for digit, alphabet, '_'.
         2. the word shouldn't be all digit.
-        2. the length should large than 2.
+        3. the length should large than 2.
     Args:
         word
     Return:
@@ -111,21 +108,12 @@ def word_filter(word):
     return True
 
 def load_project(project_name):
-    # Load the config.
-    """
-    conf = ConfigParser.ConfigParser()
-    conf.read('/Users/fancycoder/INFOX/app/crawler/config.conf')
-    main_path = '%s/%s_%s' % (conf.get("location", "save_path"),
-                              conf.get("repo_info", "owner"),
-                              conf.get("repo_info", "repo"))
-    result_file = conf.get("location", "result_file") # the file for overview of all the forks.
-    """
-
-    current_path = '/Users/fancycoder/infox/app/analyse'
-    local_data_path = '/Users/fancycoder/infox_data/result'
+    # you need to change following paths manully.
+    current_path = '/Users/fancycoder/infox/app/analyse' # the current path
+    local_data_path = '/Users/fancycoder/infox_data/result' # the same with save_path in crawler/config.conf
+    # result_file = "/Users/fancycoder/infox_data/result/tmp_result.txt" # the local file for overview of all the forks.
+    
     main_path = local_data_path + "/" + project_name
-
-    # result_file = "/Users/fancycoder/infox_data/result/tmp_result.txt"
 
     with open(current_path + '/data/support_language.txt') as read_file:
         for line in read_file.readlines():
@@ -146,9 +134,10 @@ def load_project(project_name):
                             language_stop_words[language].append(word)
 
     repo_info = get_repo_info(main_path)
+
+    """
     # Write the infomation of repo.
     # It includes language, description, forks number.
-    """
     print "---------------------------------------"
     with open(result_file, 'w') as write_file:
         write_file.write(repo_info["full_name"] + "\n")
@@ -159,7 +148,7 @@ def load_project(project_name):
             write_file.write(out_result)
     """
 
-    if FLAGS_load:
+    if not FLAGS_CRAWLER_MODE:
         # Load project into database.
         Project(
             project_name 		= project_name,
@@ -169,8 +158,8 @@ def load_project(project_name):
         ).save();
 
     forks_info = get_forks_info_dict(main_path)
-    # forks = get_forks_list(main_path)
 
+    # forks = get_forks_list(main_path)
     # forks.sort(key=lambda x: x[1], reverse=True) # sort fork by last committed time
 
     # print "---------------------------------------"
@@ -187,7 +176,7 @@ def load_project(project_name):
             with open(result_path) as read_file:
                 compare_result = json.load(read_file)
         else:
-            if FLAGS_compare:
+            if FLAGS_CRAWLER_MODE:
                 # If the compare result is not crawled, start to crawl.
                 compare_result = compare_changes_crawler.compare(fork_name)
                 if(compare_result["changed_file_number"] == -1):
@@ -253,7 +242,7 @@ def load_project(project_name):
             else:
                 file_language = "Unsupported"
             
-            if FLAGS_load:
+            if not FLAGS_CRAWLER_MODE:
                 # Load changed files into database.
                 ChangedFile(
                     full_name = project_name + '/' + fork_name + '/' + file_name,
@@ -286,7 +275,7 @@ def load_project(project_name):
 
         # sorted_key_words = sorted(key_words.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
         
-        if FLAGS_load:
+        if not FLAGS_CRAWLER_MODE:
             key_words = [x[0] for x in Counter(all_tokens).most_common(20)]
             key_stemmed_words = [x[0] for x in Counter(all_stemmed_tokens).most_common(20)]
             # Load forks into database.
@@ -305,8 +294,6 @@ def load_project(project_name):
         
 
 if __name__ == '__main__':
-    print "load = ", FLAGS_load
-    print "compare = ", FLAGS_compare
     print "Input the project name"
     project_name = raw_input().strip()
     load_project(project_name)
