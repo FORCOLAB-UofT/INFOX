@@ -37,7 +37,7 @@ def project_overview(project_name): # add filter
     if _project is None:
         abort(404)
 
-    _forks = ProjectFork.objects(project_name = project_name).order_by('-last_committed_time')
+    _forks = ProjectFork.objects(project_name = project_name, file_list__ne = []).order_by('-last_committed_time')
     #page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items
@@ -69,7 +69,7 @@ def localadd():
         print "start analyser!"
         analyser.load_project(_input_project_name)
         print "finish!"
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.project_overview', project_name=_input_project_name))
     return render_template('localadd.html', form=form)
 
 @main.route('/delete', methods=['GET', 'POST'])
@@ -86,3 +86,8 @@ def delete():
         return redirect(url_for('main.index'))
     return render_template('delete.html', form=form)
 
+@main.route('/about')
+def about():
+    """About Page
+    """
+    return render_template('about.html')

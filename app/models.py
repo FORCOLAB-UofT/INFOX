@@ -10,6 +10,7 @@ class ChangedFile(db.Document):
     changed_code        = db.StringField()
     changed_line_number = db.IntField()
     key_words           = db.ListField(db.StringField())
+    key_stemmed_words   = db.ListField(db.StringField())
     variable            = db.ListField(db.StringField())
     class_name          = db.ListField(db.StringField())
     function_name       = db.ListField(db.StringField())
@@ -24,6 +25,7 @@ class ProjectFork(db.Document):
     total_changed_file_number   = db.IntField()
     file_list                   = db.ListField(db.StringField())
     key_words                   = db.ListField(db.StringField())
+    key_stemmed_words           = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name 		= db.StringField(required=True, primary_key=True)

@@ -15,10 +15,13 @@ except:
 
 print "Input your personal access token:"
 access_token = raw_input().strip()
+if not access_token:
+    access_token = conf.get("token", "access_token")
 if(len(access_token) != 40):
     access_token = ""
     print "Invaild access token!"
-
+else:
+    print "Set access token successfully!"
 conf.set("repo_info", "owner", owner)
 conf.set("repo_info", "repo", repo)
 conf.set("token", "access_token", access_token)

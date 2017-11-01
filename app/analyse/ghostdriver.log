@@ -1,31 +1,40 @@
-[INFO  - 2017-11-01T00:57:39.017Z] GhostDriver - Main - running on port 49202
-[INFO  - 2017-11-01T00:57:39.278Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
-[INFO  - 2017-11-01T00:57:39.279Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.customHeaders:  - {}
-[INFO  - 2017-11-01T00:57:39.279Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-10.11 (El Capitan)-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2017-11-01T00:57:39.279Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: a86aab90-be9f-11e7-92fc-61e6f8769571
-[ERROR - 2017-11-01T00:57:44.809Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.onError - msg: ReferenceError: Can't find variable: Promise
+[INFO  - 2017-11-01T05:40:28.580Z] GhostDriver - Main - running on port 60487
+[INFO  - 2017-11-01T05:40:29.126Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2017-11-01T05:40:29.126Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.customHeaders:  - {}
+[INFO  - 2017-11-01T05:40:29.127Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-10.11 (El Capitan)-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2017-11-01T05:40:29.127Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 2b3b85e0-bec7-11e7-819f-4d164e70a734
+[ERROR - 2017-11-01T05:40:35.549Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.onError - msg: ReferenceError: Can't find variable: Promise
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:44.809Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.onError - stack:
+[ERROR - 2017-11-01T05:40:35.551Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.onError - stack:
   o (https://assets-cdn.github.com/assets/frameworks-2c7ebd50a82ff30d2d8aa46dcc8b3fa389884c97ba59a7a1b819e7f8d1d0c631.js:1)
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:45.325Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.onError - msg: ReferenceError: Can't find variable: Promise
+[ERROR - 2017-11-01T05:40:35.891Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.onError - msg: ReferenceError: Can't find variable: Promise
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:45.326Z] Session [a86aab90-be9f-11e7-92fc-61e6f8769571] - page.onError - stack:
+[ERROR - 2017-11-01T05:40:35.891Z] Session [2b3b85e0-bec7-11e7-819f-4d164e70a734] - page.onError - stack:
   o (https://assets-cdn.github.com/assets/frameworks-2c7ebd50a82ff30d2d8aa46dcc8b3fa389884c97ba59a7a1b819e7f8d1d0c631.js:1)
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:45.576Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509497865545
+[ERROR - 2017-11-01T05:40:36.166Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514836118
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:46.464Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509497866433
+[ERROR - 2017-11-01T05:40:40.394Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514840336
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:47.099Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509497867055
+[ERROR - 2017-11-01T05:40:43.338Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514843315
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2017-11-01T00:57:47.653Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509497867611
+[ERROR - 2017-11-01T05:40:46.460Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514846426
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-01T05:40:48.731Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514848691
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-01T05:40:51.342Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514851290
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-11-01T05:40:53.426Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1509514853370
 
   phantomjs://platform/console++.js:263 in error
