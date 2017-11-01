@@ -11,6 +11,7 @@ import compare_changes_crawler
 
 from ..models import Project, ProjectFork, ChangedFile
 
+FLAGS_load = True
 FLAGS_compare = False
 
 def get_repo_info(main_path):
@@ -88,17 +89,17 @@ def word_filter(word):
 
 def load_project(project_name):
     # Load the config.
-
+    """
     conf = ConfigParser.ConfigParser()
-    conf.read('/Users/fancycoder/INFOX/crawler/config.conf')
+    conf.read('/Users/fancycoder/INFOX/app/crawler/config.conf')
     main_path = '%s/%s_%s' % (conf.get("location", "save_path"),
                               conf.get("repo_info", "owner"),
                               conf.get("repo_info", "repo"))
     result_file = conf.get("location", "result_file") # the file for overview of all the forks.
+    """
 
-
-    # main_path = "/Users/fancycoder/infox_data/result/" + project_name
-    # result_file = "/Users/fancycoder/infox_data/result/tmp_result.txt"
+    main_path = "/Users/fancycoder/infox_data/result/" + project_name
+    result_file = "/Users/fancycoder/infox_data/result/tmp_result.txt"
 
     repo_info = get_repo_info(main_path)
     # Write the infomation of repo.
@@ -111,14 +112,15 @@ def load_project(project_name):
         print out_result
         with codecs.open(result_file, 'a', 'utf-8') as write_file:
             write_file.write(out_result)
-
-    # Load project into database.
-    Project(
-        project_name 		= project_name,
-        language 			= repo_info["language"],
-        fork_number 		= repo_info["forks"],
-        description         = str(repo_info["description"])
-    ).save();
+    
+    if FLAGS_load:
+        # Load project into database.
+        Project(
+            project_name 		= project_name,
+            language 			= repo_info["language"],
+            fork_number 		= repo_info["forks"],
+            description         = str(repo_info["description"]),
+        ).save();
 
     forks_info = get_forks_info_dict(main_path)
     forks = get_forks_list(main_path)
@@ -159,20 +161,10 @@ def load_project(project_name):
         with codecs.open(result_file, 'a', 'utf-8') as write_file:
             write_file.write(out_result)
 
-        print "add", project_name, fork_name
-        # Load forks into database.
-        ProjectFork(
-            full_name = project_name + '/' + fork_name,
-            fork_name = fork_name,
-            project_name = project_name,
-            total_changed_file_number = compare_result["changed_file_number"],
-            total_changed_line_number = compare_result["changed_line"],
-            last_committed_time = last_committed_time,
-            created_time = created_time,
-        ).save();
-        
         # Output & Save the changed file list of this fork.
-        key_words = {}
+        key_words = []
+        file_list = []
+
         for file in compare_result["file_list"]:
             full_name = file["file_full_name"]
             tokens = filter(word_filter, file["tokens"])
@@ -180,6 +172,8 @@ def load_project(project_name):
             # do stem on the tokens
             stemmed_tokens = [PorterStemmer().stem(word) for word in tokens]
             stemmed_tokens_counter = Counter(stemmed_tokens)
+
+            
             """
             for (tokens,times) in stemmed_tokens_counter:
                 if tokens not in key_words:
@@ -187,22 +181,26 @@ def load_project(project_name):
                 key_words[tokens] += times;
             """
             common_stemmed_tokens = [x[0] for x in stemmed_tokens_counter.most_common(10)]
+            for x in common_stemmed_tokens:
+                key_words.append(x)
+            file_list.append(full_name)
             
-            # Load changed files into database.
-            ChangedFile(
-                full_name = project_name + '/' + fork_name + '/' + file["file_full_name"],
-                file_name = file["file_full_name"],
-                fork_name = fork_name,
-                project_name = project_name,
-                # file_language,
-                file_suffix = file["file_suffix"],
-                # changed_code = file["changed_code"],
-                changed_line_number = file["changed_line"],
-                key_words = common_stemmed_tokens
-                # variable 
-                # class_name 
-                # function_name 
-            ).save();
+            if FLAGS_load:
+                # Load changed files into database.
+                ChangedFile(
+                    full_name = project_name + '/' + fork_name + '/' + file["file_full_name"],
+                    file_name = file["file_full_name"],
+                    fork_name = fork_name,
+                    project_name = project_name,
+                    # file_language,
+                    file_suffix = file["file_suffix"],
+                    # changed_code = file["changed_code"],
+                    changed_line_number = file["changed_line"],
+                    key_words = common_stemmed_tokens,
+                    # variable 
+                    # class_name 
+                    # function_name 
+                ).save()
             
             print file["file_full_name"] , ":", common_tokens
             with codecs.open(result_file, 'a', 'utf-8') as write_file:
@@ -215,5 +213,23 @@ def load_project(project_name):
                 write_file.write('\n')
                 write_file.write('\n')
         print ""
-        sorted_key_words = sorted(key_words.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
 
+        # sorted_key_words = sorted(key_words.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
+        
+        if FLAGS_load:
+            # Load forks into database.
+            ProjectFork(
+                full_name = project_name + '/' + fork_name,
+                fork_name = fork_name,
+                project_name = project_name,
+                total_changed_file_number = compare_result["changed_file_number"],
+                total_changed_line_number = compare_result["changed_line"],
+                last_committed_time = last_committed_time,
+                created_time = created_time,
+                file_list = file_list,
+                key_words = key_words,
+            ).save();
+        
+
+if __name__ == '__main__':
+    load_project('abseil_abseil-cpp')

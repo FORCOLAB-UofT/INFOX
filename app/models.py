@@ -22,8 +22,8 @@ class ProjectFork(db.Document):
     created_time                = db.DateTimeField()
     total_changed_line_number   = db.IntField()
     total_changed_file_number   = db.IntField()
-    # fork_list
-    # key words
+    file_list                   = db.ListField(db.StringField())
+    key_words                   = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name 		= db.StringField(required=True, primary_key=True)
