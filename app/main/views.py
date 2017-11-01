@@ -4,7 +4,7 @@ from flask import (render_template, redirect, url_for, current_app,
 
 from . import main
 from .forms import (AddProjectForm, SearchProjectForm)
-from ..models import Project, ProjectFork
+from ..models import Project, ProjectFork, ChangedFile
 
 from ..analyse import analyser
 
@@ -24,13 +24,13 @@ def index():
             return redirect(url_for('main.project_overview', project_name = _input_project_name))
 
     page = request.args.get('page', 1, type=int) # default is 1st page
-    pagination = Project.objects.paginate(page=page, per_page=10)
+    pagination = Project.objects.paginate(page=page, per_page=5)
     projects = pagination.items
     return render_template('index.html', form=form, projects=projects, pagination=pagination)
 
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name): # add filter
-    """ 查看指定Project信息
+    """ Overview of the project
     :param project_name
     """
     _project = Project.objects(project_name = project_name).first()
@@ -71,5 +71,18 @@ def localadd():
         print "finish!"
         return redirect(url_for('main.index'))
     return render_template('localadd.html', form=form)
-    
+
+@main.route('/delete', methods=['GET', 'POST'])
+def delete():
+    """ Delete Project
+    """
+    form = AddProjectForm()
+    if form.validate_on_submit():
+        _input_project_name = form.project_name.data
+        Project(project_name = _input_project_name).clean()
+        ProjectFork(project_name = _input_project_name).clean()
+        ChangedFile(project_name = _input_project_name).clean()
+        flash('The Project (%s) is deleted!' % _input_project_name)
+        return redirect(url_for('main.index'))
+    return render_template('delete.html', form=form)
 
