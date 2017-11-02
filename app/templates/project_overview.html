@@ -1,14 +1,31 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %}
-    <div class="page-header">
-        <div class="project-info">
+    <div class="project-info">
+        <div class="col-md-6">
             <h1>{{ project.project_name }}</h1>
-            {% if project.language %}<p>Language: {{ project.language }}</p>{% endif %}
-            {% if project.fork_number %}<p>Fork Number: {{ project.fork_number }}</p>{% endif %}  
+            <br>
+            {% if project.language %}<h4>Language: {{ project.language }}</h4>{% endif %}
+            {% if project.fork_number %}<h4>Fork Number on Github: {{ project.fork_number }}</h4>{% endif %}  
+            {% if project.description %}<h4> Description: </h4> <p> {{ project.description }}</p>{% endif %}
+        </div>
+        <div class="row"></div><hr>
+        <div class="col-md-4">
+            {% if forks %}<h4> Analysed Fork Number: {{ forks.count() }} </h4>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {% if refresh %}
+                <div class="refresh-button">
+                        {{ wtf.quick_form(refresh, button_map={'submit': 'primary'}) }}
+                </div>
+            {% endif %}
         </div>
     </div>
+
+    <div class="row"></div><hr>
+    
     <h3>Forks of {{ project.project_name }}</h3>
     <div class="forks-tabs">
         {% include "_forks.html" %}

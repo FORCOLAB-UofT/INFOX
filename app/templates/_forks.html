@@ -3,9 +3,11 @@
         <li class="forks">
             <div class="fork-content">
                 <div class="project-author"> {{ fork.fork_name }} </div>
-                <div class="project-last_committed_time"> {{ { "Last Committed Time": fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') } }} </div>
-                <div class="project-total_changed_file_number"> {{ { "Total Changed File(s)": fork.total_changed_file_number } }} </div>
-                <div class="project-total_changed_line_number"> {{ { "Total Changed Line(s)": fork.total_changed_line_number } }} </div>
+                <br>
+                <div class="project-time"> {{ "Last Committed Time: %s Created Time: %s" % (fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S'), fork.created_time.strftime('%Y-%m-%d %H:%M:%S')) }} </div>
+                <br>
+                <div class="project-changed_number"> {{ "Total Changed File(s): %d Total Changed Line(s): %d" % (fork.total_changed_file_number, fork.total_changed_line_number) }} </div>
+                <br>
                 <div class="project-file_list">
                     {{ "Changed File(s):" }}
                     {% for file in fork.file_list %}
@@ -13,6 +15,7 @@
                         {{ " , " }}
                     {% endfor %}
                 </div>
+                <br>
                 <div class="project-key_words">
                     {{ "Key Words:" }}
                     {% for word in fork.key_words %}
@@ -20,6 +23,7 @@
                         {{ " , "}}
                     {% endfor %}
                 </div>
+                <br>
                 <div class="project-key_stemmed_words">
                     {{ "Key Words(After Stemmed):" }}
                     {% for word in fork.key_stemmed_words %}

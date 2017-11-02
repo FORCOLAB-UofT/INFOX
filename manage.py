@@ -2,11 +2,11 @@ import os
 
 from flask import Flask
 from app import create_app
-from flask_script import Manager, Shell
+from flask_script import Manager
 
 CONFIGURE_MODE = "default"
 
-print "configure mode = ", CONFIGURE_MODE
+print ("configure mode = ", CONFIGURE_MODE)
 # os.system('mango')
 app = create_app(CONFIGURE_MODE)
 

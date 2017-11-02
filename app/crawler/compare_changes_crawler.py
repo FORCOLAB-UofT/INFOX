@@ -19,7 +19,7 @@ def compare(project_full_name):
             }
     """
 
-    print "start : ", project_full_name
+    print("start : %s" %project_full_name)
     url = 'https://github.com/%s/compare' % project_full_name
 
     driver = webdriver.PhantomJS()
@@ -28,7 +28,7 @@ def compare(project_full_name):
         driver.get(url)
         repo_content = driver.find_element_by_class_name("repository-content")
     except:
-        print "error on get diff for %s!" % project_full_name
+        print("error on get diff for %s!" % project_full_name)
         return {"changed_line": -1,
                 "changed_file_number": -1,
                 "file_list": []}
@@ -78,7 +78,7 @@ def compare(project_full_name):
         diff_info = diff.find_element_by_class_name('file-info')
         changed_line = diff_info.text.split(' ')[0].strip().replace(',','')
         file_full_name = diff_info.text.split(' ')[1].strip()
-        print diff_num, changed_line, file_full_name
+        print((diff_num, changed_line, file_full_name))
         try:
             total_changed_line_of_source_code += int(changed_line)
             changed_file_number += 1
@@ -93,13 +93,13 @@ def compare(project_full_name):
             # This is for the case that "Large diffs are not rendered by default" on Github
             # Example: https://github.com/MarlinFirmware/Marlin/compare/1.1.x...SkyNet3D:SkyNet3D-Devel
             load_container = diff.find_element_by_class_name('js-diff-load-container')
-            print "This file: %s need load code." % file
+            print("This file: %s need load code." % file)
             load_url = load_container.find_element_by_xpath('//include-fragment[1]') \
                 .get_attribute('data-fragment-url')
             try:
                 changed_code = requests.get('https://github.com/' + load_url).text
             except:
-                print "Error on get load code!"
+                print("Error on get load code!")
         except:
             pass
 
