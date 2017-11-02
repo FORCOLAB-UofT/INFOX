@@ -1,12 +1,18 @@
-# -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 from wtforms import (StringField, SubmitField, TextAreaField,
                      BooleanField, SelectField, ValidationError)
 from wtforms.validators import Length
 
 class AddProjectForm(FlaskForm):
-    project_name = StringField('Input the full name of the project (author_repo)')
+    project_name = StringField('Input the full name of the project (author_repo or author/repo)')
     submit = SubmitField('Add')
+
+class DeleteProjectForm(FlaskForm):
+    project_name = StringField('Input the full name of the project (author_repo)')
+    submit = SubmitField('Delete')
+
+class RefreshProjectForm(FlaskForm):
+    submit = SubmitField('Refresh')
 
 class SearchProjectForm(FlaskForm):
     project_name = StringField('Project Name')

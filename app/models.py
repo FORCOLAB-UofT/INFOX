@@ -28,8 +28,8 @@ class ProjectFork(db.Document):
     key_stemmed_words           = db.ListField(db.StringField())
 
 class Project(db.Document):
-    project_name 		= db.StringField(required=True, primary_key=True)
-    language 			= db.StringField()
+    project_name 		      = db.StringField(required=True, primary_key=True)
+    language 			      = db.StringField()
     fork_number               = db.IntField(default=-1)
     feature_number            = db.IntField(default=-1)
     description               = db.StringField()

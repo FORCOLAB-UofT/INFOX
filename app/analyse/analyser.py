@@ -1,22 +1,43 @@
 import os
 import json
 from collections import Counter
-import ConfigParser
+import configparser
 import codecs
 import re
+import datetime
 import nltk
 from nltk.stem.porter import PorterStemmer
+from flask import current_app
 
-import compare_changes_crawler
+from ..crawler import compare_changes_crawler
 
-FLAGS_CRAWLER_MODE = False # If you need crawler offline, change it true and run analyser individually.
-if not FLAGS_CRAWLER_MODE:
+FLAGS_APP_MODE = True
+
+if FLAGS_APP_MODE:
     from ..models import Project, ProjectFork, ChangedFile
-
 
 language_list = []
 language_file_suffix = {}
 language_stop_words = {}
+
+def load_language_data(language_data_path):
+    with open(language_data_path + '/support_language.txt') as read_file:
+        for line in read_file.readlines():
+            if line:
+                language = line.strip()
+                language_list.append(language)
+                language_file_suffix[language] = []
+                language_stop_words[language] = []
+                with open(language_data_path + '/' + language + '_suffix.txt') as f:
+                    for line in f.readlines():
+                        if line:
+                            suffix = line.strip()
+                            language_file_suffix[language].append(suffix)
+                with open(language_data_path + '/' + language + '_stopwords.txt') as f:
+                    for line in f.readlines():
+                        if line:
+                            word = line.strip()
+                            language_stop_words[language].append(word)
 
 def write_to_file(file, obj):
     """ Write the obj as json to file.
@@ -31,10 +52,9 @@ def write_to_file(file, obj):
     path = os.path.dirname(file)
     if not os.path.exists(path):
         os.makedirs(path)
-    print 'start write %s to file....' % file
     with open(file, 'w') as write_file:
         write_file.write(json.dumps(obj))
-    print 'finish writing!'
+    print ('finish write %s to file....' % file)
 
 def get_repo_info(main_path):
     """ Get the info of repo.
@@ -107,48 +127,15 @@ def word_filter(word):
         return False
     return True
 
-def load_project(project_name):
-    # you need to change following paths manully.
-    current_path = '/Users/fancycoder/infox/app/analyse' # the current path
-    local_data_path = '/Users/fancycoder/infox_data/result' # the same with save_path in crawler/config.conf
-    # result_file = "/Users/fancycoder/infox_data/result/tmp_result.txt" # the local file for overview of all the forks.
-    
-    main_path = local_data_path + "/" + project_name
+def analyse_project(project_name, crawler_mode=True):
 
-    with open(current_path + '/data/support_language.txt') as read_file:
-        for line in read_file.readlines():
-            if line:
-                language = line.strip()
-                language_list.append(language)
-                language_file_suffix[language] = []
-                language_stop_words[language] = []
-                with open(current_path + '/data/' + language + '_suffix.txt') as f:
-                    for line in f.readlines():
-                        if line:
-                            suffix = line.strip()
-                            language_file_suffix[language].append(suffix)
-                with open(current_path + '/data/' + language + '_stopwords.txt') as f:
-                    for line in f.readlines():
-                        if line:
-                            word = line.strip()
-                            language_stop_words[language].append(word)
+    local_data_path = current_app.config['LOCAL_DATA_PATH']
 
-    repo_info = get_repo_info(main_path)
+    load_language_data('app/analyse/data')
 
-    """
-    # Write the infomation of repo.
-    # It includes language, description, forks number.
-    print "---------------------------------------"
-    with open(result_file, 'w') as write_file:
-        write_file.write(repo_info["full_name"] + "\n")
-    for type in ["language", "description", "forks"]:
-        out_result = type + " : " + str(repo_info[type]) + "\n"
-        print out_result
-        with codecs.open(result_file, 'a', 'utf-8') as write_file:
-            write_file.write(out_result)
-    """
+    repo_info = get_repo_info(local_data_path + "/" + project_name)
 
-    if not FLAGS_CRAWLER_MODE:
+    if FLAGS_APP_MODE:
         # Load project into database.
         Project(
             project_name 		= project_name,
@@ -157,12 +144,12 @@ def load_project(project_name):
             description         = str(repo_info["description"]),
         ).save();
 
-    forks_info = get_forks_info_dict(main_path)
+    forks_info = get_forks_info_dict(local_data_path + "/" + project_name)
 
     # forks = get_forks_list(main_path)
     # forks.sort(key=lambda x: x[1], reverse=True) # sort fork by last committed time
 
-    # print "---------------------------------------"
+    print("-----start analysing for %s-----" % project_name)
     for author in forks_info:
         fork_name = forks_info[author]["full_name"]
         created_time = forks_info[author]["created_at"]
@@ -171,12 +158,12 @@ def load_project(project_name):
         if last_committed_time <= created_time:
             continue
         # Load the result in local file.
-        result_path = main_path + '/' + author + '/result.json'
+        result_path = local_data_path + "/" + project_name + '/' + author + '/result.json'
         if os.path.exists(result_path):
             with open(result_path) as read_file:
                 compare_result = json.load(read_file)
         else:
-            if FLAGS_CRAWLER_MODE:
+            if crawler_mode:
                 # If the compare result is not crawled, start to crawl.
                 compare_result = compare_changes_crawler.compare(fork_name)
                 if(compare_result["changed_file_number"] == -1):
@@ -188,19 +175,6 @@ def load_project(project_name):
         # Ignore the fork if it is not changed.
         if compare_result["changed_line"] == 0:
             continue
-
-        # Output & Save the overview of this fork.
-        out_result = ("fork_author: %18s, last committed time : %15s, "
-                    "created time: %15s, changed file: %3d, changed code line: %4d\n" %
-                    (author, last_committed_time, created_time,
-                    compare_result["changed_file_number"],
-                    compare_result["changed_line"]))
-        
-        """
-        print out_result.strip()
-        with codecs.open(result_file, 'a', 'utf-8') as write_file:
-            write_file.write(out_result)
-        """
 
         # Output & Save the changed file list of this fork.
         all_tokens = []
@@ -215,9 +189,8 @@ def load_project(project_name):
             common_tokens = []
             common_stemmed_tokens = []
 
-            file_language = ""
-            
             # Check the language depend on the file suffix.
+            file_language = ""
             for language in language_list:
                 if(file_suffix in language_file_suffix[language]):
                     file_language = language
@@ -227,6 +200,7 @@ def load_project(project_name):
                 # get the tokens from changed code
                 tokens = filter(lambda x: (len(x) > 1) and (x not in language_stop_words[file_language]), nltk.word_tokenize(changed_code))
                 tokens = filter(word_filter, tokens)
+                tokens = list(tokens)
                 stemmed_tokens = [PorterStemmer().stem(word) for word in tokens] # do stem on the tokens
 
                 for x in tokens:
@@ -242,7 +216,7 @@ def load_project(project_name):
             else:
                 file_language = "Unsupported"
             
-            if not FLAGS_CRAWLER_MODE:
+            if FLAGS_APP_MODE:
                 # Load changed files into database.
                 ChangedFile(
                     full_name = project_name + '/' + fork_name + '/' + file_name,
@@ -259,23 +233,10 @@ def load_project(project_name):
                     # class_name 
                     # function_name 
                 ).save()
-            
-            """
-            print file_name , ":", common_tokens
-            with codecs.open(result_file, 'a', 'utf-8') as write_file:
-                write_file.write(full_name + ":\n")
-                write_file.write('%35s' % 'common tokens: ')
-                write_file.write(json.dumps(common_tokens))
-                write_file.write('\n')
-                write_file.write('%35s' % 'common tokens after stemming: ')
-                write_file.write(json.dumps(common_stemmed_tokens))
-                write_file.write('\n')
-                write_file.write('\n')
-            """
 
         # sorted_key_words = sorted(key_words.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
         
-        if not FLAGS_CRAWLER_MODE:
+        if FLAGS_APP_MODE:
             key_words = [x[0] for x in Counter(all_tokens).most_common(20)]
             key_stemmed_words = [x[0] for x in Counter(all_stemmed_tokens).most_common(20)]
             # Load forks into database.
@@ -285,15 +246,15 @@ def load_project(project_name):
                 project_name = project_name,
                 total_changed_file_number = compare_result["changed_file_number"],
                 total_changed_line_number = compare_result["changed_line"],
-                last_committed_time = last_committed_time,
-                created_time = created_time,
+                last_committed_time = datetime.datetime.strptime(last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
+                created_time = datetime.datetime.strptime(created_time, "%Y-%m-%dT%H:%M:%SZ"),
                 file_list = file_list,
                 key_words = key_words,
                 key_stemmed_words = key_stemmed_words
             ).save();
-        
+    print("-----finish analysing for %s-----" % project_name)
 
 if __name__ == '__main__':
-    print "Input the project name"
+    print("Input the project name")
     project_name = raw_input().strip()
-    load_project(project_name)
+    analyse_project(project_name)
