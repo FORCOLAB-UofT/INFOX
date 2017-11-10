@@ -8,18 +8,19 @@ class Config:
         'port': 27017
     }
     SHOW_NUMBER_FOR_PAGE = 6
-    # LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
-    # LANGUAGE_DATA_PATH = '/home/luyao/INFOX/app/analyse/data'
-    LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
-    LANGUAGE_DATA_PATH = '/Users/fancycoder/INFOX/app/analyse/data'
+    LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
+    LANGUAGE_DATA_PATH = '/home/luyao/INFOX/app/analyse/data'
+    # LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
+    # LANGUAGE_DATA_PATH = '/Users/fancycoder/INFOX/app/analyse/data'
+    
+    ALLOW_UPDATE = False
     
 class DevelopmentConfig(Config):
-    # ALLOW_UPDATE = True
-    ALLOW_UPDATE = False
     DEBUG = True
+    RECRAWLER_MODE = True
 
 class ProductionConfig(Config):
-    ALLOW_UPDATE = False
+    RECRAWLER_MODE = True
 
 config = {
     'production': ProductionConfig,

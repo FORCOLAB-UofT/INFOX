@@ -152,6 +152,7 @@ def word_filter(word):
     return True
 
 def analyse_project(project_name, crawler_mode=True):
+    recrawler_mode = current_app.config['RECRAWLER_MODE']
 
     local_data_path = current_app.config['LOCAL_DATA_PATH']
 
@@ -183,7 +184,7 @@ def analyse_project(project_name, crawler_mode=True):
             continue
         # Load the result in local file.
         result_path = local_data_path + "/" + project_name + '/' + author + '/result.json'
-        if os.path.exists(result_path):
+        if (not recrawler_mode) and (os.path.exists(result_path)):
             with open(result_path) as read_file:
                 compare_result = json.load(read_file)
         else:
@@ -208,6 +209,7 @@ def analyse_project(project_name, crawler_mode=True):
         for file in compare_result["file_list"]:
             file_name = file["file_full_name"]
             file_suffix = file["file_suffix"]
+            diff_link = file["diff_link"]
             changed_code = file["changed_code"]
             changed_line = file["changed_line"]
             common_tokens = []
@@ -244,8 +246,8 @@ def analyse_project(project_name, crawler_mode=True):
                 for x in stemmed_tokens:
                     all_stemmed_tokens.append(x)
 
-                common_tokens = [x[0] for x in Counter(tokens).most_common(10)]
-                common_stemmed_tokens = [x[0] for x in Counter(stemmed_tokens).most_common(10)]
+                common_tokens = [x[0] for x in Counter(tokens).most_common(100)]
+                common_stemmed_tokens = [x[0] for x in Counter(stemmed_tokens).most_common(100)]
                 # load current file's name, key words to fork.
             else:
                 file_language = "Unsupported"
@@ -259,6 +261,7 @@ def analyse_project(project_name, crawler_mode=True):
                     project_name = project_name,
                     file_language = file_language,
                     file_suffix = file_suffix,
+                    diff_link = diff_link,
                     # changed_code = file["changed_code"],
                     changed_line_number = changed_line,
                     key_words = common_tokens,
@@ -271,8 +274,8 @@ def analyse_project(project_name, crawler_mode=True):
         # sorted_key_words = sorted(key_words.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
         
         if FLAGS_APP_MODE:
-            key_words = [x[0] for x in Counter(all_tokens).most_common(20)]
-            key_stemmed_words = [x[0] for x in Counter(all_stemmed_tokens).most_common(20)]
+            key_words = [x[0] for x in Counter(all_tokens).most_common(100)]
+            key_stemmed_words = [x[0] for x in Counter(all_stemmed_tokens).most_common(100)]
             # Load forks into database.
             ProjectFork(
                 full_name = project_name + '/' + fork_name,

@@ -14,6 +14,7 @@ def compare(project_full_name):
             file_list {
                 file_full_name,
                 file_suffix,
+                diff_link,
                 changed_line,
                 changed_code
             }
@@ -30,15 +31,20 @@ def compare(project_full_name):
         # driver.save_screenshot('screen.png')
         # with open('1.html','w') as f:
         #     f.write(driver.page_source)
-
-        print (driver.current_url)
-        repo_content = driver.find_element_by_class_name("repository-content")
     except:
         print("error on get diff for %s!" % project_full_name)
         return {"changed_line": -1,
                 "changed_file_number": -1,
                 "file_list": []}
-
+    
+    # current_url = requests.get(url).url
+    
+    try:
+        # print (driver.current_url)
+        repo_content = driver.find_element_by_class_name("repository-content")
+    except:
+        print("The compare result is empty.")
+    
     try:
         # If the changed is too large, the result from github will not show diff code first.
         # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...briand:edge
@@ -83,6 +89,7 @@ def compare(project_full_name):
                 break
 
         diff_info = diff.find_element_by_class_name('file-info')
+        diff_link = diff_info.find_element_by_tag_name('a').get_attribute('href')
         changed_line = diff_info.text.split(' ')[0].strip().replace(',','')
         file_full_name = diff_info.text.split(' ')[1].strip()
         print((diff_num, changed_line, file_full_name))
@@ -112,7 +119,7 @@ def compare(project_full_name):
         except:
             pass
         file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
-                            "changed_line": changed_line, "changed_code": changed_code})
+                          "diff_link": diff_link, "changed_line": changed_line, "changed_code": changed_code})
 
     # print "changed file list:", changed_file_list
     # print("total changed line = %d" % total_changed_line_of_source_code)

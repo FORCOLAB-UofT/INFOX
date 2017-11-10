@@ -7,6 +7,7 @@ class ChangedFile(db.Document):
     project_name        = db.StringField()    
     file_language       = db.StringField()
     file_suffix         = db.StringField()
+    diff_link           = db.StringField()
     changed_code        = db.StringField()
     changed_line_number = db.IntField()
     key_words           = db.ListField(db.StringField())

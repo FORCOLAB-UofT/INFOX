@@ -64,17 +64,26 @@ def project_overview(project_name):
         refresh = None
 
     _project = Project.objects(project_name = project_name).first()
-    # TODO repeated code
+    # TODO fixed repeated code.
+    _all_changed_files = {}
+    _changed_files = ChangedFile.objects(project_name = project_name)
+    for file in _changed_files:
+        _all_changed_files[(file.fork_name, file.file_name)] = file.diff_link
+    
+    _marked_files = []
     if contain_key_word:
         _forks = ProjectFork.objects(project_name = project_name, key_words = contain_key_word, file_list__ne = []).order_by('-last_committed_time')
+        _contain_key_words_changed_files = ChangedFile.objects(project_name = project_name, key_words = contain_key_word)
+        for file in _contain_key_words_changed_files:
+            _marked_files.append((file.fork_name, file.file_name))
     else:
         _forks = ProjectFork.objects(project_name = project_name, file_list__ne = []).order_by('-last_committed_time')
-
+    
+    return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form, all_changed_files=_all_changed_files, marked_files = _marked_files)
     #page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items
-    return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form)
-
+    
 @main.route('/add', methods=['GET', 'POST'])
 def add():
     """ Add Project
