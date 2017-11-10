@@ -23,6 +23,20 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/">Home</a> </li>
+                    <!--
+                    <li>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Edit <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('main.add') }}">Add</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{ url_for('main.delete') }}">Delete</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    !-->
                     <li><a href="{{ url_for('main.add') }}">Add</a> </li>
                     <li><a href="{{ url_for('main.delete') }}">Delete</a> </li>
                     <li><a href="{{ url_for('main.about') }}">About</a> </li>

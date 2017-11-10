@@ -6,6 +6,7 @@ from .forms import *
 from ..models import *
 
 from ..crawler import crawler
+from ..analyse import analyser
 
 def find_project(project_name):
     _find_project = Project.objects(project_name = project_name).first()
@@ -37,29 +38,42 @@ def index():
     projects = pagination.items
     return render_template('index.html', form=form, projects=projects, pagination=pagination)
 
+@main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
+def project_refresh(project_name):
+    if not find_project(project_name):
+        abort(404)
+    crawler.start(project_name)
+    return redirect(url_for('main.project_overview', project_name=project_name))
+
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
-def project_overview(project_name): # add filter
+def project_overview(project_name):
     """ Overview of the project
     :param project_name
     """
     if not find_project(project_name):
         abort(404)
 
-    refresh = RefreshProjectForm()
-    if refresh.validate_on_submit():
-        crawler.start(project_name)
-        return redirect(url_for('main.project_overview', project_name=project_name))
+    contain_key_word = request.args.get("key_words")
+    
+    search_form = SearchForm()
+    if search_form.validate_on_submit():
+        return redirect(url_for('main.project_overview', project_name=project_name, key_words=search_form.content.data))    
 
     if project_name in crawler.current_crawling:
         flash('The Project (%s) is updating!' % project_name)
         refresh = None
 
     _project = Project.objects(project_name = project_name).first()
-    _forks = ProjectFork.objects(project_name = project_name, file_list__ne = []).order_by('-last_committed_time')
+    # TODO repeated code
+    if contain_key_word:
+        _forks = ProjectFork.objects(project_name = project_name, key_words = contain_key_word, file_list__ne = []).order_by('-last_committed_time')
+    else:
+        _forks = ProjectFork.objects(project_name = project_name, file_list__ne = []).order_by('-last_committed_time')
+
     #page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items
-    return render_template('project_overview.html', project=_project, forks=_forks, refresh=refresh)
+    return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form)
 
 @main.route('/add', methods=['GET', 'POST'])
 def add():

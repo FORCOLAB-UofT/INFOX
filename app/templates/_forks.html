@@ -1,38 +1,46 @@
 <ul class="forks">
-    {% for fork in forks %}
-        <li class="forks">
-            <div class="fork-content">
-                <div class="project-author"> {{ fork.fork_name }} </div>
-                <br>
-                <div class="project-time"> {{ "Last Committed Time: %s Created Time: %s" % (fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S'), fork.created_time.strftime('%Y-%m-%d %H:%M:%S')) }} </div>
-                <br>
-                <div class="project-changed_number"> {{ "Total Changed File(s): %d Total Changed Line(s): %d" % (fork.total_changed_file_number, fork.total_changed_line_number) }} </div>
-                <br>
-                <div class="project-file_list">
-                    {{ "Changed File(s):" }}
-                    {% for file in fork.file_list %}
-                        {{ file }}
-                        {{ " , " }}
-                    {% endfor %}
-                </div>
-                <br>
-                <div class="project-key_words">
-                    {{ "Key Words:" }}
-                    {% for word in fork.key_words %}
-                        {{ word }}
-                        {{ " , "}}
-                    {% endfor %}
-                </div>
-                <br>
-                <div class="project-key_stemmed_words">
-                    {{ "Key Words(After Stemmed):" }}
-                    {% for word in fork.key_stemmed_words %}
-                        {{ word }}
-                        {{ "," }}
-                    {% endfor %}
-                </div>
-            </div>
-            <hr>
-        </li>
-    {% endfor %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total Changed File</th>
+                <th>Total Changed Line</th>
+                <th>Key Words</th>
+                <th>Last Committed</th>
+                <th>Created At</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for fork in forks %}
+            <tr>
+                <td> <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a> </td>
+                <td>
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                {{ fork.total_changed_file_number }}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
+                                {% for file in fork.file_list %}
+                                <li><a href="#">{{ file }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                </td>
+                <td>{{ fork.total_changed_line_number }}</td>
+                <td>{{ fork.key_words[:5] }}</td>
+                <!--
+                <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ fork.created_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                !-->
+                <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
+                <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </ul>
