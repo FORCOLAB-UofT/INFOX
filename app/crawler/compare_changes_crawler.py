@@ -22,10 +22,16 @@ def compare(project_full_name):
     print("start : %s" %project_full_name)
     url = 'https://github.com/%s/compare' % project_full_name
 
-    driver = webdriver.PhantomJS()
+    driver = webdriver.PhantomJS(service_args=['--ignore-ssl-errors=true', '--ssl-protocol=tlsv1'])
+    # driver = webdriver.PhantomJS()
     try:
         # It will jump to https://github.com/author/repo/compare/version...author:repo
         driver.get(url)
+        # driver.save_screenshot('screen.png')
+        # with open('1.html','w') as f:
+        #     f.write(driver.page_source)
+
+        print (driver.current_url)
         repo_content = driver.find_element_by_class_name("repository-content")
     except:
         print("error on get diff for %s!" % project_full_name)
@@ -69,7 +75,8 @@ def compare(project_full_name):
                 # Some page is loading dynamic, so we need to get more diff.
                 # Example: https://github.com/Smoothieware/Smoothieware/compare/edge...Nutz95:edge
                 load_url = diff_list.find_element_by_tag_name('include-fragment').get_attribute('src')
-                driver.get(load_url)
+                print(load_url)
+                driver.get('https://github.com/' + load_url)
                 diff_list = driver.find_element_by_tag_name('body')
                 continue
             except:
@@ -92,17 +99,18 @@ def compare(project_full_name):
         try:
             # This is for the case that "Large diffs are not rendered by default" on Github
             # Example: https://github.com/MarlinFirmware/Marlin/compare/1.1.x...SkyNet3D:SkyNet3D-Devel
+            # print('try load %s' % file_full_name)
             load_container = diff.find_element_by_class_name('js-diff-load-container')
-            print("This file: %s need load code." % file)
+            print("This file: %s need load code." % file_full_name)
             load_url = load_container.find_element_by_xpath('//include-fragment[1]') \
                 .get_attribute('data-fragment-url')
             try:
-                changed_code = requests.get('https://github.com/' + load_url).text
+                print('https://github.com%s' % load_url)
+                changed_code = requests.get('https://github.com' + load_url).text
             except:
                 print("Error on get load code!")
         except:
             pass
-
         file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
                             "changed_line": changed_line, "changed_code": changed_code})
 
@@ -111,3 +119,9 @@ def compare(project_full_name):
     return {"changed_line": total_changed_line_of_source_code,
             "changed_file_number": changed_file_number,
             "file_list": file_list}
+
+if __name__ == '__main__':
+    compare('Nutz95/Smoothieware')
+    # compare('mkosieradzki/protobuf')
+    # compare('SkyNet3D/Marlin')
+

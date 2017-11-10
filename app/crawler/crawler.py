@@ -14,8 +14,6 @@ from ..analyse import analyser
 
 # commits_page_limit = 1 # 1 is just for checking the status, if you need more commits set it larger.
 
-FLAGS_UPDATE = True
-
 current_crawling = set()
 
 base_url = 'https://api.github.com/repos/%s/%s'
@@ -116,7 +114,7 @@ def crawler(project_full_name):
     
     print("-----start crawling for %s-----" % project_name)
 
-    if FLAGS_UPDATE or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
+    if current_app.config['ALLOW_UPDATE'] or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
         repo_info = get_api(author_name, project_name, '', access_token)
         write_to_file(main_pain + '/repo_info.json', repo_info)
 
@@ -126,7 +124,7 @@ def crawler(project_full_name):
     print("-----finish crawling for %s-----" % project_name)
 
     """
-    # get all forks' commits
+    # Get all forks' commits.
     for fork in forks_list:
         author, repo = fork["full_name"].split('/')
         commits_list = get_api(author, repo, "commits", access_token)

@@ -7,8 +7,9 @@ import re
 import datetime
 import nltk
 from nltk.stem.porter import PorterStemmer
-from flask import current_app
+import itertools
 
+from flask import current_app
 from ..crawler import compare_changes_crawler
 
 FLAGS_APP_MODE = True
@@ -109,6 +110,27 @@ def get_forks_list(main_path):
     return forks
 """
 
+def word_split_by_char(s):
+    words = []
+    if '-' in s: # Case: ab-cd-ef
+        words = s.split('-')
+    elif '.' in s: # Case: ab.cd.ef
+        words = s.split('.')
+    elif '_' in s: # Case: ab_cd_ef
+        words = s.split('_')
+    elif re.search('[A-Z]+', s): # Case AbcDefGh or abcDefGh
+        words = re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(1).lower() + "_" + match.group(2).lower(), s).split('_')
+    return words
+
+def word_process(word):
+    search_result = re.search("[0-9A-Za-z_]", word)
+    if not search_result:
+        return ""
+    word = word[search_result.start():]
+    while (len(word) > 0) and (not re.match("[0-9A-Za-z_]", word[-1:])):
+        word = word[:-1]
+    return word
+
 def word_filter(word):
     """ The filter used for deleting the noisy words in changed code.
     Here is the method:
@@ -120,6 +142,8 @@ def word_filter(word):
     Return:
         True for not filtering, False for filtering.
     """
+    if word[:2] == '0x':
+        return False
     word = re.sub("[^0-9A-Za-z_]", "", word)
     if(word.isdigit()):
         return False
@@ -131,7 +155,7 @@ def analyse_project(project_name, crawler_mode=True):
 
     local_data_path = current_app.config['LOCAL_DATA_PATH']
 
-    load_language_data('app/analyse/data')
+    load_language_data(current_app.config['LANGUAGE_DATA_PATH'])
 
     repo_info = get_repo_info(local_data_path + "/" + project_name)
 
@@ -189,17 +213,29 @@ def analyse_project(project_name, crawler_mode=True):
             common_tokens = []
             common_stemmed_tokens = []
 
+            # Add files into fork's changed file list.
+            file_list.append(file_name)
+
             # Check the language depend on the file suffix.
             file_language = ""
             for language in language_list:
                 if(file_suffix in language_file_suffix[language]):
                     file_language = language
-    
             if file_language:
                 # process on changed code
                 # get the tokens from changed code
-                tokens = filter(lambda x: (len(x) > 1) and (x not in language_stop_words[file_language]), nltk.word_tokenize(changed_code))
+                added_code = " ".join(filter(lambda x: (x) and (x[0] == '+'), changed_code.splitlines()))
+
+                raw_tokens = nltk.word_tokenize(added_code)
+                origin_tokens = [word_process(x) for x in raw_tokens]
+                tokens = origin_tokens
+                tokens = list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))
+                # tokens.extend(list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))) # Keep original tokens
+                
+                #tokens = sum([word_split_by_char(token) for token in origin_tokens], origin_tokens)
+                tokens = [x.lower() for x in tokens]
                 tokens = filter(word_filter, tokens)
+                tokens = filter(lambda x: x not in language_stop_words[file_language], tokens)
                 tokens = list(tokens)
                 stemmed_tokens = [PorterStemmer().stem(word) for word in tokens] # do stem on the tokens
 
@@ -210,9 +246,7 @@ def analyse_project(project_name, crawler_mode=True):
 
                 common_tokens = [x[0] for x in Counter(tokens).most_common(10)]
                 common_stemmed_tokens = [x[0] for x in Counter(stemmed_tokens).most_common(10)]
-
                 # load current file's name, key words to fork.
-                file_list.append(file_name)
             else:
                 file_language = "Unsupported"
             
@@ -254,7 +288,9 @@ def analyse_project(project_name, crawler_mode=True):
             ).save();
     print("-----finish analysing for %s-----" % project_name)
 
+"""
 if __name__ == '__main__':
     print("Input the project name")
     project_name = raw_input().strip()
     analyse_project(project_name)
+"""

@@ -1,5 +1,4 @@
 import os
-here = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;O0' # a random string.
@@ -9,13 +8,22 @@ class Config:
         'port': 27017
     }
     SHOW_NUMBER_FOR_PAGE = 6
+    # LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
+    # LANGUAGE_DATA_PATH = '/home/luyao/INFOX/app/analyse/data'
     LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
-    ACCESS_TOKEN = '' #your_access_token
+    LANGUAGE_DATA_PATH = '/Users/fancycoder/INFOX/app/analyse/data'
     
 class DevelopmentConfig(Config):
+    # ALLOW_UPDATE = True
+    ALLOW_UPDATE = False
     DEBUG = True
 
+class ProductionConfig(Config):
+    ALLOW_UPDATE = False
+
 config = {
+    'production': ProductionConfig,
+    'development': DevelopmentConfig,
     'default': DevelopmentConfig
 }
 
