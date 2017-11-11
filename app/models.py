@@ -34,5 +34,6 @@ class Project(db.Document):
     fork_number               = db.IntField(default=-1)
     feature_number            = db.IntField(default=-1)
     description               = db.StringField()
-    # finish_crawlered          = db.BooleanField(default = False)
+    analyser_progress         = db.StringField()
+
     
