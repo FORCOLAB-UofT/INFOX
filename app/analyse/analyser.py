@@ -167,6 +167,7 @@ def analyse_project(project_name, crawler_mode=True):
             language 			= repo_info["language"],
             fork_number 		= repo_info["forks"],
             description         = str(repo_info["description"]),
+            analyser_progress   = "0%"
         ).save();
 
     forks_info = get_forks_info_dict(local_data_path + "/" + project_name)
@@ -175,7 +176,12 @@ def analyse_project(project_name, crawler_mode=True):
     # forks.sort(key=lambda x: x[1], reverse=True) # sort fork by last committed time
 
     print("-----start analysing for %s-----" % project_name)
+    forks_number = len(forks_info)
+    forks_count = 0
     for author in forks_info:
+        forks_count += 1
+        Project.objects(project_name = project_name).update(analyser_progress = "%d%%" % (100 * forks_count / forks_number))
+
         fork_name = forks_info[author]["full_name"]
         created_time = forks_info[author]["created_at"]
         last_committed_time = forks_info[author]["pushed_at"]

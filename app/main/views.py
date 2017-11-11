@@ -36,7 +36,7 @@ def index():
     page = request.args.get('page', 1, type=int) # default is 1st page
     pagination = Project.objects.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', form=form, projects=projects, pagination=pagination)
+    return render_template('index.html', form=form, projects=projects, pagination=pagination, crawler_set=crawler.current_crawling)
 
 @main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
 def project_refresh(project_name):
@@ -53,7 +53,7 @@ def project_overview(project_name):
     if not find_project(project_name):
         abort(404)
 
-    contain_key_word = request.args.get("key_words")
+    _contain_key_word = request.args.get("key_words")
     
     search_form = SearchForm()
     if search_form.validate_on_submit():
@@ -71,15 +71,16 @@ def project_overview(project_name):
         _all_changed_files[(file.fork_name, file.file_name)] = file.diff_link
     
     _marked_files = []
-    if contain_key_word:
-        _forks = ProjectFork.objects(project_name = project_name, key_words = contain_key_word, file_list__ne = []).order_by('-last_committed_time')
-        _contain_key_words_changed_files = ChangedFile.objects(project_name = project_name, key_words = contain_key_word)
+    if _contain_key_word:
+        _forks = ProjectFork.objects(project_name = project_name, key_words = _contain_key_word, file_list__ne = []).order_by('-last_committed_time')
+        _contain_key_words_changed_files = ChangedFile.objects(project_name = project_name, key_words = _contain_key_word)
         for file in _contain_key_words_changed_files:
             _marked_files.append((file.fork_name, file.file_name))
     else:
         _forks = ProjectFork.objects(project_name = project_name, file_list__ne = []).order_by('-last_committed_time')
     
-    return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form, all_changed_files=_all_changed_files, marked_files = _marked_files)
+    return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form,
+                           all_changed_files=_all_changed_files, marked_files = _marked_files)
     #page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items

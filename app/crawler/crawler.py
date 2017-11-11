@@ -135,14 +135,14 @@ def start_crawler(app, project_name):
     if project_name in current_crawling:
         return
     current_crawling.add(project_name)
-
+    
     with app.app_context():
         crawler(project_name)
         if analyser.FLAGS_APP_MODE:
             analyser.analyse_project(project_name)
 
     current_crawling.remove(project_name)
-
+    
 def start(project_name):
     app = current_app._get_current_object()
     thread = Thread(target=start_crawler, args=[app, project_name])

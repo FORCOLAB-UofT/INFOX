@@ -24,6 +24,15 @@
     <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
         <h4><p class="text-center"> Forks of {{ project.project_name }}</p></h4>         
     </a>
+    
+    {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ project.analyser_progress }}"
+            aria-valuemin="0" aria-valuemax="100" style="{{ "width:%s" % project.analyser_progress }}">
+                <span class="sr-only">{{ "%s Complete" % project.analyser_progress }}</span>
+            </div>
+        </div>
+    {% endif %}
 
     <div class="col-lg-4 pull-right">
         
