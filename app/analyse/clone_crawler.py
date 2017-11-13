@@ -3,6 +3,8 @@
 import os
 import codecs
 import math
+from flask import current_app
+
 from .util import word_extractor
 from .util import language_tool
 
@@ -14,7 +16,7 @@ class CloneCrawler:
         self.get_doc_sets()
 
     def get_doc_sets(self):
-        folder = '%s/%s/source_code' % ('/Users/fancycoder/infox_data/result', self.project_name)
+        folder = '%s/%s/source_code' % (current_app.config['LOCAL_DATA_PATH'], self.project_name)
         if not os.path.exists(folder):
             os.system('git clone https://github.com/%s.git %s' % (self.project_name.replace('_','/'), folder))
         
