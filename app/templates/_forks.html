@@ -59,7 +59,7 @@
                 {% if fork.key_words_by_tfidf %}
                     <td>{{ fork.key_words_by_tfidf[:5] }}</td>
                 {% else %}
-                    {% if fork.key_words_by_tdidf[:5] }
+                    {% if fork.key_words_by_tdidf[:5] %}
                         <td>{{ fork.key_words_by_tdidf[:5] }}</td>
                     {% else %}
                         <td>{{ "" }}</td>
