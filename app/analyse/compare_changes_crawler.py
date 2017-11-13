@@ -87,22 +87,25 @@ def compare(project_full_name):
                 continue
             except:
                 break
-
-        diff_info = diff.find_element_by_class_name('file-info')
-        diff_link = diff_info.find_element_by_tag_name('a').get_attribute('href')
-        changed_line = diff_info.text.split(' ')[0].strip().replace(',','')
-        file_full_name = diff_info.text.split(' ')[1].strip()
-        print((diff_num, changed_line, file_full_name))
+        try:
+            diff_info = diff.find_element_by_class_name('file-info')
+            diff_link = diff_info.find_element_by_tag_name('a').get_attribute('href')
+            changed_line = diff_info.text.split(' ')[0].strip().replace(',','')
+            file_full_name = diff_info.text.split(' ')[1].strip()
+            print((diff_num, changed_line, file_full_name))
+            file_name, file_suffix = os.path.splitext(file_full_name)
+            changed_code = diff.text
+        except:
+            print("error on parsing %s: diff%d" % (project_full_name, diff_num))
+            break
+        
         try:
             total_changed_line_of_source_code += int(changed_line)
             changed_file_number += 1
         except:
             changed_line = 0
             pass
-        file_name, file_suffix = os.path.splitext(file_full_name)
-
-    
-        changed_code = diff.text
+        
         try:
             # This is for the case that "Large diffs are not rendered by default" on Github
             # Example: https://github.com/MarlinFirmware/Marlin/compare/1.1.x...SkyNet3D:SkyNet3D-Devel
@@ -131,4 +134,3 @@ if __name__ == '__main__':
     compare('Nutz95/Smoothieware')
     # compare('mkosieradzki/protobuf')
     # compare('SkyNet3D/Marlin')
-

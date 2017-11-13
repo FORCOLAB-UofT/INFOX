@@ -27,6 +27,7 @@ class ProjectFork(db.Document):
     file_list                   = db.ListField(db.StringField())
     key_words                   = db.ListField(db.StringField())
     key_stemmed_words           = db.ListField(db.StringField())
+    key_words_by_tdidf          = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name 		      = db.StringField(required=True, primary_key=True)
