@@ -1,15 +1,24 @@
 <ul class="forks">
 
     <table class="table">
+        <colgroup>
+            <col style="width:20%">
+            <col style="width:5%">
+            <col style>
+            <col style>
+            <col style>
+            <col style="width:10%">
+            <col style="width:10%">
+        </colgroup>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Total Changed File</th>
                 <th>Total Changed Line</th>
-                <th>Key Words</th>
+                <th>Key Words(Counter)</th>
+                <th>Key Words(IF-IDF)</th>
                 <th>Last Committed</th>
                 <th>Created At</th>
-                
             </tr>
         </thead>
         <tbody>
@@ -47,13 +56,17 @@
                 </td>
                 <td>{{ fork.total_changed_line_number }}</td>
                 <td>{{ fork.key_words[:5] }}</td>
+                {% if fork.key_words_by_tdidf %}
+                    <td>{{ fork.key_words_by_tdidf[:5] }}</td>
+                {% else %}
+                    <td>{{ "" }}</td>
+                {% endif %}
                 <!--
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 <td>{{ fork.created_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 !-->
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
                 <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
-                
             </tr>
             {% endfor %}
         </tbody>

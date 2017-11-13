@@ -1,4 +1,4 @@
-import os
+import platform
 
 class Config:
     SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;O0' # a random string.
@@ -8,18 +8,24 @@ class Config:
         'port': 27017
     }
     SHOW_NUMBER_FOR_PAGE = 6
-    # LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
-    # LANGUAGE_DATA_PATH = '/home/luyao/INFOX/app/analyse/data'
-    LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
-    LANGUAGE_DATA_PATH = '/Users/fancycoder/INFOX/app/analyse/data'
+
+    if platform.system() == 'Darwin':
+        LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
+    elif platform.system() == 'Linux':
+        LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
+
+    ACCESS_TOKEN_EN = '116b7:1efcgc11gg:6g8584579cc84f7fdc9:4g7'
+    ACCESS_TOKEN = ''
+    for i in ACCESS_TOKEN_EN:
+        ACCESS_TOKEN = ACCESS_TOKEN + chr(ord(i) - 1)
     ALLOW_UPDATE = False
     
 class DevelopmentConfig(Config):
     DEBUG = True
-    RECRAWLER_MODE = True
+    RECRAWLER_MODE = False
 
 class ProductionConfig(Config):
-    RECRAWLER_MODE = True
+    RECRAWLER_MODE = False
 
 config = {
     'production': ProductionConfig,

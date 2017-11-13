@@ -5,7 +5,6 @@ from . import main
 from .forms import *
 from ..models import *
 
-from ..crawler import crawler
 from ..analyse import analyser
 
 def find_project(project_name):
@@ -36,13 +35,13 @@ def index():
     page = request.args.get('page', 1, type=int) # default is 1st page
     pagination = Project.objects.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', form=form, projects=projects, pagination=pagination, crawler_set=crawler.current_crawling)
+    return render_template('index.html', form=form, projects=projects, pagination=pagination)
 
 @main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
 def project_refresh(project_name):
     if not find_project(project_name):
         abort(404)
-    crawler.start(project_name)
+    analyser.start(project_name)
     return redirect(url_for('main.project_overview', project_name=project_name))
 
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
@@ -59,11 +58,10 @@ def project_overview(project_name):
     if search_form.validate_on_submit():
         return redirect(url_for('main.project_overview', project_name=project_name, key_words=search_form.content.data))    
 
-    if project_name in crawler.current_crawling:
-        flash('The Project (%s) is updating!' % project_name)
-        refresh = None
-
     _project = Project.objects(project_name = project_name).first()
+    if _project.analyser_progress and _project.analyser_progress != "100%":
+        flash('The Project (%s) is updating!' % project_name)
+
     # TODO fixed repeated code.
     _all_changed_files = {}
     _changed_files = ChangedFile.objects(project_name = project_name)
@@ -94,7 +92,7 @@ def add():
         _input_project_name = form.project_name.data
         _input_project_name = _input_project_name.replace('/','_')
         if not find_project(_input_project_name):
-            crawler.start(_input_project_name)
+            analyser.start(_input_project_name)
             flash('The Project (%s) is added. The data is loading......' % _input_project_name)
             return redirect(url_for('main.index'))
         else:
@@ -102,6 +100,7 @@ def add():
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
 
+"""
 @main.route('/localadd', methods=['GET', 'POST'])
 def localadd():
     form = AddProjectForm()
@@ -110,6 +109,7 @@ def localadd():
         analyser.analyse_project(_input_project_name, False)
         return redirect(url_for('main.project_overview', project_name=_input_project_name))
     return render_template('localadd.html', form=form)
+"""
 
 @main.route('/delete', methods=['GET', 'POST'])
 def delete():
