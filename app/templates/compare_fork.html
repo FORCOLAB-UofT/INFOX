@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}INFOX - Add Project{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h1>Compare Fork</h1>
+    </div>
+    <div class="col-md-4">
+        {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+    </div>
+    <div class="col-md-6">
+        {% if common_words %}
+            <div class="common_words"> <h4>Common words: {{ common_words }}</h4> </div>
+        {% endif %}
+        <hr>
+        {% if common_files %}
+            <div class="common_files"> <h4>Common files: {{ common_files }}</h4> </div>
+        {% endif %}
+    </div>
+    
+{% endblock %}

@@ -27,10 +27,13 @@ class ProjectFork(db.Document):
     file_list                   = db.ListField(db.StringField())
     key_words                   = db.ListField(db.StringField())
     key_stemmed_words           = db.ListField(db.StringField())
+    key_words_by_tfidf          = db.ListField(db.StringField())
     key_words_by_tdidf          = db.ListField(db.StringField())
+    key_words_counter_dict      = db.DictField()
+    key_words_tf_idf_dict       = db.DictField()
 
 class Project(db.Document):
-    project_name 		      = db.StringField(required=True, primary_key=True)
+    project_name              = db.StringField(required=True, primary_key=True)
     language 			      = db.StringField()
     fork_number               = db.IntField(default=-1)
     feature_number            = db.IntField(default=-1)

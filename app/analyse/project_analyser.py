@@ -59,9 +59,11 @@ class ForkAnalyser:
             last_committed_time = datetime.datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
             created_time = datetime.datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
             file_list = self.file_list,
-            key_words = word_extractor.get_top_words(self.all_tokens, 100),
-            key_stemmed_words = word_extractor.get_top_words(self.all_stemmed_tokens, 100),
-            key_words_by_tdidf = [x[0] for x in sorted(tf_idf_dict.items(), key = lambda x: x[1], reverse=True)[:100]],
+            key_words = word_extractor.get_top_words_list(self.all_tokens, 100),
+            key_stemmed_words = word_extractor.get_top_words_list(self.all_stemmed_tokens, 100),
+            key_words_counter_dict = dict((x, y) for x, y in word_extractor.get_top_words_tuple(self.all_tokens, 100)),
+            key_words_by_tfidf = [x[0] for x in sorted(tf_idf_dict.items(), key = lambda x: x[1], reverse=True)[:100]],
+            key_words_tf_idf_dict = dict((x, y) for x, y in sorted(tf_idf_dict.items(), key = lambda x: x[1], reverse=True)[:100]),
         ).save();
 
     def file_analyse(self, file):
@@ -86,8 +88,8 @@ class ForkAnalyser:
         tokens = word_extractor.get_words_from_text(file_name, added_code)
         stemmed_tokens = word_extractor.stem_process(tokens)
 
-        common_tokens = word_extractor.get_top_words(tokens, 100)
-        common_stemmed_tokens = word_extractor.get_top_words(stemmed_tokens, 100)
+        common_tokens = word_extractor.get_top_words_list(tokens, 100)
+        common_stemmed_tokens = word_extractor.get_top_words_list(stemmed_tokens, 100)
 
         # Load current file's key words to fork.
         for x in tokens:
