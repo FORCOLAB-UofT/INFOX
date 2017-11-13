@@ -56,10 +56,14 @@
                 </td>
                 <td>{{ fork.total_changed_line_number }}</td>
                 <td>{{ fork.key_words[:5] }}</td>
-                {% if fork.key_words_by_tdidf %}
-                    <td>{{ fork.key_words_by_tdidf[:5] }}</td>
+                {% if fork.key_words_by_tfidf %}
+                    <td>{{ fork.key_words_by_tfidf[:5] }}</td>
                 {% else %}
-                    <td>{{ "" }}</td>
+                    {% if fork.key_words_by_tdidf[:5] }
+                        <td>{{ fork.key_words_by_tdidf[:5] }}</td>
+                    {% else %}
+                        <td>{{ "" }}</td>
+                    {% endif %}
                 {% endif %}
                 <!--
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>

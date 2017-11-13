@@ -18,3 +18,8 @@ class SearchProjectForm(FlaskForm):
 class SearchForm(FlaskForm):
     content = StringField('Key Word')
     submit = SubmitField('Search')
+
+class CompareForkForm(FlaskForm):
+    fork1 = StringField('Fork1')
+    fork2 = StringField('Fork2')
+    submit = SubmitField('Compare')

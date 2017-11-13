@@ -45,6 +45,12 @@ def word_filter(word):
         return False
     if '=' in word:
         return False
+    if '/' in word:
+        return False
+    if '.' in word:
+        return False
+    if '$' in word:
+        return False
     word = re.sub("[^0-9A-Za-z_]", "", word)
     if(word.isdigit()):
         return False
@@ -76,6 +82,10 @@ def get_words_from_text(file, text):
 def get_counter(tokens):
     return Counter(tokens)
 
-def get_top_words(tokens, top_number):
+def get_top_words_tuple(tokens, top_number):
+    counter = get_counter(tokens)
+    return counter.most_common(top_number)
+
+def get_top_words_list(tokens, top_number):
     counter = get_counter(tokens)
     return [x[0] for x in counter.most_common(top_number)]
