@@ -129,8 +129,9 @@ def compare(project_full_name):
     return {"changed_line": total_changed_line_of_source_code,
             "changed_file_number": changed_file_number,
             "file_list": file_list}
-
+"""
 if __name__ == '__main__':
     compare('Nutz95/Smoothieware')
     # compare('mkosieradzki/protobuf')
     # compare('SkyNet3D/Marlin')
+"""
