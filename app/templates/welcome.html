@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block page_content %}
+    <div class="col-md-4">
+        <h1> INFOX </h1>
+        <h4> Identifying Features in Forks </h4>
+    </div>
+    <div class="row"></div><hr>
+    
+    <div class="welcome_word">
+        <h5>
+            Welcome!
+            <br><br>
+            INFOX is a tool that can generate an overview of active forks in a project on Github and identify not-merged features in forks.
+            <br><br>
+            For a quick start, you can reach <a href="{{ url_for('main.discover') }}"> Discover </a> page. And we recommend you to <a href="{{ url_for('auth.register') }}"> register </a> a account to follow your interested projects & forks, load data from your Github account.
+            <br><br>
+            Now, the INFOX is just a test version and we will improve continuously. So, your feedback is really helpful for us. Feel free to <a href="{{ url_for('main.about') }}" > contact us </a> !
+            <br><br>
+            Thanks for using INFOX!   
+            <br><br>
+        </h5>         
+    </div>
+    
+{% endblock %}}

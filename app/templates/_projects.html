@@ -6,10 +6,16 @@
                     <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
                         {{ project.project_name }}
                     </a>
-                    {% if not (project.analyser_progress and project.analyser_progress != "100%")  %}
-                        <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
-                                Refresh
-                        </a>
+                    {% if current_user.is_authenticated %}
+                        {% if project.project_name in current_user.followed_projects %}
+                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
+                                Unfollowed
+                            </a>
+                        {% else %}
+                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
+                                Followed
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="project-body">
