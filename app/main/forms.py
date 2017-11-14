@@ -23,3 +23,9 @@ class CompareForkForm(FlaskForm):
     fork1 = StringField('Fork1')
     fork2 = StringField('Fork2')
     submit = SubmitField('Compare')
+
+class FollowedButton():
+    submit = SubmitField('Followed')
+
+class UnFollowedButton():
+    submit = SubmitField('UnFollowed')

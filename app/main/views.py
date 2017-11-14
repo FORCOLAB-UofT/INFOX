@@ -1,5 +1,6 @@
 from flask import (render_template, redirect, url_for, current_app,
                    abort, flash, request, make_response)
+from flask_login import login_required, current_user
 
 from . import main
 from .forms import *
@@ -7,43 +8,79 @@ from ..models import *
 
 from ..analyse import analyser
 from ..analyse import fork_comparer
+from ..decorators import admin_required, permission_required
 
 def find_project(project_name):
-    _find_project = Project.objects(project_name = project_name).first()
-    if _find_project is None:
-        return False
+    return Project.objects(project_name = project_name).first()
+
+def approximate_find_project_project_name(project_name):
+    _exact_project = find_project(project_name)
+    if _exact_project:
+        return _exact_project
     else:
-        return True
+        return Project.objects(project_name__endswith = project_name).first()
 
 def delete_project(project_name):
     Project(project_name = project_name).delete()   
     ProjectFork(project_name = project_name).delete()
     ChangedFile(project_name = project_name).delete()
-            
+
 @main.route('/', methods=['GET', 'POST'])
-def index():
-    """ INFOX Homepage
-    """
+def start():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    return redirect(url_for('main.welcome'))
+
+@main.route('/welcome', methods=['GET', 'POST'])
+def welcome():
+    return render_template('welcome.html')
+
+@main.route('/discover', methods=['GET', 'POST'])
+def discover():
     form = SearchProjectForm()
     if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        if not find_project(_input_project_name):
-            flash('The Project (%s) is not be added. You can turn to Add to add it!' % _input_project_name)
-            return redirect(url_for('main.index'))
+        _input_project_name = form.project_name.data.replace('/', '_')
+        _find_result = approximate_find_project_project_name(_input_project_name)
+        if _find_result:
+            return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
         else:
-            return redirect(url_for('main.project_overview', project_name=_input_project_name))
+            flash('The Project (%s) is not be added. You can turn to Add to add it!' % _input_project_name)
+            return redirect(url_for('main.discover'))
 
+    if current_user.is_authenticated:
+        project_list = Project.objects(project_name__nin = current_user.followed_projects)
+    else:
+        project_list = Project.objects
     page = request.args.get('page', 1, type=int) # default is 1st page
-    pagination = Project.objects.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', form=form, projects=projects, pagination=pagination)
+    return render_template('discover.html', form=form, projects=projects, pagination=pagination)
+
+@main.route('/index', methods=['GET', 'POST'])
+def index():
+    project_list = Project.objects(project_name__in = current_user.followed_projects)
+    page = request.args.get('page', 1, type=int) # default is 1st page
+    pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    projects = pagination.items
+    return render_template('index.html', projects=projects, pagination=pagination)
+
 
 @main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def project_refresh(project_name):
     if not find_project(project_name):
         abort(404)
     analyser.start(project_name)
     return redirect(url_for('main.project_overview', project_name=project_name))
+
+"""
+@main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def fork_refresh(fork_name):
+    pass
+"""
 
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
@@ -59,6 +96,7 @@ def project_overview(project_name):
     if search_form.validate_on_submit():
         return redirect(url_for('main.project_overview', project_name=project_name, key_words=search_form.content.data))    
 
+    
     _project = Project.objects(project_name = project_name).first()
     if _project.analyser_progress and _project.analyser_progress != "100%":
         flash('The Project (%s) is updating!' % project_name)
@@ -83,11 +121,10 @@ def project_overview(project_name):
     #page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items
-    
+
 @main.route('/add', methods=['GET', 'POST'])
+@login_required
 def add():
-    """ Add Project
-    """
     form = AddProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data
@@ -103,6 +140,8 @@ def add():
 
 """
 @main.route('/localadd', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def localadd():
     form = AddProjectForm()
     if form.validate_on_submit():
@@ -112,10 +151,17 @@ def localadd():
     return render_template('localadd.html', form=form)
 """
 
+"""
+@main.route('/load_from_github',methods=['GET', 'POST'])
+@login_required
+def load_from_github():
+    pass
+"""
+
 @main.route('/delete', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def delete():
-    """ Delete Project
-    """
     form = DeleteProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data
@@ -127,6 +173,42 @@ def delete():
             flash('The project (%s) is not found.' % _input_project_name)
             return redirect(url_for('main.delete'))
     return render_template('delete.html', form=form)
+
+@main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
+@login_required
+def followed_project(project_name):
+    if find_project(project_name):
+        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+        return redirect(url_for('main.project_overview', project_name=project_name))
+    else:
+        flash('Project not found!')
+        return redirect(url_for('main.index'))
+
+@main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
+@login_required
+def unfollowed_project(project_name):
+    User.objects(username=current_user.username).update_one(pull__followed_projects=project_name)
+    return redirect(url_for('main.index'))
+ 
+"""
+@main.route('/followed_fork/<fork_name>', methods=['GET', 'POST'])
+@login_required
+def followed_fork(fork_name):
+    _fork = ProjectFork.objects(fork_name = fork_name).first() # guarteen the fork name unique
+    if _fork:
+        current_user.update_one(push__followed_forks=fork_name)
+        current_user.update_one(push__followed_projects=_fork.project_name)
+        return redirect(url_for('main.project_overview', project_name=_fork.project_name))
+    else:
+        flash('Fork not found!')
+    return redirect(url_for('main.index'))
+
+@main.route('/unfollowed_fork/<fork_name>', methods=['GET', 'POST'])
+@login_required
+def unfollowed_fork(fork_name):
+    current_user.update_one(pull__followed_forks=fork_name)
+    return redirect(url_for('main.index'))
+"""
 
 @main.route('/compare_fork', methods=['GET', 'POST'])
 def compare_fork():    
@@ -159,3 +241,9 @@ def about():
     """
     return render_template('about.html')
 
+@main.route('/login')
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        login_user(user)
+        flask.flash('Logged in successfully.')
