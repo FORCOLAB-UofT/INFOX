@@ -8,7 +8,8 @@ class Config:
         'port': 27017
     }
     SHOW_NUMBER_FOR_PAGE = 6
-
+    ADMIN_USERNAME = 'admin'
+    
     if platform.system() == 'Darwin':
         LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
     elif platform.system() == 'Linux':

@@ -54,18 +54,15 @@ class User(UserMixin, db.Document):
     def get_id(self):
         return self.username
 
-    def generate_confirmation_token(self, expiration=3600):
-        s = Serializer(current_app.config['SECRET_KEY'], expiration)
-        return s.dumps({'confirm': self.id})
-
     def can(self, permission):
+        if self.username == 'admin':
+            return True
         return (self.permission & permission) == permission
     
     @property
     def is_administrator(self):
         return self.permission == Permission.ADMINISTER
 
-    
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
         return False
