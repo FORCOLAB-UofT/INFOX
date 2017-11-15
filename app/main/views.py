@@ -10,20 +10,24 @@ from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
+
 def find_project(project_name):
-    return Project.objects(project_name = project_name).first()
+    return Project.objects(project_name=project_name).first()
+
 
 def approximate_find_project_project_name(project_name):
     _exact_project = find_project(project_name)
     if _exact_project:
         return _exact_project
     else:
-        return Project.objects(project_name__endswith = project_name).first()
+        return Project.objects(project_name__endswith=project_name).first()
+
 
 def delete_project(project_name):
-    Project(project_name = project_name).delete()   
-    ProjectFork(project_name = project_name).delete()
-    ChangedFile(project_name = project_name).delete()
+    Project(project_name=project_name).delete()
+    ProjectFork(project_name=project_name).delete()
+    ChangedFile(project_name=project_name).delete()
+
 
 @main.route('/', methods=['GET', 'POST'])
 def start():
@@ -31,36 +35,45 @@ def start():
         return redirect(url_for('main.index'))
     return redirect(url_for('main.welcome'))
 
+
 @main.route('/welcome', methods=['GET', 'POST'])
 def welcome():
     return render_template('welcome.html')
+
 
 @main.route('/discover', methods=['GET', 'POST'])
 def discover():
     form = SearchProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data.replace('/', '_')
-        _find_result = approximate_find_project_project_name(_input_project_name)
+        _find_result = approximate_find_project_project_name(
+            _input_project_name)
         if _find_result:
             return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
         else:
-            flash('The Project (%s) is not be added. You can turn to Add to add it!' % _input_project_name)
+            flash('The Project (%s) is not be added. You can turn to Add to add it!' %
+                  _input_project_name)
             return redirect(url_for('main.discover'))
 
     if current_user.is_authenticated:
-        project_list = Project.objects(project_name__nin = current_user.followed_projects)
+        project_list = Project.objects(
+            project_name__nin=current_user.followed_projects)
     else:
         project_list = Project.objects
-    page = request.args.get('page', 1, type=int) # default is 1st page
-    pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    page = request.args.get('page', 1, type=int)  # default is 1st page
+    pagination = project_list.order_by(
+        '-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
     return render_template('discover.html', form=form, projects=projects, pagination=pagination)
 
+
 @main.route('/index', methods=['GET', 'POST'])
 def index():
-    project_list = Project.objects(project_name__in = current_user.followed_projects)
-    page = request.args.get('page', 1, type=int) # default is 1st page
-    pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    project_list = Project.objects(
+        project_name__in=current_user.followed_projects)
+    page = request.args.get('page', 1, type=int)  # default is 1st page
+    pagination = project_list.order_by(
+        '-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
     return render_template('index.html', projects=projects, pagination=pagination)
 
@@ -74,6 +87,7 @@ def project_refresh(project_name):
     analyser.start(project_name)
     return redirect(url_for('main.project_overview', project_name=project_name))
 
+
 """
 @main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
 @login_required
@@ -81,6 +95,7 @@ def project_refresh(project_name):
 def fork_refresh(fork_name):
     pass
 """
+
 
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
@@ -91,36 +106,39 @@ def project_overview(project_name):
         abort(404)
 
     _contain_key_word = request.args.get("key_words")
-    
+
     search_form = SearchForm()
     if search_form.validate_on_submit():
-        return redirect(url_for('main.project_overview', project_name=project_name, key_words=search_form.content.data))    
+        return redirect(url_for('main.project_overview', project_name=project_name, key_words=search_form.content.data))
 
-    
-    _project = Project.objects(project_name = project_name).first()
+    _project = Project.objects(project_name=project_name).first()
     if _project.analyser_progress and _project.analyser_progress != "100%":
         flash('The Project (%s) is updating!' % project_name)
 
     # TODO fixed repeated code.
     _all_changed_files = {}
-    _changed_files = ChangedFile.objects(project_name = project_name)
+    _changed_files = ChangedFile.objects(project_name=project_name)
     for file in _changed_files:
         _all_changed_files[(file.fork_name, file.file_name)] = file.diff_link
-    
+
     _marked_files = []
     if _contain_key_word:
-        _forks = ProjectFork.objects(project_name = project_name, key_words = _contain_key_word, file_list__ne = []).order_by('-last_committed_time')
-        _contain_key_words_changed_files = ChangedFile.objects(project_name = project_name, key_words = _contain_key_word)
+        _forks = ProjectFork.objects(project_name=project_name, key_words=_contain_key_word, file_list__ne=[
+        ]).order_by('-last_committed_time')
+        _contain_key_words_changed_files = ChangedFile.objects(
+            project_name=project_name, key_words=_contain_key_word)
         for file in _contain_key_words_changed_files:
             _marked_files.append((file.fork_name, file.file_name))
     else:
-        _forks = ProjectFork.objects(project_name = project_name, file_list__ne = [], key_words__ne = []).order_by('-last_committed_time')
-    
+        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[
+        ], key_words__ne=[]).order_by('-last_committed_time')
+
     return render_template('project_overview.html', project=_project, forks=_forks, search_form=search_form,
-                           all_changed_files=_all_changed_files, marked_files = _marked_files)
-    #page = request.args.get('page', 1, type=int) # default is 1st page
+                           all_changed_files=_all_changed_files, marked_files=_marked_files)
+    # page = request.args.get('page', 1, type=int) # default is 1st page
     #pagination = _forks.paginate(page=page, per_page=10)
     #forks = pagination.items
+
 
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -128,15 +146,17 @@ def add():
     form = AddProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data
-        _input_project_name = _input_project_name.replace('/','_')
+        _input_project_name = _input_project_name.replace('/', '_')
         if not find_project(_input_project_name):
             analyser.start(_input_project_name)
-            flash('The Project (%s) is added. The data is loading......' % _input_project_name)
+            flash('The Project (%s) is added. The data is loading......' %
+                  _input_project_name)
             return redirect(url_for('main.index'))
         else:
             flash('The Project (%s) has already added!' % _input_project_name)
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
+
 
 """
 @main.route('/localadd', methods=['GET', 'POST'])
@@ -158,6 +178,7 @@ def load_from_github():
     pass
 """
 
+
 @main.route('/delete', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -174,22 +195,27 @@ def delete():
             return redirect(url_for('main.delete'))
     return render_template('delete.html', form=form)
 
+
 @main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
 def followed_project(project_name):
     if find_project(project_name):
-        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+        User.objects(username=current_user.username).update_one(
+            push__followed_projects=project_name)
         return redirect(url_for('main.project_overview', project_name=project_name))
     else:
         flash('Project not found!')
         return redirect(url_for('main.index'))
 
+
 @main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
 def unfollowed_project(project_name):
-    User.objects(username=current_user.username).update_one(pull__followed_projects=project_name)
+    User.objects(username=current_user.username).update_one(
+        pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
- 
+
+
 """
 @main.route('/followed_fork/<fork_name>', methods=['GET', 'POST'])
 @login_required
@@ -210,23 +236,24 @@ def unfollowed_fork(fork_name):
     return redirect(url_for('main.index'))
 """
 
+
 @main.route('/compare_fork', methods=['GET', 'POST'])
-def compare_fork():    
+def compare_fork():
     """ Compare two forks by Key words
     """
     form = CompareForkForm()
     if form.validate_on_submit():
-        return redirect(url_for('main.compare_fork', form=form, fork1 = form.fork1.data, fork2 = form.fork2.data)) 
+        return redirect(url_for('main.compare_fork', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
 
     _fork1_name = request.args.get("fork1")
     _fork2_name = request.args.get("fork2")
     if _fork1_name and _fork2_name:
-        _fork1 = ProjectFork.objects(fork_name = _fork1_name).first()
-        _fork2 = ProjectFork.objects(fork_name = _fork2_name).first()
+        _fork1 = ProjectFork.objects(fork_name=_fork1_name).first()
+        _fork2 = ProjectFork.objects(fork_name=_fork2_name).first()
         if _fork1 and _fork2:
             _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
             _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
-            return render_template('compare_fork.html', form=form, common_files = _common_files, common_words = _common_words)
+            return render_template('compare_fork.html', form=form, common_files=_common_files, common_words=_common_words)
         else:
             if _fork1 is None:
                 flash('(%s) is not found!' % form.fork1.data)
@@ -235,11 +262,13 @@ def compare_fork():
             return redirect(url_for('main.compare_fork'))
     return render_template('compare_fork.html', form=form)
 
+
 @main.route('/about')
 def about():
     """About Page
     """
     return render_template('about.html')
+
 
 @main.route('/login')
 def login():

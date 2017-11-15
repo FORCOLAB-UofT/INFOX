@@ -5,6 +5,7 @@ from flask_login import current_user
 
 from .models import Permission
 
+
 def permission_required(permission):
     """ permission_required decorator
     :param permission: the permission
@@ -18,6 +19,7 @@ def permission_required(permission):
             return f(*args, **kwargs)
         return inner
     return decorator
+
 
 def admin_required(f):
     """ admin verify

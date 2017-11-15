@@ -7,7 +7,7 @@ from flask_script import Manager
 # CONFIGURE_MODE = "production"
 CONFIGURE_MODE = "default"
 
-print ("configure mode = ", CONFIGURE_MODE)
+print("configure mode = ", CONFIGURE_MODE)
 app = create_app(CONFIGURE_MODE)
 
 manager = Manager(app)

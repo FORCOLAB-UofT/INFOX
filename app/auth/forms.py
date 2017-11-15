@@ -6,8 +6,10 @@ from wtforms.validators import (DataRequired, Length, Email,
 
 from ..models import User
 
+
 class LoginForm(FlaskForm):
-    email_or_username = StringField('Email or Username', validators=[DataRequired()])
+    email_or_username = StringField(
+        'Email or Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Login')
@@ -28,9 +30,10 @@ class RegistrationForm(FlaskForm):
 
     def validate_email(self, field):
         pass
-        
+
     def validate_username(self, field):
         pass
+
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Old password',

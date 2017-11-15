@@ -8,6 +8,7 @@ text_suffix = []
 
 language_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
+
 def init():
     global FLAGS_load_language_data
     if FLAGS_load_language_data:
@@ -36,12 +37,14 @@ def init():
                             language_stop_words[language].append(word)
     FLAGS_load_language_data = True
 
+
 def get_language_stop_words(language):
     init()
     if language in language_stop_words:
         return language_stop_words[language]
     else:
         return []
+
 
 def get_language_on_suffix(file_suffix):
     init()
@@ -52,9 +55,11 @@ def get_language_on_suffix(file_suffix):
             file_language = language
     return file_language
 
+
 def get_language(file):
     file_name, file_suffix = os.path.splitext(file)
     return get_language_on_suffix(file_suffix)
+
 
 def is_text(file):
     init()

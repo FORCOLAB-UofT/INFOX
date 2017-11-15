@@ -1,7 +1,8 @@
 import platform
 
+
 class Config:
-    SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;O0' # a random string.
+    SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0CFE)&H12EAa;O0'  # a random string.
     MONGODB_SETTINGS = {
         'db': 'test',
         'host': '127.0.0.1',
@@ -9,7 +10,7 @@ class Config:
     }
     SHOW_NUMBER_FOR_PAGE = 6
     ADMIN_USERNAME = 'admin'
-    
+
     if platform.system() == 'Darwin':
         LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
     elif platform.system() == 'Linux':
@@ -20,17 +21,19 @@ class Config:
     for i in ACCESS_TOKEN_EN:
         ACCESS_TOKEN = ACCESS_TOKEN + chr(ord(i) - 1)
     ALLOW_UPDATE = False
-    
+
+
 class DevelopmentConfig(Config):
     DEBUG = True
     RECRAWLER_MODE = False
 
+
 class ProductionConfig(Config):
     RECRAWLER_MODE = False
+
 
 config = {
     'production': ProductionConfig,
     'development': DevelopmentConfig,
     'default': DevelopmentConfig
 }
-

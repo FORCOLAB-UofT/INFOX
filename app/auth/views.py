@@ -25,12 +25,14 @@ def login():
             flash('User not found!')
     return render_template('auth/login.html', form=form)
 
+
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Login Successfully!')
     return redirect(url_for('main.start'))
+
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -39,13 +41,15 @@ def register():
         if User.objects(username=form.username.data).first() is None:
             user = User(email=form.email.data,
                         username=form.username.data,
-                        password_hash=generate_password_hash(form.password.data),
+                        password_hash=generate_password_hash(
+                            form.password.data),
                         permission=Permission.NORMAL_USER).save()
             flash('Register Successful!')
             return redirect(url_for('auth.login'))
         else:
             flash('Username already exist!')
     return render_template('auth/register.html', form=form)
+
 
 @auth.route('/change-password', methods=['GET', 'POST'])
 @login_required
@@ -57,7 +61,8 @@ def change_password():
         return redirect(url_for('main.index'))
     if current_user == _user and form.validate_on_submit():
         if check_password_hash(current_user.password_hash, form.old_password.data):
-            User.objects(username=current_user.username).update_one(set__password_hash=generate_password_hash(form.new_password.data))
+            User.objects(username=current_user.username).update_one(
+                set__password_hash=generate_password_hash(form.new_password.data))
             flash('Password has changed!')
             return redirect(url_for('main.index'))
         else:
