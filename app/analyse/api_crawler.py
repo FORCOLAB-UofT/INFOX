@@ -17,8 +17,10 @@ base_url = 'https://api.github.com/repos/%s/%s'
 base_url_with_page = 'https://api.github.com/repos/%s/%s/%s?page=%d'
 api_limit_error = 'API rate limit exceeded'
 
+
 def validate_access_token(access_token):
     return len(access_token) == 40
+
 
 def get_api(author, repo, type="", access_token=""):
     """The general function to get the data using Github's API.
@@ -48,7 +50,7 @@ def get_api(author, repo, type="", access_token=""):
                 raise Exception(api_limit_error)
         except requests.RequestException as error:
             print(error)
-        print ('finish crawling!')
+        print('finish crawling!')
         return response.json()
 
     page_num = 0
@@ -81,8 +83,9 @@ def get_api(author, repo, type="", access_token=""):
         for item in json_result:
             result.append(item)
 
-    print ('finish crawling! Get all the %s !' % (type))
+    print('finish crawling! Get all the %s !' % (type))
     return result
+
 
 def project_info_crawler(project_full_name):
     author_name, project_name = project_full_name.split('_')
@@ -91,7 +94,7 @@ def project_info_crawler(project_full_name):
     if not validate_access_token(access_token):
         access_token = ''
     main_pain = save_path + '/' + author_name + '_' + project_name
-    
+
     print("-----start crawling for %s-----" % project_name)
 
     if current_app.config['ALLOW_UPDATE'] or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
@@ -111,8 +114,8 @@ def project_info_crawler(project_full_name):
         localfile_tool.write_to_file(main_pain + '/' + author + '/commits.json', commits_list)
     """
 
+
 """
 if __name__ == '__main__':
     project_info_crawler('shuiblue/INFOX')
 """
-

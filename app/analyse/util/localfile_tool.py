@@ -1,6 +1,7 @@
 import os
 import json
 
+
 def write_to_file(file, obj):
     """ Write the obj as json to file.
     It will overwrite the file if it exist
@@ -16,7 +17,8 @@ def write_to_file(file, obj):
         os.makedirs(path)
     with open(file, 'w') as write_file:
         write_file.write(json.dumps(obj))
-    print ('finish write %s to file....' % file)
+    print('finish write %s to file....' % file)
+
 
 def get_repo_info(main_path):
     """ Get the info of repo.
@@ -28,6 +30,7 @@ def get_repo_info(main_path):
     with open(main_path + '/repo_info.json') as read_file:
         repo_info = json.load(read_file)
     return repo_info
+
 
 def get_forks_info_dict(main_path):
     """ Get the info of fork.
@@ -47,6 +50,7 @@ def get_forks_info_dict(main_path):
             fork_name = fork["full_name"].split('/')[0]
             forks_info[fork_name] = fork
     return forks_info
+
 
 """
 def get_forks_list(main_path):
