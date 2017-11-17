@@ -11,12 +11,7 @@ from flask import current_app
 from .util import localfile_tool
 
 # commits_page_limit = 1 # 1 is just for checking the status, if you need more commits set it larger.
-
-
-base_url = 'https://api.github.com/repos/%s/%s'
-base_url_with_page = 'https://api.github.com/repos/%s/%s/%s?page=%d'
 api_limit_error = 'API rate limit exceeded'
-
 
 def add_access_token(url):
     if len(current_app.config['ACCESS_TOKEN']) == 40:
@@ -24,11 +19,8 @@ def add_access_token(url):
     else:
         return url
 
-# info_type : repo, starred
-def get_user_info(username, info_type):
+def get_api(url):
     try:
-        url = 'https://api.github.com/users/%s/%s' % (username, info_type)
-        url = add_access_token(url)
         response = requests.get(url)
         if api_limit_error in response.text:
             raise Exception(api_limit_error)
@@ -36,10 +28,38 @@ def get_user_info(username, info_type):
         print(error)
     return response.json()
 
+def page_iter(base_url):    
+    page_num = 0
+    result = []
+    # Do the loop until getting the empty response.
+    last_json_result = None
+    while True:
+        page_num += 1
+        url = add_access_token(base_url + ('?page=%d' % page_num))
+        json_result = get_api(url)
+        #print(json_result)
+        # If the response is empty, then break the loop.
+        if not json_result:
+            break
+        if json_result == last_json_result:
+            break
+        last_json_result = json_result
+
+        for item in json_result:
+            result.append(item)
+
+    print('finish crawling! Get all pages for %s !' % base_url)
+    return result
+
+# info_type : repo, starred
+def get_user_info(username, info_type):
+    return page_iter('https://api.github.com/users/%s/%s' % (username, info_type))
+
 def get_user_starred_list(username):
     raw_data = get_user_info(username, 'starred')
     starred_list = [starred["full_name"] for starred in raw_data]
-    localfile_tool.write_to_file(current_app.config['LOCAL_DATA_PATH'] + '/users_info/' + username + "/starred.json" , raw_data)
+    if raw_data:
+        localfile_tool.write_to_file(current_app.config['LOCAL_DATA_PATH'] + '/users_info/' + username + "/starred.json" , raw_data)
     return starred_list
 
 def get_repo(author, repo, type=""):
@@ -58,51 +78,10 @@ def get_repo(author, repo, type=""):
         If the type is not set, return a json object for response.
         If the type is set, return a list of json objects for all the items.
     """
-
     if not type:
-        try:
-            url = base_url % (author, repo)
-            url = add_access_token(url)
-            response = requests.get(url)
-            if api_limit_error in response.text:
-                raise Exception(api_limit_error)
-        except requests.RequestException as error:
-            print(error)
-        print('finish crawling!')
-        return response.json()
-
-    page_num = 0
-    result = []
-    # Do the loop until getting the empty response.
-    while True:
-        page_num += 1
-
-        # This is manual limit to speed up checking the status.
-        # if type == "commits" and page_num > commits_page_limit:
-        #     break
-
-        # print('page_num = %d' % page_num)
-        try:
-            url = base_url_with_page % (author, repo, type, page_num)
-            url = add_access_token(url)
-            response = requests.get(url)
-            if api_limit_error in response.text:
-                raise Exception(api_limit_error)
-        except requests.RequestException as error:
-            print(error)
-
-        json_result = response.json()
-
-        # If the response is empty, then break the loop.
-        if not json_result:
-            break
-
-        for item in json_result:
-            result.append(item)
-
-    print('finish crawling! Get all the %s !' % (type))
-    return result
-
+        return get_api('https://api.github.com/repos/%s/%s' % (author, repo))
+    else:
+        return page_iter('https://api.github.com/repos/%s/%s/%s' % (author, repo, type))
 
 def project_info_crawler(project_full_name):
     author_name, project_name = project_full_name.split('_')
