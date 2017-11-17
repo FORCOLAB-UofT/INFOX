@@ -1,9 +1,9 @@
 import os
 import re
 import nltk
+import itertools
 from nltk.stem.porter import PorterStemmer
 from collections import Counter
-import itertools
 
 from . import language_tool
 
