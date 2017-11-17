@@ -14,7 +14,6 @@
                 <th>Name</th>
                 <th>Total Changed File</th>
                 <th>Total Changed Line</th>
-                <th>Key Words(Counter)</th>
                 <th>Key Words(TF-IDF)</th>
                 <th>Last Committed</th>
                 <th>Created At</th>
@@ -59,14 +58,13 @@
                         </div>
                 </td>
                 <td>{{ fork.total_changed_line_number }}</td>
-                <td>{{ fork.key_words[:5] }}</td>
                 {% if fork.key_words_by_tfidf %}
-                    <td>{{ fork.key_words_by_tfidf[:5] }}</td>
+                    <td>{{ fork.key_words_by_tfidf[:7] }}</td>
                 {% else %}
-                    {% if fork.key_words_by_tdidf[:5] %}
-                        <td>{{ fork.key_words_by_tdidf[:5] }}</td>
+                    {% if fork.key_words_by_tdidf[:7] %}
+                        <td>{{ fork.key_words_by_tdidf[:7] }}</td>
                     {% else %}
-                        <td>{{ "" }}</td>
+                        <td>{{ fork.key_words[:7] }}</td>
                     {% endif %}
                 {% endif %}
                 <!--
