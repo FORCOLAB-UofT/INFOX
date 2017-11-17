@@ -6,16 +6,23 @@
     <div class="page-header">
         <h1> About </h1>
     </div>
-    <div class="about-information">    
-        <h4> Contact </h4> 
-            <div> Email: fancycoder0@gmail.com </div>
+    <div class="about-information">
+        <div class="contact-info"> 
+            <h4> Contact </h4> 
+                <div> Email: fancycoder0@gmail.com </div>
+        </div>
         <hr>
         <div class="people-list">
             <h4> People </h4>
             <div> </div><a href="https://drive.google.com/open?id=1ApEVBepDBSyaZiMxmUrpB3s-20vmRY-G">Luyao Ren</a> </div>
             <div> Shurui Zhou </div>
             <div> <a href="https://www.cs.cmu.edu/~ckaestne/"> Christian Kästner </a> </div>
-            <div> </div><a href="http://www.itu.dk/people/wasowski/"> Andrzej Wąsowski </a> </div>
+            <div> <a href="http://www.itu.dk/people/wasowski/"> Andrzej Wąsowski </a> </div>
+        </div>
+        <hr>
+        <div class="feedback">
+            <h4> Feedback </h4>
+            {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
         </div>
     </div>
 {% endblock %}}
