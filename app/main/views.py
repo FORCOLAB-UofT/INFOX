@@ -11,19 +11,19 @@ from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
 
-def find_project(project_name):
+def db_find_project(project_name):
     return Project.objects(project_name=project_name).first()
 
 
-def approximate_find_project_project_name(project_name):
-    _exact_project = find_project(project_name)
+def db_approximate_find_project_project_name(project_name):
+    _exact_project = db_find_project(project_name)
     if _exact_project:
         return _exact_project
     else:
         return Project.objects(project_name__endswith=project_name).first()
 
 
-def delete_project(project_name):
+def db_delete_project(project_name):
     Project(project_name=project_name).delete()
     ProjectFork(project_name=project_name).delete()
     ChangedFile(project_name=project_name).delete()
@@ -46,7 +46,7 @@ def discover():
     form = SearchProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data.replace('/', '_')
-        _find_result = approximate_find_project_project_name(
+        _find_result = db_approximate_find_project_project_name(
             _input_project_name)
         if _find_result:
             return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
@@ -82,7 +82,7 @@ def index():
 @login_required
 @admin_required
 def project_refresh(project_name):
-    if not find_project(project_name):
+    if not db_find_project(project_name):
         abort(404)
     analyser.start(project_name)
     return redirect(url_for('main.project_overview', project_name=project_name))
@@ -102,7 +102,7 @@ def project_overview(project_name):
     """ Overview of the project
     :param project_name
     """
-    if not find_project(project_name):
+    if not db_find_project(project_name):
         abort(404)
 
     _contain_key_word = request.args.get("key_words")
@@ -115,7 +115,6 @@ def project_overview(project_name):
     if _project.analyser_progress and _project.analyser_progress != "100%":
         flash('The Project (%s) is updating!' % project_name)
 
-    # TODO fixed repeated code.
     _all_changed_files = {}
     _changed_files = ChangedFile.objects(project_name=project_name)
     for file in _changed_files:
@@ -148,20 +147,25 @@ def project_overview(project_name):
                            all_changed_files=_all_changed_files, marked_files=_marked_files, pagination=pagination)
 
 
+def db_add_project(project_name):
+    _project_name = project_name.replace('/', '_')
+    if not db_find_project(_project_name):
+        analyser.start(_project_name)
+        return True
+    else:
+        return False
+
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
     form = AddProjectForm()
     if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        _input_project_name = _input_project_name.replace('/', '_')
-        if not find_project(_input_project_name):
-            analyser.start(_input_project_name)
-            flash('The Project (%s) is added. The data is loading......' %
-                  _input_project_name)
+        _input = form.project_name.data
+        if db_add_project(_input):
+            flash('The Project (%s) is added. The data is loading......' % _input)
             return redirect(url_for('main.index'))
         else:
-            flash('The Project (%s) has already added!' % _input_project_name)
+            flash('The Project (%s) has already added!' % _input)
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
 
@@ -194,8 +198,8 @@ def delete():
     form = DeleteProjectForm()
     if form.validate_on_submit():
         _input_project_name = form.project_name.data
-        if find_project(_input_project_name):
-            delete_project(_input_project_name)
+        if db_find_project(_input_project_name):
+            db_delete_project(_input_project_name)
             flash('The project (%s) is already deleted!' % _input_project_name)
             return redirect(url_for('main.index'))
         else:
@@ -203,18 +207,21 @@ def delete():
             return redirect(url_for('main.delete'))
     return render_template('delete.html', form=form)
 
+def db_followed_project(project_name):
+    if db_find_project(project_name):
+        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+        return True
+    else:
+        return False
 
 @main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
 def followed_project(project_name):
-    if find_project(project_name):
-        User.objects(username=current_user.username).update_one(
-            push__followed_projects=project_name)
-        return redirect(url_for('main.project_overview', project_name=project_name))
+    if db_followed_project(project_name):
+        flash('Followed Project %s successfully!' % project_name) 
     else:
         flash('Project not found!')
-        return redirect(url_for('main.index'))
-
+    return redirect(url_for('main.project_overview', project_name=project_name))
 
 @main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
 @login_required

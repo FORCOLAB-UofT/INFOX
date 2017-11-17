@@ -5,15 +5,22 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from . import auth
 from .. import db
 from ..models import User, Permission
-from .forms import LoginForm, RegistrationForm, ChangePasswordForm
+from .forms import *
 
+from ..analyse.api_crawler import get_user_starred_list
+from ..main.views import db_add_project
+from ..main.views import db_followed_project
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.objects(email=form.email_or_username.data).first()
-        if user is None:
+        user = User.objects(email=form.email_or_username.data)
+        user_count = user.count()
+        if user_count > 1:
+            flash('You maybe use the same email for different accounts. Please use username to login.')            
+            return redirect(url_for('auth.login'))
+        elif user_count == 0:
             user = User.objects(username=form.email_or_username.data).first()
         if user is not None:
             if check_password_hash(user.password_hash, form.password.data):
@@ -49,6 +56,26 @@ def register():
         else:
             flash('Username already exist!')
     return render_template('auth/register.html', form=form)
+
+
+@auth.route('/load_from_github', methods=['GET', 'POST'])
+def load_from_github():
+    class ProjectSelection(FlaskForm):
+        pass
+    _starred_project = get_user_starred_list(current_user.username)
+    for project in _starred_project:
+        setattr(ProjectSelection, project, BooleanField(project))
+    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
+    form = ProjectSelection()
+    if form.validate_on_submit():
+        for project in _starred_project:
+            print(getattr(form, project))
+        for field in form:
+            if field.type == "BooleanField" and field.data:
+                db_add_project(field.id)
+        flash('Add successfully!')
+        return redirect(url_for('main.index'))
+    return render_template('auth/load_from_github.html', form=form)
 
 
 @auth.route('/change-password', methods=['GET', 'POST'])
