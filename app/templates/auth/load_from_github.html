@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}INFOX - Load from Github{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Load from Github</h1>
+</div>
+<h3> Following is your starred project on Github. </h3>
+<h3> Select them to load into INFOX. </h3>
+    <form method="POST">
+        {% for field in form %}
+            {% if field.type == "BooleanField" %}
+                {{ field.label }} {{ field }} <br>
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+    </form>
+
+{% endblock %}

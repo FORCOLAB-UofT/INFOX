@@ -18,11 +18,31 @@ base_url_with_page = 'https://api.github.com/repos/%s/%s/%s?page=%d'
 api_limit_error = 'API rate limit exceeded'
 
 
-def validate_access_token(access_token):
-    return len(access_token) == 40
+def add_access_token(url):
+    if len(current_app.config['ACCESS_TOKEN']) == 40:
+        return url + ('?access_token=%s' % current_app.config['ACCESS_TOKEN'])
+    else:
+        return url
 
+# info_type : repo, starred
+def get_user_info(username, info_type):
+    try:
+        url = 'https://api.github.com/users/%s/%s' % (username, info_type)
+        url = add_access_token(url)
+        response = requests.get(url)
+        if api_limit_error in response.text:
+            raise Exception(api_limit_error)
+    except requests.RequestException as error:
+        print(error)
+    return response.json()
 
-def get_api(author, repo, type="", access_token=""):
+def get_user_starred_list(username):
+    raw_data = get_user_info(username, 'starred')
+    starred_list = [starred["full_name"] for starred in raw_data]
+    localfile_tool.write_to_file(current_app.config['LOCAL_DATA_PATH'] + '/users_info/' + username + "/starred.json" , raw_data)
+    return starred_list
+
+def get_repo(author, repo, type=""):
     """The general function to get the data using Github's API.
     There is two cases:
     when type is not empty, iterator for page is need which means the data is iterated(like get all the forks for the repo),
@@ -31,7 +51,6 @@ def get_api(author, repo, type="", access_token=""):
         author: like FancyCoder0
         repo: like INFOX
         type: one of [forks, branches, commits]
-        access_token: your personal access token for limit of Github's API.
         For example:
             get_api('FancyCoder0', 'INFOX', "")
             get_api('FancyCoder0', 'INFOX', "forks")
@@ -43,8 +62,7 @@ def get_api(author, repo, type="", access_token=""):
     if not type:
         try:
             url = base_url % (author, repo)
-            if access_token:
-                url = url + ('?access_token=%s' % access_token)
+            url = add_access_token(url)
             response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
@@ -66,8 +84,7 @@ def get_api(author, repo, type="", access_token=""):
         # print('page_num = %d' % page_num)
         try:
             url = base_url_with_page % (author, repo, type, page_num)
-            if access_token:
-                url = url + ('&access_token=%s' % access_token)
+            url = add_access_token(url)
             response = requests.get(url)
             if api_limit_error in response.text:
                 raise Exception(api_limit_error)
@@ -90,18 +107,15 @@ def get_api(author, repo, type="", access_token=""):
 def project_info_crawler(project_full_name):
     author_name, project_name = project_full_name.split('_')
     save_path = current_app.config['LOCAL_DATA_PATH']
-    access_token = current_app.config['ACCESS_TOKEN']
-    if not validate_access_token(access_token):
-        access_token = ''
     main_pain = save_path + '/' + author_name + '_' + project_name
 
     print("-----start crawling for %s-----" % project_name)
 
     if current_app.config['ALLOW_UPDATE'] or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
-        repo_info = get_api(author_name, project_name, '', access_token)
+        repo_info = get_repo(author_name, project_name, '')
         localfile_tool.write_to_file(main_pain + '/repo_info.json', repo_info)
 
-        forks_list = get_api(author_name, project_name, 'forks', access_token)
+        forks_list = get_repo(author_name, project_name, 'forks')
         localfile_tool.write_to_file(main_pain + '/forks.json', forks_list)
 
     print("-----finish crawling for %s-----" % project_name)
@@ -110,7 +124,7 @@ def project_info_crawler(project_full_name):
     # Get all forks' commits.
     for fork in forks_list:
         author, repo = fork["full_name"].split('/')
-        commits_list = get_api(author, repo, "commits", access_token)
+        commits_list = get_api(author, repo, "commits")
         localfile_tool.write_to_file(main_pain + '/' + author + '/commits.json', commits_list)
     """
 

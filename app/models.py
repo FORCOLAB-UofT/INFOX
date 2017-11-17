@@ -50,6 +50,7 @@ class User(UserMixin, db.Document):
     username = db.StringField(unique=True, required=True)
     email = db.StringField()
     password_hash = db.StringField()
+    github_name = db.StringField()
     permission = db.IntField()
     last_seen = db.DateTimeField()
     followed_projects = db.ListField(db.StringField())
