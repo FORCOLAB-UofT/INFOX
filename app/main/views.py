@@ -124,8 +124,13 @@ def project_overview(project_name):
     _marked_files = set()
     pagination = None
     if _contain_key_word:
-        _forks = ProjectFork.objects(project_name=project_name, key_words=_contain_key_word, file_list__ne=[
-        ]).order_by('-last_committed_time')
+
+        _forks = ProjectFork.objects(project_name=project_name, key_words_by_tdidf=_contain_key_word, file_list__ne=[]).order_by('-last_committed_time')
+        if not _forks:
+            _forks = ProjectFork.objects(project_name=project_name, key_words_by_tfidf=_contain_key_word, file_list__ne=[]).order_by('-last_committed_time')
+            if not _forks: 
+                _forks = ProjectFork.objects(project_name=project_name, key_words=_contain_key_word, file_list__ne=[]).order_by('-last_committed_time')
+        
         _contain_key_words_changed_files = ChangedFile.objects(
             project_name=project_name, key_words=_contain_key_word)
         for file in _contain_key_words_changed_files:
