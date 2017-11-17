@@ -68,8 +68,6 @@ def load_from_github():
     setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
     form = ProjectSelection()
     if form.validate_on_submit():
-        for project in _starred_project:
-            print(getattr(form, project))
         for field in form:
             if field.type == "BooleanField" and field.data:
                 db_add_project(field.id)

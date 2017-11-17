@@ -221,7 +221,7 @@ def followed_project(project_name):
         flash('Followed Project %s successfully!' % project_name) 
     else:
         flash('Project not found!')
-    return redirect(url_for('main.project_overview', project_name=project_name))
+    return redirect(url_for('main.discover'))
 
 @main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
