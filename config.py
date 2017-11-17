@@ -9,6 +9,7 @@ class Config:
         'port': 27017
     }
     SHOW_NUMBER_FOR_PAGE = 6
+    SHOW_NUMBER_FOR_FORKS = 15
     ADMIN_USERNAME = 'admin'
 
     if platform.system() == 'Darwin':

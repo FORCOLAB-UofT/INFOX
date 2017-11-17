@@ -35,9 +35,9 @@
     {% endif %}
 
     <div class="col-lg-4 pull-right">
-        
         <div class="col-md-6">
-            {% if forks %}<h4> Active Fork: {{ forks.count() }} </h4>{% endif %}
+            {% if active_fork_number %}<h5> Active Fork: {{ active_fork_number }} </h5>{% endif %}
+            {% if key_word %}<h5> Search for:  {{ key_word }} </h5>{% endif %}
         </div>
 
         <div class="col-md-6">
@@ -49,9 +49,11 @@
     <div class="forks-tabs">
         {% include "_forks.html" %}
     </div>
-    {#
-    <div class="pagination">
-        {{ render_pagination(pagination, '.project_overview', projectname = project.project_name) }}
-    </div>
-    #}
+
+    {% if pagination %}
+        <div class="pagination">
+            {{ render_pagination(pagination, '.project_overview', args={ 'project_name':project.project_name }) }}
+        </div>
+    {% endif %}
+
 {% endblock %}

@@ -38,3 +38,7 @@ class FollowedButton():
 
 class UnFollowedButton():
     submit = SubmitField('UnFollowed')
+
+class FeedbackForm(FlaskForm):
+    feedback = TextAreaField('')
+    submit = SubmitField('Send to us')
