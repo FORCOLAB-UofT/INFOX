@@ -21,17 +21,15 @@ class Config:
     ACCESS_TOKEN = ''
     for i in ACCESS_TOKEN_EN:
         ACCESS_TOKEN = ACCESS_TOKEN + chr(ord(i) - 1)
-    ALLOW_UPDATE = False
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    ALLOW_UPDATE = False
     RECRAWLER_MODE = False
-
 
 class ProductionConfig(Config):
+    ALLOW_UPDATE = True
     RECRAWLER_MODE = False
-
 
 config = {
     'production': ProductionConfig,
