@@ -88,7 +88,7 @@ def project_info_crawler(project_full_name):
 
     print("-----start crawling for %s-----" % project_name)
 
-    if current_app.config['ALLOW_UPDATE'] or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
+    if current_app.config['ALLOW_FORKS_UPDATE'] or (not os.path.exists(main_pain + '/repo_info.json')) or (not os.path.exists(main_pain + '/forks.json')):
         repo_info = get_repo(author_name, project_name, '')
         localfile_tool.write_to_file(main_pain + '/repo_info.json', repo_info)
 

@@ -24,11 +24,11 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    ALLOW_UPDATE = False
-    RECRAWLER_MODE = False
+    ALLOW_FORKS_UPDATE = True
+    RECRAWLER_MODE = True
 
 class ProductionConfig(Config):
-    ALLOW_UPDATE = True
+    ALLOW_FORKS_UPDATE = True
     RECRAWLER_MODE = False
 
 config = {

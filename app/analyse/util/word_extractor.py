@@ -92,12 +92,9 @@ def get_words_from_text(file, text):
 def get_counter(tokens):
     return Counter(tokens)
 
-
-def get_top_words_tuple(tokens, top_number):
-    counter = get_counter(tokens)
-    return counter.most_common(top_number)
-
-
-def get_top_words_list(tokens, top_number):
-    counter = get_counter(tokens)
-    return [x[0] for x in counter.most_common(top_number)]
+def get_top_words(tokens, top_number, list_option = True):
+    counter = get_counter(tokens).most_common(top_number)
+    if list_option:
+        return [x for x, y in counter]
+    else:
+        return dict([(x,y) for x, y in counter])

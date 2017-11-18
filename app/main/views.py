@@ -96,12 +96,12 @@ def fork_refresh(fork_name):
     pass
 """
 
-
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
     """ Overview of the project
     :param project_name
     """
+
     if not db_find_project(project_name):
         abort(404)
 
@@ -169,28 +169,6 @@ def add():
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
 
-
-"""
-@main.route('/localadd', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def localadd():
-    form = AddProjectForm()
-    if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        analyser.analyse_project(_input_project_name, False)
-        return redirect(url_for('main.project_overview', project_name=_input_project_name))
-    return render_template('localadd.html', form=form)
-"""
-
-"""
-@main.route('/load_from_github',methods=['GET', 'POST'])
-@login_required
-def load_from_github():
-    pass
-"""
-
-
 @main.route('/delete', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -230,28 +208,6 @@ def unfollowed_project(project_name):
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
 
-
-"""
-@main.route('/followed_fork/<fork_name>', methods=['GET', 'POST'])
-@login_required
-def followed_fork(fork_name):
-    _fork = ProjectFork.objects(fork_name = fork_name).first() # guarteen the fork name unique
-    if _fork:
-        current_user.update_one(push__followed_forks=fork_name)
-        current_user.update_one(push__followed_projects=_fork.project_name)
-        return redirect(url_for('main.project_overview', project_name=_fork.project_name))
-    else:
-        flash('Fork not found!')
-    return redirect(url_for('main.index'))
-
-@main.route('/unfollowed_fork/<fork_name>', methods=['GET', 'POST'])
-@login_required
-def unfollowed_fork(fork_name):
-    current_user.update_one(pull__followed_forks=fork_name)
-    return redirect(url_for('main.index'))
-"""
-
-
 @main.route('/compare_fork', methods=['GET', 'POST'])
 def compare_fork():
     """ Compare two forks by Key words
@@ -290,9 +246,32 @@ def about():
     return render_template('about.html', form=form)
 
 
-@main.route('/login')
-def login():
-    form = LoginForm()
+"""
+@main.route('/localadd', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def localadd():
+    form = AddProjectForm()
     if form.validate_on_submit():
-        login_user(user)
-        flask.flash('Logged in successfully.')
+        _input_project_name = form.project_name.data
+        analyser.analyse_project(_input_project_name, False)
+        return redirect(url_for('main.project_overview', project_name=_input_project_name))
+    return render_template('localadd.html', form=form)
+
+@main.route('/followed_fork/<fork_name>', methods=['GET', 'POST'])
+@login_required
+def followed_fork(fork_full_name):
+    _fork = ProjectFork.objects(full_name = fork_full_name).first()
+    if _fork:
+        current_user.update_one(push__followed_forks=fork_full_name)
+        current_user.update_one(push__followed_projects=_fork.project_name)
+        return True
+    else:
+        return False
+
+@main.route('/unfollowed_fork/<fork_name>', methods=['GET', 'POST'])
+@login_required
+def unfollowed_fork(fork_full_name):
+    current_user.update_one(pull__followed_forks=fork_full_name)
+ 
+"""
