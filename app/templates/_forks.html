@@ -3,7 +3,7 @@
         <colgroup>
             <col style="width:20%">
             <col style="width:5%">
-            <col style>
+            <col style="width:5%">
             <col style>
             <col style>
             <col style="width:10%">
@@ -12,6 +12,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Commits</th>
                 <th>Total Changed File</th>
                 <th>Total Changed Line</th>
                 <th>Key Words(TF-IDF)</th>
@@ -24,7 +25,23 @@
             <tr>
                 <td>
                     <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
-                    
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{ fork.total_commit_number }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="commit_list">
+                            {% for commit in fork.commit_list %}
+                            <li>
+                                <a href="{{ commit["link"] }}">
+                                    {{ commit["title"] }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>                   
                 </td>
                 <td>
                         <div class="dropdown">
@@ -61,11 +78,7 @@
                 {% if fork.key_words_by_tfidf %}
                     <td>{{ fork.key_words_by_tfidf[:7] }}</td>
                 {% else %}
-                    {% if fork.key_words_by_tdidf[:7] %}
-                        <td>{{ fork.key_words_by_tdidf[:7] }}</td>
-                    {% else %}
-                        <td>{{ fork.key_words[:7] }}</td>
-                    {% endif %}
+                    <td>{{ fork.key_words[:7] }}</td>
                 {% endif %}
                 <!--
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>

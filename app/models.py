@@ -11,10 +11,14 @@ class ChangedFile(db.Document):
     file_language = db.StringField()
     file_suffix = db.StringField()
     diff_link = db.StringField()
-    changed_code = db.StringField()
+    # changed_code = db.StringField()
     changed_line_number = db.IntField()
     key_words = db.ListField(db.StringField())
+    key_words_dict = db.DictField()
     key_stemmed_words = db.ListField(db.StringField())
+    key_stemmed_words_dict = db.DictField()
+    key_words_tfidf = db.ListField(db.StringField())
+    key_words_tf_idf_dict = db.DictField()
     variable = db.ListField(db.StringField())
     class_name = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
@@ -28,14 +32,16 @@ class ProjectFork(db.Document):
     created_time = db.DateTimeField()
     total_changed_line_number = db.IntField()
     total_changed_file_number = db.IntField()
+    total_commit_number = db.IntField()
     file_list = db.ListField(db.StringField())
+    commit_list = db.ListField(db.DictField())
     key_words = db.ListField(db.StringField())
+    key_words_dict = db.DictField()
     key_stemmed_words = db.ListField(db.StringField())
-    key_words_by_tfidf = db.ListField(db.StringField())
-    key_words_by_tdidf = db.ListField(db.StringField())
-    key_words_counter_dict = db.DictField()
+    key_stemmed_words_dict = db.DictField()
+    key_words_tfidf = db.ListField(db.StringField())
     key_words_tf_idf_dict = db.DictField()
-
+    tags = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
@@ -88,12 +94,10 @@ def load_user(username):
 
 
 class Permission:
-    """
-    权限类，用于指定权限常量。当常量组合时可以构造不同身份权限。
-    """
     FOLLOW = 1
     ADD = 2
     DELETE = 4
     REFRESH = 8
     NORMAL_USER = 7
-    ADMINISTER = 15           # 管理网站
+    ADMINISTER = 15
+

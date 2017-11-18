@@ -1,9 +1,9 @@
 import os
 from selenium import webdriver
 import requests
+from bs4 import BeautifulSoup
 
-
-def compare(project_full_name):
+def fetch_compare_page(project_full_name):
     """Compare the fork with the main branch.
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -19,7 +19,15 @@ def compare(project_full_name):
                 changed_line,
                 changed_code
             }
+            commit_list {
+                author,
+                title,
+                description,
+                link
+            }
     """
+    default_result_value = {"changed_line": -1, "changed_file_number": -1, "file_list": [], "commit_list": []}
+    empty_result_value = {"changed_line": 0, "changed_file_number": 0, "file_list": [], "commit_list": []}
 
     print("start : %s" % project_full_name)
     url = 'https://github.com/%s/compare' % project_full_name
@@ -30,22 +38,46 @@ def compare(project_full_name):
     try:
         # It will jump to https://github.com/author/repo/compare/version...author:repo
         driver.get(url)
-        # driver.save_screenshot('screen.png')
-        # with open('1.html','w') as f:
-        #     f.write(driver.page_source)
     except:
         print("error on get diff for %s!" % project_full_name)
-        return {"changed_line": -1,
-                "changed_file_number": -1,
-                "file_list": []}
-
-    # current_url = requests.get(url).url
+        return default_result_value
 
     try:
-        # print (driver.current_url)
         repo_content = driver.find_element_by_class_name("repository-content")
     except:
-        print("The compare result is empty.")
+        print("The compare result is empty!")
+
+    commit_list = []
+    try:
+        commit_list_on_page = driver.find_elements_by_class_name('commit-message ')
+        for commit in commit_list_on_page:
+            href = commit.find_element_by_class_name('message').get_attribute('href')
+            soup = BeautifulSoup(requests.get(href).content, 'html.parser')
+            try:
+                author = soup.find('a', {'class': 'user-mention'}).text
+            except:
+                author = ""
+            try:
+                title = soup.find('p', {'class': 'commit-title'}).text
+            except:
+                title = ""
+            try:
+                desc = soup.find('div', {'class': 'commit-desc'}).text
+            except:
+                desc = ""
+            if author or title or desc or href:
+                commit_list.append({
+                    "author":author,
+                    "title":title,
+                    "description":desc,
+                    "link":href
+                    })
+                print(author + "'s commit")
+                # print(title)
+                # print(desc)
+                # print(href)
+    except:
+        print("Can not get commit list!")
 
     try:
         # If the changed is too large, the result from github will not show diff code first.
@@ -54,9 +86,8 @@ def compare(project_full_name):
         commits, changed_files, comments = repo_overall_info.find_elements_by_class_name(
             'Counter')
         changed_file_number = int(changed_files.text)
-        return {"changed_line": -1,
-                "changed_file_number": changed_file_number,
-                "file_list": []}
+        large_result_value = {"changed_line": -1, "changed_file_number": changed_file_number, "file_list": [], "commit_list": commit_list}
+        return large_result_value
         # repo_content = driver.find_element_by_class_name('repository-content')
     except:
         pass
@@ -64,12 +95,9 @@ def compare(project_full_name):
     file_list = []
     total_changed_line_of_source_code = -1
     try:
-        diff_list = repo_content.find_element_by_id(
-            "diff").find_element_by_id("files")
+        diff_list = repo_content.find_element_by_id("diff").find_element_by_id("files")
     except:
-        return {"changed_line": 0,
-                "changed_file_number": 0,
-                "file_list": []}
+        return empty_result_value
 
     changed_file_number = 0
     total_changed_line_of_source_code = 0
@@ -138,12 +166,10 @@ def compare(project_full_name):
     # print("total changed line = %d" % total_changed_line_of_source_code)
     return {"changed_line": total_changed_line_of_source_code,
             "changed_file_number": changed_file_number,
-            "file_list": file_list}
+            "file_list": file_list,
+            "commit_list": commit_list}
 
-
-"""
 if __name__ == '__main__':
-    compare('Nutz95/Smoothieware')
-    # compare('mkosieradzki/protobuf')
-    # compare('SkyNet3D/Marlin')
-"""
+    fetch_compare_page('Nutz95/Smoothieware')
+    # fetch_compare_page('mkosieradzki/protobuf')
+    # fetch_compare_page('SkyNet3D/Marlin')
