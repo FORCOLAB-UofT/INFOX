@@ -23,6 +23,15 @@ def db_approximate_find_project_project_name(project_name):
         return Project.objects(project_name__endswith=project_name).first()
 
 
+def db_add_project(project_name):
+    _project_name = project_name.replace('/', '_')
+    if not db_find_project(_project_name):
+        analyser.start(_project_name)
+        return True
+    else:
+        return False
+
+
 def db_delete_project(project_name):
     Project(project_name=project_name).delete()
     ProjectFork(project_name=project_name).delete()
@@ -86,25 +95,6 @@ def index():
     return render_template('index.html', projects=projects, pagination=pagination)
 
 
-@main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def project_refresh(project_name):
-    """ Refresh the specfic project.
-    """
-    if not db_find_project(project_name):
-        abort(404)
-    analyser.start(project_name)
-    return redirect(url_for('main.project_overview', project_name=project_name))
-
-"""
-@main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def fork_refresh(fork_name):
-    pass
-"""
-
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
     """ Overview of the project
@@ -151,32 +141,9 @@ def project_overview(project_name):
                            all_changed_files=_all_changed_files, marked_files=_marked_files, pagination=pagination)
 
 
-def db_add_project(project_name):
-    _project_name = project_name.replace('/', '_')
-    if not db_find_project(_project_name):
-        analyser.start(_project_name)
-        return True
-    else:
-        return False
-
-
-@main.route('/add', methods=['GET', 'POST'])
-@login_required
-def add():
-    form = AddProjectForm()
-    if form.validate_on_submit():
-        _input = form.project_name.data
-        if db_add_project(_input):
-            flash('The Project (%s) is added. The data is loading......' % _input)
-            return redirect(url_for('main.index'))
-        else:
-            flash('The Project (%s) has already added!' % _input)
-            return redirect(url_for('main.add'))
-    return render_template('add.html', form=form)
-
-
 @main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.FOLLOW)
 def followed_project(project_name):
     if db_followed_project(project_name):
         flash('Followed Project %s successfully!' % project_name) 
@@ -187,6 +154,7 @@ def followed_project(project_name):
 
 @main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.FOLLOW)
 def unfollowed_project(project_name):
     User.objects(username=current_user.username).update_one(
         pull__followed_projects=project_name)
@@ -219,6 +187,22 @@ def compare_forks():
     return render_template('compare_forks.html', form=form)
 
 
+@main.route('/add', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.ADD)
+def add():
+    form = AddProjectForm()
+    if form.validate_on_submit():
+        _input = form.project_name.data
+        if db_add_project(_input):
+            flash('The Project (%s) is added. The data is loading......' % _input)
+            return redirect(url_for('main.index'))
+        else:
+            flash('The Project (%s) has already added!' % _input)
+            return redirect(url_for('main.add'))
+    return render_template('add.html', form=form)
+
+
 @main.route('/about')
 def about():
     """About Page
@@ -230,6 +214,8 @@ def about():
         return redirect(url_for('main.about'))
     return render_template('about.html', form=form)
 
+# ---------------- Following is all admin required. ----------------
+
 @main.route('/admin_manage')
 @login_required
 @admin_required
@@ -238,6 +224,17 @@ def admin_manage():
     _users = User.objects()
     return render_template('admin_manage.html', projects=_projects, users=_users)
 
+
+@main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def project_refresh(project_name):
+    """ Refresh the specfic project.
+    """
+    if not db_find_project(project_name):
+        abort(404)
+    analyser.start(project_name)
+    return redirect(url_for('main.admin_manage'))
 
 @main.route('/refresh_all', methods=['GET', 'POST'])
 @login_required
@@ -269,7 +266,14 @@ def delete_user(username):
     flash('User (%s) is deleted!' % username)
     return redirect(url_for('main.admin_manage'))
 
+
 """
+@main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def fork_refresh(fork_name):
+    pass
+
 @main.route('/localadd', methods=['GET', 'POST'])
 @login_required
 @admin_required
