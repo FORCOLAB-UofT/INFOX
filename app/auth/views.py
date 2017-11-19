@@ -63,7 +63,8 @@ def register():
 def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
-    _starred_project = get_user_starred_list(current_user.username)
+    
+    _starred_project = get_user_starred_list(current_user.github_name)
     for project in _starred_project:
         setattr(ProjectSelection, project, BooleanField(project))
     setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
@@ -75,6 +76,7 @@ def load_from_github():
         flash('Add successfully!')
         return redirect(url_for('main.index'))
     return render_template('auth/load_from_github.html', form=form)
+
 
 
 @auth.route('/change-password', methods=['GET', 'POST'])

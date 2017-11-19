@@ -12,6 +12,7 @@ from .util import localfile_tool
 
 # commits_page_limit = 1 # 1 is just for checking the status, if you need more commits set it larger.
 api_limit_error = 'API rate limit exceeded'
+not_found_error = 'Not Found'
 
 def get_api_with_params(url, params):
     """ Send request to Github API.
@@ -23,11 +24,16 @@ def get_api_with_params(url, params):
     """
     try:
         response = requests.get(url, params=params)
-        # if api_limit_error in response.text[:100]:
-        #     raise api_limit_error
-    except requests.RequestException as error:
+        result = response.json()
+        if type(result) == dict:
+            if api_limit_error in str(result.get('message')):
+                raise api_limit_error
+            if not_found_error in str(result.get('message')):
+                raise not_found_error
+        return result
+    except Exception as error:
         print(error)
-    return response.json()
+        return None
 
 def get_api(url):
     """ Used for no iterable result.
@@ -55,14 +61,13 @@ def page_iter(base_url):
         # if json_result == last_json_result:
         #     break
         # last_json_result = json_result
-
         for item in json_result:
             result.append(item)
 
     print('finish crawling! Get all pages for %s!' % (base_url))
     return result
 
-def get_user_starred_list(username):    
+def get_user_starred_list(username):
     raw_data = page_iter('https://api.github.com/users/%s/%s' % (username, 'starred'))
     starred_list=[]
     try:
@@ -70,7 +75,7 @@ def get_user_starred_list(username):
         if raw_data:
             localfile_tool.write_to_file(current_app.config['LOCAL_DATA_PATH'] + '/users_info/' + username + "/starred.json" , raw_data)
     except:
-        raise 'Error on get_user_starred_list!'
+        print('Error on get_user_starred_list!')
     return starred_list
 
 def get_repo(author, repo, type=""):
