@@ -12,12 +12,32 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Commits</th>
-                <th>Total Changed File</th>
-                <th>Total Changed Line</th>
-                <th>Key Words(TF-IDF)</th>
-                <th>Last Committed</th>
-                <th>Created At</th>
+                <th>
+                    Commits
+                </th>
+                <th>
+                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_file_number') }}">        
+                        Total Changed File
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_line_number') }}">
+                        Total Changed Line
+                    </a>
+                </th>
+                <th>
+                    Key Words(TF-IDF)
+                </th>
+                <th>
+                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
+                        Last Committed
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-created_time') }}">        
+                        Created At
+                    </a>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -75,10 +95,10 @@
                         </div>
                 </td>
                 <td>{{ fork.total_changed_line_number }}</td>
-                {% if fork.key_words_by_tfidf %}
-                    <td>{{ fork.key_words_by_tfidf[:7] }}</td>
+                {% if fork.key_words_tfidf %}
+                    <td>{{ fork.key_words_tfidf[:7] }}</td>
                 {% else %}
-                    <td>{{ fork.key_words[:7] }}</td>
+                    <td>{{ [] }}</td>
                 {% endif %}
                 <!--
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
