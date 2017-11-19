@@ -29,6 +29,14 @@ def db_delete_project(project_name):
     ChangedFile(project_name=project_name).delete()
 
 
+def db_followed_project(project_name):
+    if db_find_project(project_name):
+        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+        return True
+    else:
+        return False
+
+
 @main.route('/', methods=['GET', 'POST'])
 def start():
     if current_user.is_authenticated:
@@ -151,6 +159,7 @@ def db_add_project(project_name):
     else:
         return False
 
+
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
@@ -165,12 +174,6 @@ def add():
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
 
-def db_followed_project(project_name):
-    if db_find_project(project_name):
-        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
-        return True
-    else:
-        return False
 
 @main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
@@ -181,12 +184,14 @@ def followed_project(project_name):
         flash('Project not found!')
     return redirect(url_for('main.discover'))
 
+
 @main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
 @login_required
 def unfollowed_project(project_name):
     User.objects(username=current_user.username).update_one(
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
+
 
 @main.route('/compare_forks', methods=['GET', 'POST'])
 def compare_forks():
