@@ -14,6 +14,13 @@ from .util import localfile_tool
 api_limit_error = 'API rate limit exceeded'
 
 def get_api_with_params(url, params):
+    """ Send request to Github API.
+        Args:
+            url: the api url
+            params: the requests params (included access tokens, pages)
+        Return:
+            A json obj contains result.
+    """
     try:
         response = requests.get(url, params=params)
         # if api_limit_error in response.text[:100]:
@@ -23,14 +30,20 @@ def get_api_with_params(url, params):
     return response.json()
 
 def get_api(url):
+    """ Used for no iterable result.
+    """
     return get_api_with_params(url, { 'access_token': current_app.config['ACCESS_TOKEN'] })
 
-def page_iter(base_url):    
+def page_iter(base_url):   
+    """ Used for iterable result.
+        Get the result by iterating the page num.
+    """ 
     page_num = 0
     result = []
     # Do the loop until getting the empty response.
     # last_json_result = None
     params = { 'access_token': current_app.config['ACCESS_TOKEN'] }
+    # TODO(luyaoren) Multi-thread to speed up.
     while True:
         page_num += 1
         params['page'] = page_num
@@ -82,6 +95,13 @@ def get_repo(author, repo, type=""):
         return page_iter('https://api.github.com/repos/%s/%s/%s' % (author, repo, type))
 
 def project_info_crawler(project_full_name):
+    """ Crawler to get the diff result.
+        It will write all the raw data into local file.
+        Args:
+            project_full_name
+        Returns:
+            None
+    """
     author_name, project_name = project_full_name.split('_')
     save_path = current_app.config['LOCAL_DATA_PATH']
     main_pain = save_path + '/' + author_name + '_' + project_name

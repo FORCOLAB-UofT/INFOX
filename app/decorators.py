@@ -8,8 +8,10 @@ from .models import Permission
 
 def permission_required(permission):
     """ permission_required decorator
-    :param permission: the permission
-    :return: decorator
+        Args:
+            permission: the permission
+        Returns:
+            decorator
     """
     def decorator(f):
         @wraps(f)
@@ -23,7 +25,9 @@ def permission_required(permission):
 
 def admin_required(f):
     """ admin verify
-    :param f: view approach
-    :return: decorator
+        Args
+            f: view approach
+        Returns:
+            decorator
     """
     return permission_required(Permission.ADMINISTER)(f)
