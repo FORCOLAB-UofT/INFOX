@@ -3,7 +3,8 @@
         <colgroup>
             <col style="width:20%">
             <col style="width:5%">
-            <col style="width:5%">
+            <col style="width:10%">
+            <col style="width:10%">
             <col style>
             <col style>
             <col style="width:10%">
@@ -27,6 +28,9 @@
                 </th>
                 <th>
                     Key Words(TF-IDF)
+                </th>
+                <th>
+                    Key Words(TF-IDF, lemmatize)
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
@@ -96,9 +100,15 @@
                 </td>
                 <td>{{ fork.total_changed_line_number }}</td>
                 {% if fork.key_words_tfidf %}
-                    <td>{{ fork.key_words_tfidf[:7] }}</td>
+                    <td>{{ " , ".join(fork.key_words_tfidf[:10]) }}</td>
                 {% else %}
-                    <td>{{ [] }}</td>
+                    <td>{{ "" }}</td>
+                {% endif %}
+
+                {% if fork.key_words_tfidf %}
+                <td>{{ " , ".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
+                {% else %}
+                    <td>{{ "" }}</td>
                 {% endif %}
                 <!--
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>

@@ -22,7 +22,8 @@ class ForkAnalyser:
         self.code_clone_crawler = code_clone_crawler
         self.diff_result_path = current_app.config['LOCAL_DATA_PATH'] + "/" + self.project_name + '/' + self.author + '/diff_result.json'
         self.all_tokens = []
-        self.all_stemmed_tokens = []
+        # self.all_stemmed_tokens = []
+        self.all_lemmatize_tokens = []
         self.file_list = []
     
     def get_tf_idf(self, tokens, top_number, list_option = True):
@@ -51,8 +52,9 @@ class ForkAnalyser:
         # delete_code = " ".join(filter(lambda x: (x) and (x[0] == '-'), changed_code.splitlines()))
 
         tokens = word_extractor.get_words_from_text(file_name, added_code)
-        stemmed_tokens = word_extractor.stem_process(tokens)
-        
+        lemmatize_tokens = word_extractor.lemmatize_process(tokens)
+        # stemmed_tokens = word_extractor.stem_process(tokens)
+
         if DATABASE_UPDATE_MODE:
             # Load changed files into database.
             ChangedFile(
@@ -65,17 +67,21 @@ class ForkAnalyser:
                 changed_line_number=changed_line,
                 key_words=word_extractor.get_top_words(tokens, 100),
                 key_words_dict=word_extractor.get_top_words(tokens, 100, False),
-                key_stemmed_words=word_extractor.get_top_words(stemmed_tokens, 100),
-                key_stemmed_words_dict=word_extractor.get_top_words(stemmed_tokens, 100, False),
                 key_words_tfidf=self.get_tf_idf(tokens, 100),
                 key_words_tf_idf_dict=self.get_tf_idf(tokens, 100, False),
+                key_words_lemmatize_tfidf=self.get_tf_idf(lemmatize_tokens, 100),
+                key_words_lemmatize_tfidf_dict=self.get_tf_idf(lemmatize_tokens, 100, False),
+                # key_stemmed_words=word_extractor.get_top_words(stemmed_tokens, 100),
+                # key_stemmed_words_dict=word_extractor.get_top_words(stemmed_tokens, 100, False),
             ).save()
 
         # Load current file's key words to fork.
         for x in tokens:
             self.all_tokens.append(x)
-        for x in stemmed_tokens:
-            self.all_stemmed_tokens.append(x)
+        for x in lemmatize_tokens:
+            self.all_lemmatize_tokens.append(x)
+        # for x in stemmed_tokens:
+        #     self.all_stemmed_tokens.append(x)
 
     def work(self):
         # Ignore the fork if it doesn't have commits after fork.
@@ -109,10 +115,12 @@ class ForkAnalyser:
                 file_list=self.file_list,
                 key_words=word_extractor.get_top_words(self.all_tokens, 100),
                 key_words_dict=word_extractor.get_top_words(self.all_tokens, 100, False),
-                key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 100),
-                key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
                 key_words_tfidf=self.get_tf_idf(self.all_tokens, 100),
                 key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 100, False),
+                key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 100),
+                key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 100, False),
+                # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 100),
+                # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
             ).save()
 
 

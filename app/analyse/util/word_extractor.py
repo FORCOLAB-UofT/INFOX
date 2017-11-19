@@ -2,8 +2,9 @@ import os
 import re
 import nltk
 import itertools
-from nltk.stem.porter import PorterStemmer
 from collections import Counter
+from nltk.stem.porter import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 from . import language_tool
 
@@ -72,8 +73,12 @@ def word_filter(word):
 def stem_process(tokens):
     """Do stem on the tokens.
     """
-    return [PorterStemmer().stem(word) for word in tokens]
+    stemmer = PorterStemmer()
+    return [stemmer.stem(word) for word in tokens]
 
+def lemmatize_process(tokens):
+    lemmatizer = WordNetLemmatizer()
+    return [lemmatizer.lemmatize(word) for word in tokens]
 
 def get_words_from_text(file, text):
     """
