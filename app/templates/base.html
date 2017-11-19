@@ -37,6 +37,9 @@
                                 {{ current_user.username }}<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
+                                {% if current_user.is_administrator %}
+                                    <li><a href="{{ url_for('main.admin_manage') }}">Admin</a></li>
+                                {% endif %}
                                 <li><a href="{{ url_for('auth.load_from_github') }}">Load from Github</a></li>
                                 <li><a href="{{ url_for('auth.change_password') }}">Change Password</a></li>
                                 <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>

@@ -89,18 +89,6 @@ def project_refresh(project_name):
     analyser.start(project_name)
     return redirect(url_for('main.project_overview', project_name=project_name))
 
-@main.route('/refresh_all', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def project_refresh_all():
-    """ Refresh all the project.
-    """
-    project_list = Project.objects()
-    for project in project_list:
-        analyser.start(project.project_name)
-    flash('refresh all successfully!')
-    return redirect(url_for('main.index'))
-
 """
 @main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
 @login_required
@@ -177,22 +165,6 @@ def add():
             return redirect(url_for('main.add'))
     return render_template('add.html', form=form)
 
-@main.route('/delete', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def delete():
-    form = DeleteProjectForm()
-    if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        if db_find_project(_input_project_name):
-            db_delete_project(_input_project_name)
-            flash('The project (%s) is already deleted!' % _input_project_name)
-            return redirect(url_for('main.index'))
-        else:
-            flash('The project (%s) is not found.' % _input_project_name)
-            return redirect(url_for('main.delete'))
-    return render_template('delete.html', form=form)
-
 def db_followed_project(project_name):
     if db_find_project(project_name):
         User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
@@ -261,12 +233,35 @@ def admin_manage():
     _users = User.objects()
     return render_template('admin_manage.html', projects=_projects, users=_users)
 
+
+@main.route('/refresh_all', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def project_refresh_all():
+    """ Refresh all the project.
+    """
+    project_list = Project.objects()
+    for project in project_list:
+        analyser.start(project.project_name)
+    flash('refresh all successfully!')
+    return redirect(url_for('main.admin_manage'))
+
+
+@main.route('/delete_project/<project_name>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_project(project_name):
+    db_delete_project(project_name)
+    flash('The project (%s) is deleted!' % project_name) 
+    return redirect(url_for('main.admin_manage'))
+
+
 @main.route('/delete_user/<username>')
 @login_required
 @admin_required
 def delete_user(username):
     User.objects(username=username).delete()
-    flash('Delete successful!')
+    flash('User (%s) is deleted!' % username)
     return redirect(url_for('main.admin_manage'))
 
 """
