@@ -72,7 +72,7 @@ class User(UserMixin, db.Document):
 
     @property
     def is_administrator(self):
-        return self.permission == Permission.ADMINISTER
+        return self.can(Permission.ADMINISTER)
 
 
 class AnonymousUser(AnonymousUserMixin):

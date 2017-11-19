@@ -52,7 +52,7 @@
 
     {% if pagination %}
         <div class="pagination">
-            {{ render_pagination(pagination, '.project_overview', args={ 'project_name':project.project_name }) }}
+            {{ render_pagination(pagination, '.project_overview', args={ 'project_name':project.project_name , 'key_word':key_word, 'order':order }) }}
         </div>
     {% endif %}
 

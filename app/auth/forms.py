@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
                         validators=[DataRequired(), Length(1, 80), Email()])
     username = StringField('Username',
                            validators=[DataRequired(), Length(1, 30)])
-    # github_name = StringField('Github Name', validators=[DataRequired(), Length(1, 30)])
+    github_name = StringField('Github Name', validators=[DataRequired(), Length(1, 30)])
     password = PasswordField('Password',
                              validators=[DataRequired(), Length(4, 20),
                                          EqualTo('password_confirm',

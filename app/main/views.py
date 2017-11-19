@@ -253,6 +253,21 @@ def about():
         return redirect(url_for('main.about'))
     return render_template('about.html', form=form)
 
+@main.route('/admin_manage')
+@login_required
+@admin_required
+def admin_manage():
+    _projects = Project.objects()
+    _users = User.objects()
+    return render_template('admin_manage.html', projects=_projects, users=_users)
+
+@main.route('/delete_user/<username>')
+@login_required
+@admin_required
+def delete_user(username):
+    User.objects(username=username).delete()
+    flash('Delete successful!')
+    return redirect(url_for('main.admin_manage'))
 
 """
 @main.route('/localadd', methods=['GET', 'POST'])

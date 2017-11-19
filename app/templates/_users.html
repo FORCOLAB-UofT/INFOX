@@ -1,0 +1,22 @@
+<ul class="users">
+    {% for user in users %}
+        <li class="user">
+            <div class="user-content">
+                <div class="username">
+                    {{ user.username }}
+                </div>
+                {% if current_user.is_administrator %}
+                    <div class="github_name">
+                        Github Name: {{ user.github_name}}
+                    </div>
+                    <div class="email">
+                        Email: {{ user.email }}
+                    </div>
+                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('main.delete_user', username = user.username) }}">
+                        Delete
+                    </a>
+                {% endif %}
+                <hr>
+        </li>
+    {% endfor %}
+</ul>

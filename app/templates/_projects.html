@@ -17,6 +17,12 @@
                                 </a>
                             {% endif %}
                         {% endif %}
+
+                        {% if current_user.is_administrator %}
+                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
+                                Refresh
+                            </a>
+                        {% endif %}
                     </div>
                     <div class="project-body">
                         <div class="language"> {{ "Language: %s" % project.language }} </div>
@@ -25,4 +31,4 @@
                     </div>
             </li>
         {% endfor %}
-    </ul>
+</ul>

@@ -50,7 +50,8 @@ def register():
                         username=form.username.data,
                         password_hash=generate_password_hash(
                             form.password.data),
-                        permission=Permission.NORMAL_USER).save()
+                        permission=Permission.NORMAL_USER,
+                        github_name=form.github_name.data).save()
             flash('Register Successful!')
             return redirect(url_for('auth.login'))
         else:
