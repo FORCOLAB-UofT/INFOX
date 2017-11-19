@@ -10,6 +10,11 @@ from .util import language_tool
 
 
 class CloneCrawler:
+    """ Clone Crawler.
+
+    Attributes:
+        project name
+    """
     doc_sets = []
 
     def __init__(self, project_name):
@@ -18,6 +23,8 @@ class CloneCrawler:
         self.get_doc_sets()
 
     def get_doc_sets(self):
+        """ Get all the text content.
+        """
         folder = '%s/%s/source_code' % (
             current_app.config['LOCAL_DATA_PATH'], self.project_name)
         if not os.path.exists(folder):
@@ -45,6 +52,14 @@ class CloneCrawler:
               (self.project_name, suceessful_file_number))
 
     def calc_key_words_tfidf(self, word_counter):
+        """ Calculate the TF-IDF of the word_counter.
+            Args:
+                word_counter: a list of the word count tuple
+                              Example: [('a',1), ('b',2)]
+            Returns:
+                A dict of the TF-IDF of each word.
+                Example: { 'a': 0.1, 'b': 0.3 }
+        """
         # print("calc tfidf for %s" % project_name)
         TFIDF = {}
         times_total = 0

@@ -9,6 +9,12 @@ from . import language_tool
 
 
 def word_split_by_char(s):
+    """ split the word by some separators
+        Args:
+            Word
+        Returns:
+            List of the split words
+    """
     words = []
     if '-' in s:  # Case: ab-cd-ef
         words = s.split('-')
@@ -42,7 +48,7 @@ def word_filter(word):
         3. the length should large than 2.
     Args:
         word
-    Return:
+    Returns:
         True for not filtering, False for filtering.
     """
     if word[:2] == '0x':
@@ -64,11 +70,19 @@ def word_filter(word):
 
 
 def stem_process(tokens):
-    # do stem on the tokens
+    """Do stem on the tokens.
+    """
     return [PorterStemmer().stem(word) for word in tokens]
 
 
 def get_words_from_text(file, text):
+    """
+        Args:
+            file: file full name
+            text: the raw text of the file
+        Returns:
+            A list of the tokens of the result of the participle. 
+    """
     if not language_tool.is_text(file):
         return []
     raw_tokens = nltk.word_tokenize(text)

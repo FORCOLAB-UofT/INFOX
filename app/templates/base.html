@@ -24,7 +24,7 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/">Home</a> </li>
                     <li><a href="{{ url_for('main.discover') }}">Discover</a></li>
-                    <li><a href="{{ url_for('main.compare_fork') }}">Compare Fork</a></li>
+                    <li><a href="{{ url_for('main.compare_forks') }}">Compare Forks</a></li>
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('main.add') }}">Add</a></li>
                     {% endif %}

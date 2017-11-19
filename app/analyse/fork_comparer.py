@@ -2,6 +2,13 @@ from flask import current_app
 
 
 def compare_on_files(fork1, fork2):
+    """
+        Args:
+            fork1: ProjectFork
+            fork2: ProjectFork
+        Return:
+            A list contains the common path of the two forks.
+    """
     common_path = set()
 
     f2_path_list = []
@@ -27,6 +34,13 @@ def compare_on_files(fork1, fork2):
 
 
 def compare_on_key_words(fork1, fork2):
+    """
+        Args:
+            fork1: ProjectFork
+            fork2: ProjectFork
+        Return:
+            A list contains the common key words of the two forks.       
+    """
     common_words = []
     for word in fork1.key_words:
         if word in fork2.key_words:

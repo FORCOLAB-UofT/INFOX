@@ -8,7 +8,7 @@ def fetch_compare_page(project_full_name):
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
     Return:
-        A dict contains this :
+        A dict contains following fields :
         compare_result {
             changed_file_number,
             total_changed_line_number,
@@ -169,7 +169,10 @@ def fetch_compare_page(project_full_name):
             "file_list": file_list,
             "commit_list": commit_list}
 
+"""
 if __name__ == '__main__':
+    # Used for testing
     fetch_compare_page('Nutz95/Smoothieware')
-    # fetch_compare_page('mkosieradzki/protobuf')
-    # fetch_compare_page('SkyNet3D/Marlin')
+    fetch_compare_page('mkosieradzki/protobuf')
+    fetch_compare_page('SkyNet3D/Marlin')
+"""

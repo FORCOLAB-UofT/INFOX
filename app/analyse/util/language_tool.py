@@ -10,6 +10,8 @@ language_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
 
 def init():
+    """ Load the language data.
+    """
     global FLAGS_load_language_data
     if FLAGS_load_language_data:
         return
@@ -47,6 +49,15 @@ def get_language_stop_words(language):
 
 
 def get_language_on_suffix(file_suffix):
+    """ Get the language depend on the suffix.
+        Args:
+            suffix
+        Returns:
+            language
+
+            example:
+                cpp -> cpluscplus
+    """
     init()
     # Check the language depend on the file suffix.
     file_language = ""
@@ -57,11 +68,25 @@ def get_language_on_suffix(file_suffix):
 
 
 def get_language(file):
+    """ Get the language depend on the file name.
+        Args:
+            file name
+        Returns:
+            file language
+            
+            example: a.cpp -> cplusplus
+    """
     file_name, file_suffix = os.path.splitext(file)
     return get_language_on_suffix(file_suffix)
 
 
 def is_text(file):
+    """ The file is text
+        Args:
+            file full name
+        Returns:
+            True/False
+    """
     init()
     if '.' not in file:
         return False

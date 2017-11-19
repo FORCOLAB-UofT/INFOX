@@ -82,6 +82,8 @@ def index():
 @login_required
 @admin_required
 def project_refresh(project_name):
+    """ Refresh the specfic project.
+    """
     if not db_find_project(project_name):
         abort(404)
     analyser.start(project_name)
@@ -91,6 +93,8 @@ def project_refresh(project_name):
 @login_required
 @admin_required
 def project_refresh_all():
+    """ Refresh all the project.
+    """
     project_list = Project.objects()
     for project in project_list:
         analyser.start(project.project_name)
@@ -108,7 +112,8 @@ def fork_refresh(fork_name):
 @main.route('/project/<project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
     """ Overview of the project
-    :param project_name
+        Args:
+            project_name
     """
 
     if not db_find_project(project_name):
@@ -211,13 +216,13 @@ def unfollowed_project(project_name):
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
 
-@main.route('/compare_fork', methods=['GET', 'POST'])
-def compare_fork():
+@main.route('/compare_forks', methods=['GET', 'POST'])
+def compare_forks():
     """ Compare two forks by Key words
     """
     form = CompareForkForm()
     if form.validate_on_submit():
-        return redirect(url_for('main.compare_fork', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
+        return redirect(url_for('main.compare_forks', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
 
     _fork1_name = request.args.get("fork1")
     _fork2_name = request.args.get("fork2")
@@ -227,14 +232,14 @@ def compare_fork():
         if _fork1 and _fork2:
             _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
             _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
-            return render_template('compare_fork.html', form=form, common_files=_common_files, common_words=_common_words)
+            return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
         else:
             if _fork1 is None:
                 flash('(%s) is not found!' % form.fork1.data)
             if _fork2 is None:
                 flash('(%s) is not found!' % form.fork2.data)
             return redirect(url_for('main.compare_fork'))
-    return render_template('compare_fork.html', form=form)
+    return render_template('compare_forks.html', form=form)
 
 
 @main.route('/about')
