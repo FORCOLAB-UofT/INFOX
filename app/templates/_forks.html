@@ -6,7 +6,6 @@
             <col style="width:10%">
             <col style="width:10%">
             <col style>
-            <col style>
             <col style="width:10%">
             <col style="width:10%">
         </colgroup>
@@ -25,9 +24,6 @@
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_line_number') }}">
                         Total Changed Line
                     </a>
-                </th>
-                <th>
-                    Key Words(TF-IDF)
                 </th>
                 <th>
                     Key Words(TF-IDF, lemmatize)
@@ -68,53 +64,49 @@
                     </div>                   
                 </td>
                 <td>
-                        <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                {{ fork.total_changed_file_number }}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
-                                {% for file_name in fork.file_list %}
-                                <li>
-                                    {% if all_changed_files[(fork.fork_name, file_name)].changed_line_number %}
-                                        {% if marked_files %}
-                                            {% if (fork.fork_name, file_name) in marked_files %}
-                                                <a class="label-success" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
-                                                    {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
-                                                </a>
-                                            {% else %}
-                                                <a class="label-default" href='{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}'>
-                                                    {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
-                                                </a>
-                                            {% endif %}
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{ fork.total_changed_file_number }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
+                            {% for file_name in fork.file_list %}
+                            <li>
+                                {% if all_changed_files[(fork.fork_name, file_name)].changed_line_number %}
+                                    {% if marked_files %}
+                                        {% if (fork.fork_name, file_name) in marked_files %}
+                                            <a class="label-success" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
+                                                {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
+                                            </a>
                                         {% else %}
-                                            <a href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
+                                            <a class="label-default" href='{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}'>
                                                 {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
                                             </a>
                                         {% endif %}
+                                    {% else %}
+                                        <a href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
+                                            {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
+                                        </a>
                                     {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </td>
-                <td>{{ fork.total_changed_line_number }}</td>
-                {% if fork.key_words_tfidf %}
-                    <td>{{ " , ".join(fork.key_words_tfidf[:10]) }}</td>
-                {% else %}
-                    <td>{{ "" }}</td>
-                {% endif %}
 
-                {% if fork.key_words_tfidf %}
-                <td>{{ " , ".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
-                {% else %}
-                    <td>{{ "" }}</td>
-                {% endif %}
-                <!--
-                <td>{{ fork.last_committed_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>{{ fork.created_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                !-->
+                <td>{{ fork.total_changed_line_number }}</td>
+                
+                <td>
+                    {% if fork.key_words_lemmatize_tfidf %}
+                        {{ " , ".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
+                    {% else %}
+                        {{ " , ".join(fork.key_words_tfidf[:10]) }}
+                    {% endif %}
+                </td>
+
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
+
                 <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
             </tr>
             {% endfor %}

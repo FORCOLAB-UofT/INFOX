@@ -11,6 +11,7 @@ class ChangedFile(db.Document):
     file_language = db.StringField()
     file_suffix = db.StringField()
     diff_link = db.StringField()
+    # Too big may cause performance problem.
     # changed_code = db.StringField()
     changed_line_number = db.IntField()
     key_words = db.ListField(db.StringField())
@@ -46,6 +47,11 @@ class ProjectFork(db.Document):
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
     tags = db.ListField(db.StringField())
+
+    # For compatibility old version.
+    key_words_by_tdidf = db.ListField(db.StringField())
+    key_words_by_tfidf = db.ListField(db.StringField())
+    key_words_counter_dict = db.DictField()
 
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)

@@ -130,7 +130,7 @@ def project_overview(project_name):
         for file in _contain_key_words_changed_files:
             _marked_files.add((file.fork_name, file.file_name))
     else:
-        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[]).order_by(_order)
+        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], key_words_tfidf__ne=[]).order_by(_order)
         
     pagination = _forks.paginate(page=_page, per_page=current_app.config['SHOW_NUMBER_FOR_FORKS'])
     _show_forks = pagination.items
