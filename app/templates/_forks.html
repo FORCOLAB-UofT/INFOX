@@ -11,31 +11,37 @@
         </colgroup>
         <thead>
             <tr>
-                <th>Name</th>
                 <th>
-                    Commits
+                    <p class="text-center">Fork Full Name</p>
+                </th>
+                <th>
+                    <p class="text-center">Commits</p>
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_file_number') }}">        
-                        Total Changed File
+                        Changed Files
+                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
                     </a>
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_line_number') }}">
-                        Total Changed Line
+                        Changed Lines
+                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
                     </a>
                 </th>
                 <th>
-                    Key Words(TF-IDF, lemmatize)
+                    <p class="text-center">Key Words</p>
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
                         Last Committed
+                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
                     </a>
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-created_time') }}">        
                         Created At
+                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
                     </a>
                 </th>
             </tr>
@@ -44,7 +50,9 @@
             {% for fork in forks %}
             <tr>
                 <td>
-                    <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
+                    <p class="text-center">
+                        <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
+                    </p>
                 </td>
                 <td>
                     <div class="dropdown">
@@ -99,9 +107,9 @@
                 
                 <td>
                     {% if fork.key_words_lemmatize_tfidf %}
-                        {{ " , ".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
+                        {{ ",".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
                     {% else %}
-                        {{ " , ".join(fork.key_words_tfidf[:10]) }}
+                        {{ ",".join(fork.key_words_tfidf[:10]) }}
                     {% endif %}
                 </td>
 

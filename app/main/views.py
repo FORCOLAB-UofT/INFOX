@@ -1,5 +1,4 @@
-from flask import (render_template, redirect, url_for, current_app,
-                   abort, flash, request, make_response)
+from flask import g, render_template, redirect, url_for, current_app, abort, flash, request, make_response
 from flask_login import login_required, current_user
 
 from . import main
@@ -9,6 +8,8 @@ from ..models import *
 from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
+
+from ..auth.views import get_user_starred_list
 
 
 def db_find_project(project_name):
@@ -26,7 +27,7 @@ def db_approximate_find_project_project_name(project_name):
 def db_add_project(project_name):
     _project_name = project_name.replace('/', '_')
     if not db_find_project(_project_name):
-        analyser.start(_project_name)
+        analyser.start(_project_name, current_user.github_access_token)
         return True
     else:
         return False
@@ -44,7 +45,6 @@ def db_followed_project(project_name):
         return True
     else:
         return False
-
 
 @main.route('/', methods=['GET', 'POST'])
 def start():
@@ -130,7 +130,7 @@ def project_overview(project_name):
         for file in _contain_key_words_changed_files:
             _marked_files.add((file.fork_name, file.file_name))
     else:
-        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], key_words_tfidf__ne=[]).order_by(_order)
+        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[]).order_by(_order)
         
     pagination = _forks.paginate(page=_page, per_page=current_app.config['SHOW_NUMBER_FOR_FORKS'])
     _show_forks = pagination.items
@@ -233,7 +233,7 @@ def project_refresh(project_name):
     """
     if not db_find_project(project_name):
         abort(404)
-    analyser.start(project_name)
+    analyser.start(project_name, current_user.github_access_token)
     return redirect(url_for('main.admin_manage'))
 
 @main.route('/refresh_all', methods=['GET', 'POST'])
@@ -244,7 +244,7 @@ def project_refresh_all():
     """
     project_list = Project.objects()
     for project in project_list:
-        analyser.start(project.project_name)
+        analyser.start(project.project_name, current_user.github_access_token)
     flash('refresh all successfully!')
     return redirect(url_for('main.admin_manage'))
 
@@ -302,3 +302,23 @@ def unfollowed_fork(fork_full_name):
     current_user.update_one(pull__followed_forks=fork_full_name)
  
 """
+
+
+@main.route('/load_from_github', methods=['GET', 'POST'])
+@login_required
+def load_from_github():
+    class ProjectSelection(FlaskForm):
+        pass
+    
+    _starred_project = get_user_starred_list(current_user.username)
+    for project in _starred_project:
+        setattr(ProjectSelection, project, BooleanField(project))
+    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
+    form = ProjectSelection()
+    if form.validate_on_submit():
+        for field in form:
+            if field.type == "BooleanField" and field.data:
+                db_add_project(field.id)
+        flash('Add successfully!')
+        return redirect(url_for('main.index'))
+    return render_template('load_from_github.html', form=form)

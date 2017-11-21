@@ -15,7 +15,6 @@ def init():
     global FLAGS_load_language_data
     if FLAGS_load_language_data:
         return
-    FLAGS_load_language_data = True
     with open(language_data_path + '/text_suffix.txt') as read_file:
         for line in read_file.readlines():
             text_suffix.append(line.strip())
@@ -91,6 +90,7 @@ def is_text(file):
     if '.' not in file:
         return False
     file_name, file_suffix = os.path.splitext(file)
+    file_suffix = file_suffix.strip()
     if file_suffix in text_suffix:
         return True
     else:

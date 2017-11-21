@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="project_name" >
                 <a href="{{ "https://github.com/" + project.project_name.replace('_','/') }}">
-                    <h1>{{ project.project_name }}</h1>
+                    <h1>{{ project.project_name.replace('_', '/') }}</h1>
                 </a>        
             </div>
             <br>
@@ -22,7 +22,7 @@
     <div class="row"></div><hr>
 
     <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-        <h4><p class="text-center"> Forks of {{ project.project_name }}</p></h4>         
+        <h4><p class="text-center"> Forks of {{ project.project_name.replace('_', '/') }}</p></h4>         
     </a>
     
     {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}

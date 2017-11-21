@@ -123,16 +123,10 @@ class ForkAnalyser:
                 # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
             ).save()
 
-
 def update_progress(project_name, analyser_progress):
     Project.objects(project_name=project_name).update(analyser_progress=analyser_progress)
 
-def analyse_project(project_name):
-    repo_info = localfile_tool.get_repo_info(
-        current_app.config['LOCAL_DATA_PATH'] + "/" + project_name)
-    forks_info = localfile_tool.get_forks_info_dict(
-        current_app.config['LOCAL_DATA_PATH'] + "/" + project_name)
-
+def analyse_project(project_name, repo_info, forks_info):
     if DATABASE_UPDATE_MODE:
         # Load project into database.
         Project(
@@ -143,17 +137,13 @@ def analyse_project(project_name):
             analyser_progress="0%"
         ).save()
 
-    print("-----start analysing for %s-----" % project_name)
     forks_number = len(forks_info)
     forks_count = 0
     code_clone_crawler = CloneCrawler(project_name)
-    for author in forks_info:
+    for fork in forks_info:
         forks_count += 1
-        update_progress(project_name, "%d%%" %
-                        (100 * forks_count / forks_number))
+        update_progress(project_name, "%d%%" % (100 * forks_count / forks_number))
+        author = fork["owner"]["login"]
+        ForkAnalyser(project_name, author, fork, code_clone_crawler).work()
 
-        ForkAnalyser(project_name, author,
-                     forks_info[author], code_clone_crawler).work()
-
-    print("-----finish analysing for %s-----" % project_name)
 
