@@ -25,9 +25,10 @@ def word_split_by_char(s):
         words = s.split('_')
     elif '/' in s:  # Case: ab/cd/ef
         words = s.split('/')
-    elif re.search('[A-Z]+', s):  # Case AbcDefGh or abcDefGh
-        words = re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(
-            1).lower() + "_" + match.group(2).lower(), s).split('_')
+    else:
+        if re.search('[A-Z]+', s):  # Case AbcDefGh or abcDefGh
+            words = re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(1).lower() + "_" + match.group(2).lower(), s).split('_')
+        words.append(s)
     return words
 
 
@@ -93,9 +94,8 @@ def get_words_from_text(file, text):
     raw_tokens = nltk.word_tokenize(text)
     origin_tokens = [word_process(x) for x in raw_tokens]
     tokens = origin_tokens
-    tokens = list(itertools.chain(
-        *[word_split_by_char(token) for token in origin_tokens]))
-    # tokens.extend(list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))) # Keep original tokens
+    tokens = list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))
+    #tokens.extend(list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))) # Keep original tokens
 
     #tokens = sum([word_split_by_char(token) for token in origin_tokens], origin_tokens)
     tokens = [x.lower() for x in tokens]

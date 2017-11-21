@@ -27,6 +27,7 @@ class CloneCrawler:
         """
         folder = '%s/%s/source_code' % (
             current_app.config['LOCAL_DATA_PATH'], self.project_name)
+        # TODO(luyao) Some problem. file may be update.
         if not os.path.exists(folder):
             os.system('git clone https://github.com/%s.git %s' %
                       (self.project_name.replace('_', '/'), folder))
