@@ -67,6 +67,7 @@ def page_iter(base_url):
     print('finish crawling! Get all pages for %s!' % (base_url))
     return result
 
+"""
 def get_user_starred_list(username):
     raw_data = page_iter('https://api.github.com/users/%s/%s' % (username, 'starred'))
     starred_list=[]
@@ -77,6 +78,7 @@ def get_user_starred_list(username):
     except:
         print('Error on get_user_starred_list!')
     return starred_list
+"""
 
 def get_repo(author, repo, type=""):
     """The general function to get the data using Github's API.

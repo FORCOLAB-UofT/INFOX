@@ -2,6 +2,7 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
 from flask_login import LoginManager
+from flask_github import GitHub
 
 from config import config
 
@@ -10,7 +11,7 @@ db = MongoEngine()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-
+github = GitHub()
 
 def create_app(config_name):
     """ factory function for create app
@@ -18,8 +19,13 @@ def create_app(config_name):
     :return: app object
     """
     app = Flask(__name__, static_folder='static')
+
+    # set up config
     app.config.from_object(config[config_name])
 
+    # setup github-flask
+
+    github.init_app(app)
     bootstrap.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
