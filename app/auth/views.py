@@ -1,99 +1,55 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, request, url_for, flash
+from flask import g, render_template, redirect, request, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash, generate_password_hash
-from . import auth
-from .. import db
-from ..models import User, Permission
-from .forms import *
 
-from ..analyse.api_crawler import get_user_starred_list
-from ..main.views import db_add_project
-from ..main.views import db_followed_project
+from . import auth
+
+from .. import github
+from ..models import User, Permission
+from ..analyse.util import localfile_tool
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.objects(email=form.email_or_username.data)
-        user_count = user.count()
-        if user_count > 1:
-            flash('You maybe use the same email for different accounts. Please use username to login.')            
-            return redirect(url_for('auth.login'))
-        elif user_count == 0:
-            user = User.objects(username=form.email_or_username.data).first()
-        if user is not None:
-            if check_password_hash(user.password_hash, form.password.data):
-                login_user(user, form.remember_me.data)
-                return redirect(request.args.get('next') or url_for('main.index'))
-            else:
-                flash('Password Error!')
-        else:
-            flash('User not found!')
-    return render_template('auth/login.html', form=form)
+    return github.authorize()
 
-
-@auth.route('/logout')
+@auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
-    flash('Login Successfully!')
+    flash('Logout Successfully!')
     return redirect(url_for('main.start'))
 
+@github.access_token_getter
+def token_getter():
+    if current_user.is_authenticated:
+        # print("user token %s: %s" % (current_user.username, current_user.github_access_token))
+        return current_user.github_access_token
+    else:
+        # print("token get from g! %s" % g.github_access_token)
+        return g.get('github_access_token', None)
 
-@auth.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        if User.objects(username=form.username.data).first() is None:
-            user = User(email=form.email.data,
-                        username=form.username.data,
-                        password_hash=generate_password_hash(
-                            form.password.data),
-                        permission=Permission.NORMAL_USER,
-                        github_name=form.github_name.data).save()
-            flash('Register Successful!')
-            return redirect(url_for('auth.login'))
-        else:
-            flash('Username already exist!')
-    return render_template('auth/register.html', form=form)
+def get_user_starred_list(username):
+    raw_data = github.request('GET', 'users' + '/' + username + '/' + 'repos', True)
+    return [x["full_name"] for x in raw_data]
 
-
-@auth.route('/load_from_github', methods=['GET', 'POST'])
-def load_from_github():
-    class ProjectSelection(FlaskForm):
-        pass
-    
-    _starred_project = get_user_starred_list(current_user.github_name)
-    for project in _starred_project:
-        setattr(ProjectSelection, project, BooleanField(project))
-    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
-    form = ProjectSelection()
-    if form.validate_on_submit():
-        for field in form:
-            if field.type == "BooleanField" and field.data:
-                db_add_project(field.id)
-        flash('Add successfully!')
-        return redirect(url_for('main.index'))
-    return render_template('auth/load_from_github.html', form=form)
-
-
-
-@auth.route('/change-password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    form = ChangePasswordForm()
-    _user = User.objects(username=current_user.username).first()
+@auth.route('/callback', methods=['GET', 'POST'])
+@github.authorized_handler
+def github_login(access_token):
+    g.github_access_token = access_token
+    _github_user_info = github.get('user')
+    _github_username = _github_user_info["login"]
+    _github_user_email = _github_user_info["email"]
+    _user = User.objects(username=_github_username).first()
     if _user is None:
-        flash('User not found!')
-        return redirect(url_for('main.index'))
-    if current_user == _user and form.validate_on_submit():
-        if check_password_hash(current_user.password_hash, form.old_password.data):
-            User.objects(username=current_user.username).update_one(
-                set__password_hash=generate_password_hash(form.new_password.data))
-            flash('Password has changed!')
-            return redirect(url_for('main.index'))
-        else:
-            flash('Original Password Error!')
-            return redirect(url_for('auth.change_password'))
-    return render_template('auth/change_password.html', form=form)
+        User(username=_github_username,
+             email=_github_user_email,
+             permission=Permission.GITHUB_USER).save()
+        flash('Login with Github successfully!')
+    User.objects(username=_github_username).update(github_access_token=access_token)
+    _user = User.objects(username=_github_username).first()
+    login_user(_user, True)
+    
+    # print("login acc=%s" % g.github_access_token)
+    
+    return redirect(url_for('main.index'))
+

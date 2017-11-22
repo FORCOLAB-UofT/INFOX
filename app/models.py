@@ -60,23 +60,25 @@ class Project(db.Document):
     feature_number = db.IntField(default=-1)
     description = db.StringField()
     analyser_progress = db.StringField()
-
+    project_name_show = db.StringField()
 
 class User(UserMixin, db.Document):
     username = db.StringField(unique=True, required=True)
     email = db.StringField()
-    password_hash = db.StringField()
-    github_name = db.StringField()
     permission = db.IntField()
     last_seen = db.DateTimeField()
     followed_projects = db.ListField(db.StringField())
     followed_forks = db.ListField(db.StringField())
 
+    github_access_token = db.StringField()
+    password_hash = db.StringField()
+    github_name = db.StringField()
+
     def get_id(self):
         return self.username
-
+    
     def can(self, permission):
-        if self.username == 'admin':
+        if self.username == 'FancyCoder0':
             return True
         return (self.permission & permission) == permission
 
@@ -106,8 +108,9 @@ def load_user(username):
 class Permission:
     FOLLOW = 1
     ADD = 2
-    DELETE = 4
-    REFRESH = 8
-    NORMAL_USER = 7
-    ADMINISTER = 15
+    REFRESH = 4
+    DELETE = 8
+    BASIC_USER = 1 # can follow
+    GITHUB_USER = 7 # can follow, add, refresh
+    ADMINISTER = 15 # all
 
