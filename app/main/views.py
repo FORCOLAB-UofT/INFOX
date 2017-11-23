@@ -1,4 +1,4 @@
-from flask import g, render_template, redirect, url_for, current_app, abort, flash, request, make_response
+from flask import g, jsonify, render_template, redirect, url_for, current_app, abort, flash, request, make_response
 from flask_login import login_required, current_user
 
 from . import main
@@ -267,6 +267,24 @@ def delete_user(username):
     return redirect(url_for('main.admin_manage'))
 
 
+@main.route('/_fork_edit_tag', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.ADD)
+def _fork_edit_tag():
+    _full_name = request.args.get('full_name')
+    _tag = request.args.get('tag')
+    _oper = request.args.get('oper')
+    print(_full_name)
+    print(_tag)
+    print(_oper)
+    if _oper == 'delete':
+        ProjectFork.objects(full_name=_full_name).update_one(pull__tags=_tag)
+    elif _oper == 'add':
+        ProjectFork.objects(full_name=_full_name).update_one(push__tags=_tag)
+    elif _oper == 'clear':
+        ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
+    return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
+    
 """
 @main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
 @login_required
@@ -322,3 +340,4 @@ def load_from_github():
         flash('Add successfully!')
         return redirect(url_for('main.index'))
     return render_template('load_from_github.html', form=form)
+

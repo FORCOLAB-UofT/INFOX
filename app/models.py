@@ -53,6 +53,8 @@ class ProjectFork(db.Document):
     key_words_by_tfidf = db.ListField(db.StringField())
     key_words_counter_dict = db.DictField()
 
+    tags = db.ListField(db.StringField())
+
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     language = db.StringField()
