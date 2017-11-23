@@ -1,11 +1,48 @@
+<script type="text/javascript"
+src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        var add_form = function(e) {
+            var tag_list = $(this).siblings('span[id="tag_list"]')
+            var input_tag = $(this).siblings('input[name="add"]')
+            $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
+                full_name: $(this).parents('.tag').attr('id') ,
+                oper: 'add',
+                tag: input_tag.val(),
+            }, function(data) {
+                tag_list.text(data.tags);
+                input_tag.val('')
+            });
+            return false;
+        };
+        var clear_form = function(e) {
+            var tag_list = $(this).siblings('span[id="tag_list"]')
+            $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
+                full_name: $(this).parents('.tag').attr('id') ,
+                oper: 'clear',
+            }, function(data) {
+                tag_list.text(data.tags);
+            });
+            return false;
+        };
+        $('.tag a#add').bind('click', add_form);
+        $('.tag a#clear').bind('click', clear_form);
+    });
+</script>
+
 <ul class="forks">
     <table class="table">
         <colgroup>
-            <col style="width:20%">
-            <col style="width:5%">
-            <col style="width:10%">
-            <col style="width:10%">
             <col style>
+            <col style>
+            <col style="width:10%">
+            <col style="width:10%">
+            <col style="width:20%">
+            <col style="width:30%">
             <col style="width:10%">
             <col style="width:10%">
         </colgroup>
@@ -28,6 +65,9 @@
                         Changed Lines
                         <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
                     </a>
+                </th>
+                <th>
+                    <p class="text-center">Tags</p>
                 </th>
                 <th>
                     <p class="text-center">Key Words</p>
@@ -106,6 +146,19 @@
                 <td>{{ fork.total_changed_line_number }}</td>
                 
                 <td>
+                    <div class="tag" id="{{ fork.full_name }}">
+                        <span id="tag_list">
+                            {{ ",".join(fork.tags) }}
+                        </span>
+                        {% if current_user.is_authenticated %}
+                            <input type="text" size="5" name="add">
+                            <a href=# id="add">add</a>
+                            <a href=# id="clear">clear</a>
+                        {% endif %}
+                    </div>
+                </td>
+
+                <td>
                     {% if fork.key_words_lemmatize_tfidf %}
                         {{ ",".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
                     {% else %}
@@ -120,5 +173,4 @@
             {% endfor %}
         </tbody>
     </table>
-
 </ul>
