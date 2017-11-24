@@ -51,5 +51,5 @@ def github_login(access_token):
     
     # print("login acc=%s" % g.github_access_token)
     
-    return redirect(url_for('main.index'))
+    return redirect(request.args.get('next') or url_for('main.index'))
 
