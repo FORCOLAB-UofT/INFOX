@@ -177,9 +177,9 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
                 <td>
                     {% if fork.key_words_lemmatize_tfidf %}
-                        {{ ",".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
+                        {{ ",".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
                     {% else %}
-                        {{ ",".join(fork.key_words_tfidf[:10]) }}
+                        {{ ",".join(fork.key_words_tfidf[:6]) }}
                     {% endif %}
                 </td>
 
