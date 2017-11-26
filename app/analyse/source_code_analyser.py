@@ -36,11 +36,12 @@ def get_fork_changed_code_name_list(project_full_name):
             continue
         parts = re.split('@@.*?-.*?\+.*?@@', diff[st.start():])
 
+        start_with_plus_regex = re.compile('^\++')
         if file_suffix in ['.java','.cpp','.cc','.c','.h','.cs']:
             added_code = ''
             for part in parts:
-                added_code+="\n".join(filter(lambda x: (x) and (x[0] == '+'), part.splitlines()))
-
+                lines_of_code = filter(lambda x: (x) and (x[0] == '+'), part.splitlines())
+                added_code+="\n".join([start_with_plus_regex.sub('', x) for x in lines_of_code])
             file_path = '%s/added_code/%s/%s' % (current_app.config['LOCAL_DATA_PATH'], project_full_name, file_full_name)
             file_dir = os.path.dirname(file_path)
             if not os.path.exists(file_dir):
@@ -61,3 +62,5 @@ def get_fork_changed_code_name_list(project_full_name):
             all_name_list.extend(name_list)
 
     return all_name_list
+
+
