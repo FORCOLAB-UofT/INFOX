@@ -1,7 +1,6 @@
 import os
 import json
 
-
 def write_to_file(file, obj):
     """ Write the obj as json to file.
     It will overwrite the file if it exist

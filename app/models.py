@@ -22,6 +22,7 @@ class ChangedFile(db.Document):
     key_stemmed_words_dict = db.DictField()
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
+    
     variable = db.ListField(db.StringField())
     class_name = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
@@ -54,6 +55,8 @@ class ProjectFork(db.Document):
     key_words_counter_dict = db.DictField()
 
     tags = db.ListField(db.StringField())
+    variable = db.ListField(db.StringField())
+    
 
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
