@@ -112,6 +112,8 @@ def get_counter(tokens):
     return Counter(tokens)
 
 def get_top_words(tokens, top_number, list_option = True):
+    if tokens is None:
+        return None
     counter = get_counter(tokens).most_common(top_number)
     if list_option:
         return [x for x, y in counter]

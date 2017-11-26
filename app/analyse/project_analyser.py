@@ -4,6 +4,7 @@ import datetime
 from flask import current_app
 
 from . import compare_changes_crawler
+from . import source_code_analyser
 from .util import word_extractor
 from .util import localfile_tool
 from .util import language_tool
@@ -100,6 +101,9 @@ class ForkAnalyser:
         for file in compare_result["file_list"]:
             self.file_analyse(file)
 
+        changed_code_name_list = source_code_analyser.get_fork_changed_code_name_list(self.fork_name)
+        # print(word_extractor.get_top_words(changed_code_name_list, 10))
+
         if DATABASE_UPDATE_MODE:
             # Update forks into database.
             ProjectFork(
@@ -119,6 +123,7 @@ class ForkAnalyser:
                 key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 100, False),
                 key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 100),
                 key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 100, False),
+                variable=word_extractor.get_top_words(changed_code_name_list, 100),
                 # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 100),
                 # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
             ).save()
