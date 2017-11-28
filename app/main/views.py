@@ -214,10 +214,6 @@ def about():
         return redirect(url_for('main.about'))
     return render_template('about.html', form=form)
 
-@main.route('/add_tag')
-def add_tag():
-    pass
-
 # ---------------- Following is all admin required. ----------------
 
 @main.route('/admin_manage')
@@ -279,9 +275,7 @@ def _fork_edit_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     _oper = request.args.get('oper')
-    print(_full_name)
-    print(_tag)
-    print(_oper)
+    # print(_full_name, _tag, _oper)
     if _oper == 'delete':
         ProjectFork.objects(full_name=_full_name).update_one(pull__tags=_tag)
     elif _oper == 'add':
@@ -289,7 +283,20 @@ def _fork_edit_tag():
     elif _oper == 'clear':
         ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
     return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
-    
+
+@main.route('/add_tag', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.ADD)
+def add_tag():
+    _full_name = request.args.get('full_name')
+    _tag = request.args.get('tag')
+    User.objects(username=current_user.username).update_one(push__tag_list(_full_name, _tag))
+    _tag_now = User.objects(username=current_user.username).first().tag_list
+    if (_tag_now is not None) and ()
+        return jsonify(tags=_tag_now[_full_name])
+    else:
+        return None
+
 """
 @main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
 @login_required
