@@ -47,11 +47,12 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     <table class="table">
         <colgroup>
             <col style>
+            <col style="width:10%">
+            <col style="width:10%">
+            <col style="width:10%">
             <col style>
-            <col style="width:10%">
-            <col style="width:10%">
-            <col style="width:20%">
-            <col style="width:30%">
+            <col style>
+            <col style>
             <col style>
             <col style="width:10%">
             <col style="width:10%">
@@ -83,7 +84,10 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                     <p class="text-center">Key Words</p>
                 </th>
                 <th>
-                    <p class="text-center">Key Variables & Functions</p>
+                    <p class="text-center">Key Variables</p>
+                </th>
+                <th>
+                    <p class="text-center">Key Functions</p>
                 </th>
                 
                 <th>
@@ -159,7 +163,7 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
                 <td>{{ fork.total_changed_line_number }}</td>
                 
-                <td>
+                <td style="word-break:break-all;">
                     <div class="tag" id="{{ fork.full_name }}">
                         <span id="tag_list" style="float:left;">
                             {{ ",".join(fork.tags) }}
@@ -179,15 +183,20 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                     </div>
                 </td>
 
-                <td>
+                <td style="word-break:break-all;">
                     {% if fork.key_words_lemmatize_tfidf %}
                         {{ ",".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
                     {% else %}
                         {{ ",".join(fork.key_words_tfidf[:6]) }}
                     {% endif %}
                 </td>
-                <td>
+
+                <td style="word-break:break-all;">
                     {{ ",".join(fork.variable[:6]) }}
+                </td>
+
+                <td style="word-break:break-all;">
+                    {{ ",".join(fork.function_name[:6]) }}
                 </td>
 
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>

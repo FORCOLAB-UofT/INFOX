@@ -26,6 +26,7 @@ class ChangedFile(db.Document):
     variable = db.ListField(db.StringField())
     class_name = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
+    
 
 
 class ProjectFork(db.Document):
@@ -56,7 +57,7 @@ class ProjectFork(db.Document):
 
     tags = db.ListField(db.StringField())
     variable = db.ListField(db.StringField())
-    
+    function_name = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
@@ -79,6 +80,8 @@ class User(UserMixin, db.Document):
     password_hash = db.StringField()
     github_name = db.StringField()
 
+    tag_list = db.DictField() # {fork_full_name: tag_list }
+
     def get_id(self):
         return self.username
     
@@ -100,9 +103,7 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
-
 login_manager.anonymous_user = AnonymousUser
-
 
 @login_manager.user_loader
 def load_user(username):
@@ -116,6 +117,14 @@ class Permission:
     REFRESH = 4
     DELETE = 8
     BASIC_USER = 1 # can follow
-    GITHUB_USER = 7 # can follow, add, refresh
+    GITHUB_USER = 3 # can follow, add
     ADMINISTER = 15 # all
 
+class TagType:
+    FEATURE = 1
+    REFACTORING = 2
+    BUG_FIX = 3
+    CONFIGURE = 4
+    OTHER = 5
+
+    
