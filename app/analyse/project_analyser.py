@@ -94,16 +94,25 @@ class ForkAnalyser:
                 compare_result = json.load(read_file)
         else:
             # If the compare result is not crawled, start to crawl.
-            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
-            if(compare_result["changed_file_number"] != -1):
+            try:
+                compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
+            except:
+                return
+            if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
         
         for file in compare_result["file_list"]:
             self.file_analyse(file)
 
-        changed_code_name_list = source_code_analyser.get_fork_changed_code_name_list(self.fork_name)
+        try:
+            tmp = source_code_analyser.get_info_from_fork_changed_code(self.fork_name)
+            changed_code_name_list = tmp['name_list']
+            changed_code_func_list = tmp['func_list']
+        except:
+            changed_code_name_list = []
+            changed_code_func_list = []
         # print(word_extractor.get_top_words(changed_code_name_list, 10))
-
+        
         if DATABASE_UPDATE_MODE:
             # Update forks into database.
             ProjectFork(
@@ -124,6 +133,7 @@ class ForkAnalyser:
                 key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 100),
                 key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 100, False),
                 variable=word_extractor.get_top_words(changed_code_name_list, 100),
+                function_name=word_extractor.get_top_words(changed_code_func_list, 100),
                 # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 100),
                 # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
             ).save()

@@ -214,6 +214,10 @@ def about():
         return redirect(url_for('main.about'))
     return render_template('about.html', form=form)
 
+@main.route('/add_tag')
+def add_tag():
+    pass
+
 # ---------------- Following is all admin required. ----------------
 
 @main.route('/admin_manage')
@@ -243,6 +247,7 @@ def project_refresh_all():
     """ Refresh all the project.
     """
     project_list = Project.objects()
+    analyser.current_analysing = set()
     for project in project_list:
         analyser.start(project.project_name, current_user.github_access_token)
     flash('refresh all successfully!')
