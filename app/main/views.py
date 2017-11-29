@@ -284,10 +284,22 @@ def _fork_edit_tag():
         ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
     return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
 
-@main.route('/add_tag', methods=['GET', 'POST'])
+@main.route('/get_familar_fork', methods=['GET', 'POST'])
+def get_familar_fork():
+    _repo_name = request.args.get('repo_name')
+    _fork_name = request.args.get('fork_name')
+    if (_repo_name is not None) and (_fork_name is not None):
+        _fork_list = ProjectFork.objects(project_name=_repo_name)
+        _fork = ProjectFork.objects(fork_name=_fork_name).first()
+        _result = fork_comparer.get_familiar_fork(_fork_list, _fork)
+        return jsonify(result=_result)
+    else:
+        return None
+"""
+@main.route('/_add_tag', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.ADD)
-def add_tag():
+def _add_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     User.objects(username=current_user.username).update_one(push__tag_list(_full_name, _tag))
@@ -296,6 +308,7 @@ def add_tag():
         return jsonify(tags=_tag_now[_full_name])
     else:
         return None
+"""
 
 """
 @main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])

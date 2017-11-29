@@ -46,3 +46,29 @@ def compare_on_key_words(fork1, fork2):
         if word in fork2.key_words:
             common_words.append(word)
     return common_words
+
+def get_familiar_fork(fork_list, fork1):
+    if (fork_list is None) or (fork1 is None):
+        return
+    
+    sort_list = {}
+    for fork2 in fork_list:
+        if fork2.full_name == fork1.full_name:
+            continue
+        n_common_words = len(compare_on_key_words(fork1, fork2))
+        n_dep_commpn_files = 0
+        commpn_files = compare_on_files(fork1, fork2)
+        for file in commpn_files:
+            n_dep_commpn_files += file.count('/')
+        
+        # print(n_common_words, n_dep_commpn_files)
+        value = n_common_words + 5 * n_dep_commpn_files
+        sort_list[fork2.fork_name] = value
+     
+    result = [x for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)][:5]
+    print(result)
+
+def get_cluster(fork_list):
+    for fork1 in fork_list:
+        for fork2 in fork_list:
+            pass
