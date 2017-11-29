@@ -47,6 +47,9 @@ def compare_on_key_words(fork1, fork2):
             common_words.append(word)
     return common_words
 
+def calc_commit_common(fork1, fork2):
+    pass
+
 def get_familiar_fork(fork_list, fork1):
     if (fork_list is None) or (fork1 is None):
         return
@@ -67,6 +70,7 @@ def get_familiar_fork(fork_list, fork1):
      
     result = [x for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)][:5]
     print(result)
+
 
 def get_cluster(fork_list):
     for fork1 in fork_list:

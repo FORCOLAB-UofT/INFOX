@@ -1,6 +1,6 @@
 import os
 import json
-import datetime
+from datetime import datetime
 from flask import current_app
 
 from . import compare_changes_crawler
@@ -13,7 +13,7 @@ from ..models import *
 
 DATABASE_UPDATE_MODE=True
 
-class ForkAnalyser:
+class ForkUpdater:
     def __init__(self, project_name, author, fork_info, code_clone_crawler):
         self.project_name = project_name
         self.author = author
@@ -88,6 +88,10 @@ class ForkAnalyser:
         # Ignore the fork if it doesn't have commits after fork.
         if self.last_committed_time <= self.created_time:
             return
+        
+        last_update = ProjectFork.objects(full_name=self.project_name + '/' + self.fork_name).first()
+        if (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
+                return
 
         if (not current_app.config['RECRAWLER_MODE']) and (os.path.exists(self.diff_result_path)):
             with open(self.diff_result_path) as read_file:
@@ -123,8 +127,8 @@ class ForkAnalyser:
                 total_changed_line_number=compare_result["changed_line"],
                 total_commit_number=len(compare_result["commit_list"]),
                 commit_list=compare_result["commit_list"],
-                last_committed_time=datetime.datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
-                created_time=datetime.datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
+                last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
+                created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
                 file_list=self.file_list,
                 key_words=word_extractor.get_top_words(self.all_tokens, 100),
                 key_words_dict=word_extractor.get_top_words(self.all_tokens, 100, False),
@@ -134,6 +138,7 @@ class ForkAnalyser:
                 key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 100, False),
                 variable=word_extractor.get_top_words(changed_code_name_list, 100),
                 function_name=word_extractor.get_top_words(changed_code_func_list, 100),
+                last_updated_time=datetime.utcnow(),
                 # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 100),
                 # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
             ).save()
@@ -141,7 +146,7 @@ class ForkAnalyser:
 def update_progress(project_name, analyser_progress):
     Project.objects(project_name=project_name).update(analyser_progress=analyser_progress)
 
-def analyse_project(project_name, repo_info, forks_info):
+def start_update(project_name, repo_info, forks_info):
     if DATABASE_UPDATE_MODE:
         # Load project into database.
         Project(
@@ -149,7 +154,8 @@ def analyse_project(project_name, repo_info, forks_info):
             language=repo_info["language"],
             fork_number=repo_info["forks"],
             description=str(repo_info["description"]),
-            analyser_progress="0%"
+            analyser_progress="0%",
+            last_updated_time=datetime.utcnow(),
         ).save()
 
     forks_number = len(forks_info)
@@ -159,6 +165,6 @@ def analyse_project(project_name, repo_info, forks_info):
         forks_count += 1
         update_progress(project_name, "%d%%" % (100 * forks_count / forks_number))
         author = fork["owner"]["login"]
-        ForkAnalyser(project_name, author, fork, code_clone_crawler).work()
+        ForkUpdater(project_name, author, fork, code_clone_crawler).work()
 
 

@@ -49,6 +49,7 @@ class ProjectFork(db.Document):
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
     tags = db.ListField(db.StringField())
+    last_updated_time = db.DateTimeField()
 
     # For compatibility old version.
     key_words_by_tdidf = db.ListField(db.StringField())
@@ -67,6 +68,7 @@ class Project(db.Document):
     description = db.StringField()
     analyser_progress = db.StringField()
     project_name_show = db.StringField()
+    last_updated_time = db.DateTimeField()
 
 class User(UserMixin, db.Document):
     username = db.StringField(unique=True, required=True)
