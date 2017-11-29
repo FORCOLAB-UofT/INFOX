@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from flask import g, render_template, redirect, request, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -46,6 +47,7 @@ def github_login(access_token):
              permission=Permission.GITHUB_USER).save()
         flash('Login with Github successfully!')
     User.objects(username=_github_username).update(github_access_token=access_token)
+    User.objects(username=_github_username).update(last_seen=datetime.utcnow())
     _user = User.objects(username=_github_username).first()
     login_user(_user, True)
     
