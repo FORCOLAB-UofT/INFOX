@@ -11,10 +11,7 @@ class Config:
     }
 
     # LOCAL_DATA_PATH used for storing the raw data from crawling the github.
-    if platform.system() == 'Darwin':
-        LOCAL_DATA_PATH = '/Users/fancycoder/infox_data/result'
-    elif platform.system() == 'Linux':
-        LOCAL_DATA_PATH = '/home/luyao/infox_data/result'
+    LOCAL_DATA_PATH = os.environ.get('INFOX_LOCAL_DATA_PATH')
 
     # Overview page config.
     SHOW_NUMBER_FOR_PAGE = 6 # Project number per page in index page.
@@ -24,8 +21,9 @@ class Config:
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
     GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
 
-    SECRET_KEY = '#+^aOjdlPHFD09)&*2P3JR-0C;O0'  # a random string.
-    
+    # secret key is a random string.
+    SECRET_KEY = os.environ.get('INFOX_SECRET_KEY')
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
