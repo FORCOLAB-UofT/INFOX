@@ -55,25 +55,30 @@ def get_info_from_fork_changed_code(project_full_name):
             with open(file_path, 'w') as f:
                 f.write("\n".join(added_code))
 
-            if platform.system() == 'Darwin':
-                srcML_name = 'srcML'
-            elif platform.system() == 'Linux':
-                srcML_name = 'src2srcml'
-        
-            srcML_result = os.popen('%s %s' % (srcML_name, file_path), 'r').read()
-            srcml_ns = 'http://www.srcML.org/srcML/src'
-            name_list = filter(lambda x: (x) and (len(x) > 2), [x.text for x in ET.fromstring(srcML_result).iter(tag='{%s}name' % srcml_ns)])
-            name_list = filter(lambda x: x not in language_tool.get_language_stop_words(language_tool.get_language(file_full_name)), name_list)
-            func_list = []
-            for x in ET.fromstring(srcML_result).iter(tag='{%s}function_decl' % srcml_ns):
-                func_name = x.find('{%s}name' % srcml_ns)
-                if func_name is not None:
-                    if func_name.text is not None:
-                        func_list.append(func_name.text)
-
             all_added_code.extend(added_code)
-            all_name_list.extend(name_list)
-            all_func_list.extend(func_list)
+
+            try:
+                if platform.system() == 'Darwin':
+                    srcML_name = 'srcML'
+                    srcml_ns = 'http://www.srcML.org/srcML/src'
+                elif platform.system() == 'Linux':
+                    srcML_name = 'src2srcml'
+                    srcml_ns = 'http://www.sdml.info/srcML/src'
+                
+                srcML_result = os.popen('%s %s' % (srcML_name, file_path), 'r').read()
+                
+                name_list = filter(lambda x: (x) and (len(x) > 2), [x.text for x in ET.fromstring(srcML_result).iter(tag='{%s}name' % srcml_ns)])
+                name_list = filter(lambda x: x not in language_tool.get_language_stop_words(language_tool.get_language(file_full_name)), name_list)
+                func_list = []
+                for x in ET.fromstring(srcML_result).iter(tag='{%s}function_decl' % srcml_ns):
+                    func_name = x.find('{%s}name' % srcml_ns)
+                    if func_name is not None:
+                        if func_name.text is not None:
+                            func_list.append(func_name.text)
+                all_name_list.extend(name_list)
+                all_func_list.extend(func_list)
+            except:
+                pass
 
     return {'name_list': all_name_list, 'func_list': all_func_list}
 

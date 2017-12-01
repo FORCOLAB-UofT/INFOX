@@ -71,7 +71,6 @@ def get_familiar_fork(fork_list, fork1):
     result = [x for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)][:5]
     print(result)
 
-
 def get_cluster(fork_list):
     for fork1 in fork_list:
         for fork2 in fork_list:

@@ -18,7 +18,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('main.welcome') }}">INFOX - beta</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">INFOX - beta</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -35,10 +35,15 @@
                             Find
                         </a>
                     </li>
-                    <li><a href="{{ url_for('main.compare_forks') }}">
+                    {#
+                    <li>
+                        <a href="{{ url_for('main.compare_forks') }}">
                             <span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>
                             Compare
-                    </a></li>
+                        </a>
+                    </li>
+                    #}
+                    {#
                     {% if current_user.is_authenticated %}
                         <li>
                             <a href="{{ url_for('main.add') }}">
@@ -47,6 +52,7 @@
                             </a>
                         </li>
                     {% endif %}
+                    #}
                     <li>
                         <a href="{{ url_for('main.about') }}">
                             <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>

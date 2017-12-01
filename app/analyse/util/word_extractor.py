@@ -123,3 +123,7 @@ def get_top_words(tokens, top_number, list_option = True):
         return [x for x, y in counter]
     else:
         return dict([(x,y) for x, y in counter])
+
+# just for test
+def get_top_words_from_text(text, top_number=10):
+    return get_top_words(get_words_from_text('1.txt', text), top_number)
