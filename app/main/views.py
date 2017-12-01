@@ -11,7 +11,7 @@ from ..decorators import admin_required, permission_required
 
 from ..auth.views import get_user_starred_list
 
-
+#------------------------------------------------------------------
 def db_find_project(project_name):
     return Project.objects(project_name=project_name).first()
 
@@ -40,11 +40,10 @@ def db_delete_project(project_name):
 
 
 def db_followed_project(project_name):
-    if db_find_project(project_name):
-        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
-        return True
-    else:
-        return False
+    _project_name = project_name.replace('/', '_')
+    User.objects(username=current_user.username).update_one(push__followed_projects=_project_name)
+
+#------------------------------------------------------------------
 
 @main.route('/', methods=['GET', 'POST'])
 def start():
@@ -84,10 +83,61 @@ def discover():
     return render_template('discover.html', form=form, projects=projects, pagination=pagination)
 
 
+@main.route('/compare_forks', methods=['GET', 'POST'])
+def compare_forks():
+    """ Compare two forks by Key words
+    """
+    form = CompareForkForm()
+    if form.validate_on_submit():
+        return redirect(url_for('main.compare_forks', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
+
+    _fork1_name = request.args.get("fork1")
+    _fork2_name = request.args.get("fork2")
+    if _fork1_name and _fork2_name:
+        _fork1 = ProjectFork.objects(fork_name=_fork1_name).first()
+        _fork2 = ProjectFork.objects(fork_name=_fork2_name).first()
+        if _fork1 and _fork2:
+            _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
+            _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
+            return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
+        else:
+            if _fork1 is None:
+                flash('(%s) is not found!' % form.fork1.data)
+            if _fork2 is None:
+                flash('(%s) is not found!' % form.fork2.data)
+            return redirect(url_for('main.compare_fork'))
+    return render_template('compare_forks.html', form=form)
+
+
+@main.route('/load_from_github', methods=['GET', 'POST'])
+@login_required
+def load_from_github():
+    class ProjectSelection(FlaskForm):
+        pass
+    
+    _starred_project = get_user_starred_list(current_user.username)
+    for project in _starred_project:
+        setattr(ProjectSelection, project, BooleanField(project))
+    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
+    form = ProjectSelection()
+    if form.validate_on_submit():
+        for field in form:
+            if field.type == "BooleanField" and field.data:
+                db_add_project(field.id)
+                db_followed_project(field.id)
+        flash('Add & Follow successfully!')
+        return redirect(url_for('main.index'))
+    return render_template('load_from_github.html', form=form)
+
+
 @main.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     project_list = Project.objects(
         project_name__in=current_user.followed_projects)
+    
+    if len(project_list) == 0:
+        return redirect(url_for('main.load_from_github'))
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.order_by(
         '-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
@@ -145,10 +195,8 @@ def project_overview(project_name):
 @login_required
 @permission_required(Permission.FOLLOW)
 def followed_project(project_name):
-    if db_followed_project(project_name):
-        flash('Followed Project %s successfully!' % project_name) 
-    else:
-        flash('Project not found!')
+    db_followed_project(project_name)
+    flash('Followed Project %s successfully!' % project_name) 
     return redirect(url_for('main.discover'))
 
 
@@ -269,31 +317,6 @@ def get_familar_fork():
     else:
         return None
 
-@main.route('/compare_forks', methods=['GET', 'POST'])
-def compare_forks():
-    """ Compare two forks by Key words
-    """
-    form = CompareForkForm()
-    if form.validate_on_submit():
-        return redirect(url_for('main.compare_forks', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
-
-    _fork1_name = request.args.get("fork1")
-    _fork2_name = request.args.get("fork2")
-    if _fork1_name and _fork2_name:
-        _fork1 = ProjectFork.objects(fork_name=_fork1_name).first()
-        _fork2 = ProjectFork.objects(fork_name=_fork2_name).first()
-        if _fork1 and _fork2:
-            _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
-            _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
-            return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
-        else:
-            if _fork1 is None:
-                flash('(%s) is not found!' % form.fork1.data)
-            if _fork2 is None:
-                flash('(%s) is not found!' % form.fork2.data)
-            return redirect(url_for('main.compare_fork'))
-    return render_template('compare_forks.html', form=form)
-
 """
 @main.route('/_add_tag', methods=['GET', 'POST'])
 @login_required
@@ -340,24 +363,6 @@ def unfollowed_fork(fork_full_name):
 """
 
 
-@main.route('/load_from_github', methods=['GET', 'POST'])
-@login_required
-def load_from_github():
-    class ProjectSelection(FlaskForm):
-        pass
-    
-    _starred_project = get_user_starred_list(current_user.username)
-    for project in _starred_project:
-        setattr(ProjectSelection, project, BooleanField(project))
-    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
-    form = ProjectSelection()
-    if form.validate_on_submit():
-        for field in form:
-            if field.type == "BooleanField" and field.data:
-                db_add_project(field.id)
-        flash('Add successfully!')
-        return redirect(url_for('main.index'))
-    return render_template('load_from_github.html', form=form)
 
 
 # ----------------------------  use for test ------------------------
