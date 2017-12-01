@@ -52,8 +52,10 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
             <col style="width:10%">
             <col style>
             <col style>
+            {#
             <col style>
             <col style>
+            #}
             <col style="width:10%">
             <col style="width:10%">
         </colgroup>
@@ -83,13 +85,14 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                 <th>
                     <p class="text-center">Key Words</p>
                 </th>
+                {#
                 <th>
                     <p class="text-center">Key Variables</p>
                 </th>
                 <th>
                     <p class="text-center">Key Functions</p>
                 </th>
-                
+                #}
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
                         Last Committed
@@ -184,13 +187,10 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                 </td>
 
                 <td style="word-break:break-all;">
-                    {% if fork.key_words_lemmatize_tfidf %}
-                        {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
-                    {% else %}
-                        {{ ", ".join(fork.key_words_tfidf[:6]) }}
-                    {% endif %}
+                    {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
                 </td>
 
+                {# 
                 <td style="word-break:break-all;">
                     {{ ", ".join(fork.variable[:6]) }}
                 </td>
@@ -198,6 +198,7 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                 <td style="word-break:break-all;">
                     {{ ", ".join(fork.function_name[:6]) }}
                 </td>
+                #}
 
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
 
