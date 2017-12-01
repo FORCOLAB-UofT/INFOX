@@ -114,8 +114,8 @@ def project_overview(project_name):
         return redirect(url_for('main.project_overview', project_name=project_name, key_word=search_form.content.data, order=_order))
 
     _project = Project.objects(project_name=project_name).first()
-    if _project.analyser_progress and _project.analyser_progress != "100%":
-        flash('The Project (%s) is updating!' % project_name)
+    # if _project.analyser_progress and _project.analyser_progress != "100%":
+    #     flash('The Project (%s) is updating!' % project_name)
 
     _all_changed_files = {}
     _changed_files = ChangedFile.objects(project_name=project_name)
@@ -159,33 +159,6 @@ def unfollowed_project(project_name):
     User.objects(username=current_user.username).update_one(
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
-
-
-@main.route('/compare_forks', methods=['GET', 'POST'])
-def compare_forks():
-    """ Compare two forks by Key words
-    """
-    form = CompareForkForm()
-    if form.validate_on_submit():
-        return redirect(url_for('main.compare_forks', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
-
-    _fork1_name = request.args.get("fork1")
-    _fork2_name = request.args.get("fork2")
-    if _fork1_name and _fork2_name:
-        _fork1 = ProjectFork.objects(fork_name=_fork1_name).first()
-        _fork2 = ProjectFork.objects(fork_name=_fork2_name).first()
-        if _fork1 and _fork2:
-            _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
-            _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
-            return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
-        else:
-            if _fork1 is None:
-                flash('(%s) is not found!' % form.fork1.data)
-            if _fork2 is None:
-                flash('(%s) is not found!' % form.fork2.data)
-            return redirect(url_for('main.compare_fork'))
-    return render_template('compare_forks.html', form=form)
-
 
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -295,6 +268,32 @@ def get_familar_fork():
         return jsonify(result=_result)
     else:
         return None
+
+@main.route('/compare_forks', methods=['GET', 'POST'])
+def compare_forks():
+    """ Compare two forks by Key words
+    """
+    form = CompareForkForm()
+    if form.validate_on_submit():
+        return redirect(url_for('main.compare_forks', form=form, fork1=form.fork1.data, fork2=form.fork2.data))
+
+    _fork1_name = request.args.get("fork1")
+    _fork2_name = request.args.get("fork2")
+    if _fork1_name and _fork2_name:
+        _fork1 = ProjectFork.objects(fork_name=_fork1_name).first()
+        _fork2 = ProjectFork.objects(fork_name=_fork2_name).first()
+        if _fork1 and _fork2:
+            _common_files = fork_comparer.compare_on_files(_fork1, _fork2)
+            _common_words = fork_comparer.compare_on_key_words(_fork1, _fork2)
+            return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
+        else:
+            if _fork1 is None:
+                flash('(%s) is not found!' % form.fork1.data)
+            if _fork2 is None:
+                flash('(%s) is not found!' % form.fork2.data)
+            return redirect(url_for('main.compare_fork'))
+    return render_template('compare_forks.html', form=form)
+
 """
 @main.route('/_add_tag', methods=['GET', 'POST'])
 @login_required
@@ -311,12 +310,6 @@ def _add_tag():
 """
 
 """
-@main.route('/fork_refresh/<fork_name>', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def fork_refresh(fork_name):
-    pass
-
 @main.route('/localadd', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -366,3 +359,16 @@ def load_from_github():
         return redirect(url_for('main.index'))
     return render_template('load_from_github.html', form=form)
 
+
+# ----------------------------  use for test ------------------------
+@main.route('/test', methods=['GET', 'POST'])
+@admin_required
+def test():
+    from ..analyse.util import word_extractor
+    fork_list = ProjectFork.objects()
+    s = ""
+    for fork in fork_list:
+        for commit in fork.commit_list:
+            s+=commit["title"] + "\n"
+            s+=commit["description"] + "\n"
+    return jsonify(word_extractor.get_top_words_from_text(s, 50))

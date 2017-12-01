@@ -185,18 +185,18 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
                 <td style="word-break:break-all;">
                     {% if fork.key_words_lemmatize_tfidf %}
-                        {{ ",".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
+                        {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
                     {% else %}
-                        {{ ",".join(fork.key_words_tfidf[:6]) }}
+                        {{ ", ".join(fork.key_words_tfidf[:6]) }}
                     {% endif %}
                 </td>
 
                 <td style="word-break:break-all;">
-                    {{ ",".join(fork.variable[:6]) }}
+                    {{ ", ".join(fork.variable[:6]) }}
                 </td>
 
                 <td style="word-break:break-all;">
-                    {{ ",".join(fork.function_name[:6]) }}
+                    {{ ", ".join(fork.function_name[:6]) }}
                 </td>
 
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
