@@ -1,39 +1,38 @@
 <ul class="projects">
-        {% for project in projects %}
-            <li class="project">
-                <div class="project-content">
-                    <div class="project-name">
-                        <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-                            {{ project.project_name.replace('_', '/') }}
+    {% for project in projects %}
+        <li class="project">
+            <div class="project-content">
+                <div class="project-name">
+                    <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
+                        {{ project.project_name.replace('_', '/') }}
+                    </a>
+                    {% if current_user.is_authenticated %}
+                        {% if project.project_name in current_user.followed_projects %}
+                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
+                                Unfollowed
+                            </a>
+                        {% else %}
+                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
+                                Followed
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if current_user.is_administrator %}
+                        <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
+                            Refresh
                         </a>
-                        {% if current_user.is_authenticated %}
-                            {% if project.project_name in current_user.followed_projects %}
-                                <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
-                                    Unfollowed
-                                </a>
-                            {% else %}
-                                <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
-                                    Followed
-                                </a>
-                            {% endif %}
-                        {% endif %}
+                        <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
+                                Delete
+                        </a>
+                        <div> {{ "Progress = %s" % project.analyser_progress }} </div>
                         
-                        {% if current_user.is_administrator %}
-                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
-                                Refresh
-                            </a>
-                            <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
-                                    Delete
-                            </a>
-                            <div> {{ "Progress = %s" % project.analyser_progress }} </div>
-                            
-                        {% endif %}
-                    </div>
-                    <div class="project-body">
-                        <div class="language"> {{ "Language: %s" % project.language }} </div>
-                        <div class="github_fork_number"> {{ "Fork on Github: %d" % project.fork_number }} </div>
-                        {# <div class="feature_number"> {{ "Feature Number: %d" % project.feature_number }} </div> #}
-                    </div>
-            </li>
-        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="project-body">
+                    <div class="language"> {{ "Language: %s" % project.language }} </div>
+                    <div class="github_fork_number"> {{ "Fork on Github: %d" % project.fork_number }} </div>
+                </div>
+        </li>
+    {% endfor %}
 </ul>

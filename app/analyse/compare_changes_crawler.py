@@ -39,8 +39,7 @@ def fetch_compare_page(project_full_name):
         # It will jump to https://github.com/author/repo/compare/version...author:repo
         driver.get(url)
     except:
-        print("error on get diff for %s!" % project_full_name)
-        return default_result_value
+        raise Exception('error on fetch compare page on %s' % project_full_name)
 
     try:
         repo_content = driver.find_element_by_class_name("repository-content")

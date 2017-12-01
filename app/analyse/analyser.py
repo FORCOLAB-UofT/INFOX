@@ -1,7 +1,7 @@
 from flask import current_app
 from flask_github import GitHub
 from threading import Thread
-from . import project_analyser
+from . import project_updater
 
 current_analysing = set()
 
@@ -15,8 +15,10 @@ def start_analyse(app, project_full_name, analyse_github):
     with app.app_context():
         author, repo = project_full_name.split('_')
         repo_info = analyse_github.get('repos/%s/%s' % (author, repo))
+        print('finish fetch repo info for %s' % repo)
         repo_forks_list = analyse_github.request('GET', 'repos/%s/%s/forks' % (author, repo), True)
-        project_analyser.analyse_project(project_full_name, repo_info, repo_forks_list)
+        print('finish fetch fork list for %s' % repo)
+        project_updater.start_update(project_full_name, repo_info, repo_forks_list)
 
     current_analysing.remove(project_full_name)
     print("-----finish analysing for %s-----" % project_full_name)

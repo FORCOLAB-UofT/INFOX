@@ -6,11 +6,11 @@
                     {{ user.username }}
                 </div>
                 {% if current_user.is_administrator %}
-                    <div class="github_name">
-                        Github Name: {{ user.github_name}}
-                    </div>
                     <div class="email">
                         Email: {{ user.email }}
+                    </div>
+                    <div class="last-seen">
+                        Last Login: {{ user.last_seen }}
                     </div>
                     <a type="button" class="btn btn-default btn-xs" href="{{ url_for('main.delete_user', username = user.username) }}">
                         Delete
