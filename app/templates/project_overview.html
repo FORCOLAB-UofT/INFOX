@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="project_name" >
                 <a href="{{ "https://github.com/" + project.project_name.replace('_','/') }}">
-                    <h1>{{ project.project_name.replace('_', '/') }}</h1>
+                    <h1> {{ project.project_name.replace('_', '/') }}</h1>
                 </a>        
             </div>
             <br>
@@ -26,23 +26,11 @@
     </a>
     
     {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
-        {#
         <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
-                
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="{{ "min-width: 2em; width:%s" % project.analyser_progress }}">
+                {{ project.analyser_progress }}
             </div>
-        </div>    
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-            
-            </div>
-        </div>
-        #}
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ project.analyser_progress }}"
-            aria-valuemin="0" aria-valuemax="100" style="{{ "width:%s" % project.analyser_progress }}">
-                <span class="sr-only">{{ "%s Complete" % project.analyser_progress }}</span>
-            </div>
+            It's Updating Now. We will send you an updated email once we are done!
         </div>
     {% endif %}
 
