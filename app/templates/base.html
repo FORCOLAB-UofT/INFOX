@@ -59,8 +59,6 @@
                             About
                         </a>
                     </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -72,7 +70,7 @@
                                     <li><a href="{{ url_for('main.admin_manage') }}"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>Admin</a></li>
                                 {% endif %}
                                 <li><a href="{{ url_for('main.load_from_github') }}"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>Load from Github</a></li>
-                                <li><a href="{{ url_for('main.add') }}"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>Add Repo Manually</a></li>
+                                <li><a href="{{ url_for('main.add') }}"><span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Add Repo Manually</a></li>
                                 <li><a href="{{ url_for('auth.logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>Logout</a></li>
                             </ul>
                         </li>
@@ -95,5 +93,10 @@
     {% endfor %}
     {% block page_content %}{% endblock %}
 </div>
-<footer class="footer"><br></footer>
+
+{#
+    <div class="footer">
+    This footer will always be positioned at the bottom of the page, but <strong>not fixed</strong>.
+    </div>
+#}
 {% endblock %}

@@ -1,6 +1,3 @@
-div.post-tabs {
-    margin-top: 16px;
-}
 ul.projects {
     list-style-type: none;
     padding: 0px;
@@ -8,14 +5,51 @@ ul.projects {
     border-top: 1px solid #e0e0e0;
 }
 ul.projects li.project {
-    padding: 8px;
+    padding: 10px;
     border-bottom: 1px solid #e0e0e0;
+    text-decoration: none;
 }
+
+ul.projects li.project div.project-name {
+    font-family: 'New Century Schoolbook';
+    font-weight: bold;
+}
+
 div.pagination {
     width: 100%;
     text-align: right;
     padding: 0px;
     margin: 0px;
 }
+
+div.welcome_word {
+    font-family: Georgia;
+    font-style: oblique;
+    font-size: larger;
+}
+
+html {
+   height:100%;
+}
+
+body{  
+    min-height:100%;
+    padding-left: 10px
+    position: relative;   
+}  
+
+body div.container {
+    padding-bottom: 60px;   /* Height of the footer */
+}
+
+body div.footer {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+    background-color: #efefef;
+    text-align: center;
+}
+
 
 
