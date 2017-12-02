@@ -6,16 +6,17 @@
     <div class="col-md-4">
         <h1> Repos Overview </h1>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
         {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
     </div>
     
     <div class="row"></div><hr>
     
-    <div class="projects-tabs">
-        {% include '_projects.html' %}  
-    </div>
-    <div class="pagination">
+    <div class="col-md-6  projects-tabs">
+        {% include '_projects.html' %} 
+        <div class="pagination">
         {{ render_pagination(pagination, '.discover') }}
+        </div>
     </div>
+    
 {% endblock %}}

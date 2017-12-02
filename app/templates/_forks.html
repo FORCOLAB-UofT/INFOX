@@ -1,10 +1,11 @@
 <script type="text/javascript"
 src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
 <script type="text/javascript">
 var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 
-<script type="text/javascript">
+<script type="text/javascript">   
     $(function() {
         var add_form = function(e) {
             var tag_obj = $(this).parents('.tag')
@@ -43,8 +44,8 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     }
 </style>
 
-<ul class="forks">
-    <table class="table">
+
+    <table id="forks-list" class="display" cellspacing="0" width="100%">
         <colgroup>
             <col style>
             <col style="width:10%">
@@ -69,14 +70,12 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_file_number') }}">        
-                        Changed Files
-                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
+                        <p class="text-center"> Files of Changed <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> </p>
                     </a>
                 </th>
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_line_number') }}">
-                        Changed Lines
-                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
+                        <p class="text-center"> Lines of Changed <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> </p>
                     </a>
                 </th>
                 <th>
@@ -116,8 +115,8 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                     </p>
                 </td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <div class="dropdown text-center">
+                        <button class="btn-group-sm dropdown-toggle " type="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ fork.total_commit_number }}
                             <span class="caret"></span>
                         </button>
@@ -133,8 +132,8 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                     </div>                   
                 </td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <div class="dropdown text-center">
+                        <button class="btn-group-sm dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             {{ fork.total_changed_file_number }}
                             <span class="caret"></span>
                         </button>
@@ -164,7 +163,11 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
                     </div>
                 </td>
 
-                <td>{{ fork.total_changed_line_number }}</td>
+                <td>
+                    <div class="text-center">
+                        {{ fork.total_changed_line_number }}
+                    </div>
+                </td>
                 
                 <td style="word-break:break-all;">
                     <div class="tag" id="{{ fork.full_name }}">
@@ -207,4 +210,3 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
             {% endfor %}
         </tbody>
     </table>
-</ul>
