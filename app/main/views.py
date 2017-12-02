@@ -365,7 +365,7 @@ def unfollowed_fork(fork_full_name):
 
 
 
-
+"""
 # ----------------------------  use for test ------------------------
 @main.route('/test', methods=['GET', 'POST'])
 def test():
@@ -384,4 +384,4 @@ from ..email import send_mail
 def test2():
     send_mail('fancycoder0@gmail.com','test', 'email.html')
     return 'hello'
-
+"""

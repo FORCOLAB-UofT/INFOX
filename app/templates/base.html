@@ -94,9 +94,14 @@
     {% block page_content %}{% endblock %}
 </div>
 
-{#
-    <div class="footer">
-    This footer will always be positioned at the bottom of the page, but <strong>not fixed</strong>.
+
+<div class="footer">
+    <div class="container">
+        <a href="{{ url_for('main.about') }}"> About Us </a> .
+        <a href="#"> Join Us </a> .
+        <a href="https://github.com/FancyCoder0/INFOX"> Source Code for INFOX </a> .
+        <a href="https://github.com/FancyCoder0/INFOX/issues"> Open An Issue </a> 
     </div>
-#}
+</div>
+
 {% endblock %}
