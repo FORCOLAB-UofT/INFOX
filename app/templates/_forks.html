@@ -1,11 +1,61 @@
+<script type="text/javascript"
+src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        var add_form = function(e) {
+            var tag_obj = $(this).parents('.tag')
+            var tag_list = tag_obj.find('span[id="tag_list"]')
+            var input_tag = $(this).siblings('input[name="add"]')
+            $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
+                full_name: tag_obj.attr('id'),
+                oper: 'add',
+                tag: input_tag.val(),
+            }, function(data) {
+                tag_list.text(data.tags);
+                input_tag.val('')
+            });
+            return false;
+        };
+        var clear_form = function(e) {
+            var tag_obj = $(this).parents('.tag')
+            var tag_list = tag_obj.find('span[id="tag_list"]')
+            $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
+                full_name: tag_obj.attr('id') ,
+                oper: 'clear',
+            }, function(data) {
+                tag_list.text(data.tags);
+            });
+            return false;
+        };
+        $('.tag a#add').bind('click', add_form);
+        $('.tag a#clear').bind('click', clear_form);
+    });
+</script>
+
+<style type="text/css">
+    tr.change:hover
+    {
+        background-color:rgba(20, 157, 221, 0.166)
+    }
+</style>
+
 <ul class="forks">
     <table class="table">
         <colgroup>
-            <col style="width:20%">
-            <col style="width:5%">
+            <col style>
+            <col style="width:10%">
             <col style="width:10%">
             <col style="width:10%">
             <col style>
+            <col style>
+            {#
+            <col style>
+            <col style>
+            #}
             <col style="width:10%">
             <col style="width:10%">
         </colgroup>
@@ -30,8 +80,19 @@
                     </a>
                 </th>
                 <th>
+                    <p class="text-center">Tags</p>
+                </th>
+                <th>
                     <p class="text-center">Key Words</p>
                 </th>
+                {#
+                <th>
+                    <p class="text-center">Key Variables</p>
+                </th>
+                <th>
+                    <p class="text-center">Key Functions</p>
+                </th>
+                #}
                 <th>
                     <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
                         Last Committed
@@ -48,7 +109,7 @@
         </thead>
         <tbody>
             {% for fork in forks %}
-            <tr>
+            <tr class="change">
                 <td>
                     <p class="text-center">
                         <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
@@ -105,13 +166,39 @@
 
                 <td>{{ fork.total_changed_line_number }}</td>
                 
-                <td>
-                    {% if fork.key_words_lemmatize_tfidf %}
-                        {{ ",".join(fork.key_words_lemmatize_tfidf[:10]) }}</td>
-                    {% else %}
-                        {{ ",".join(fork.key_words_tfidf[:10]) }}
-                    {% endif %}
+                <td style="word-break:break-all;">
+                    <div class="tag" id="{{ fork.full_name }}">
+                        <span id="tag_list" style="float:left;">
+                            {{ ",".join(fork.tags) }}
+                        </span>
+                        {% if current_user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-default btn-xs" type="button" id="edit_tag_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="edit_tag_list">
+                                <input type="text" size="7" name="add">
+                                <a href=# id="add">add</a>
+                                <a href=# id="clear">clear-all</a>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
                 </td>
+
+                <td style="word-break:break-all;">
+                    {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
+                </td>
+
+                {# 
+                <td style="word-break:break-all;">
+                    {{ ", ".join(fork.variable[:6]) }}
+                </td>
+
+                <td style="word-break:break-all;">
+                    {{ ", ".join(fork.function_name[:6]) }}
+                </td>
+                #}
 
                 <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
 
@@ -120,5 +207,4 @@
             {% endfor %}
         </tbody>
     </table>
-
 </ul>

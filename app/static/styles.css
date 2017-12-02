@@ -7,10 +7,6 @@ ul.projects {
     margin: 16px 0px 0px 0px;
     border-top: 1px solid #e0e0e0;
 }
-div.post-tabs ul.posts {
-    margin: 0px;
-    border-top: none;
-}
 ul.projects li.project {
     padding: 8px;
     border-bottom: 1px solid #e0e0e0;
@@ -21,15 +17,5 @@ div.pagination {
     padding: 0px;
     margin: 0px;
 }
-.post-body h1 {
-    font-size: 130%;
-}
-.post-body h2 {
-    font-size: 120%;
-}
-.post-body h3 {
-    font-size: 110%;
-}
-.table.followers tr {
-    border-bottom: 1px solid #e0e0e0;
-}
+
+

@@ -81,6 +81,9 @@ def lemmatize_process(tokens):
     lemmatizer = WordNetLemmatizer()
     return [lemmatizer.lemmatize(word) for word in tokens]
 
+def move_other_char(text):
+    return re.sub("[^0-9A-Za-z_]", "", text)
+
 def get_words_from_text(file, text):
     """
         Args:
@@ -109,11 +112,18 @@ def get_words_from_text(file, text):
 
 
 def get_counter(tokens):
+    tokens = filter(lambda x: x is not None, tokens)
     return Counter(tokens)
 
 def get_top_words(tokens, top_number, list_option = True):
+    if tokens is None:
+        return None
     counter = get_counter(tokens).most_common(top_number)
     if list_option:
         return [x for x, y in counter]
     else:
         return dict([(x,y) for x, y in counter])
+
+# just for test
+def get_top_words_from_text(text, top_number=10):
+    return get_top_words(get_words_from_text('1.txt', text), top_number)
