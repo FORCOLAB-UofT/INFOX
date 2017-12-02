@@ -8,17 +8,16 @@
     </div>
     
     <div class="row"></div><hr>
-
-    <div>
-            <h4> Here is all your repos which have been loaded in INFOX. </h4>
-    </div>
-    <hr>
     
-    
-    <div class="projects-tabs">
+    <div class="col-md-6 projects-tabs">
+        <div>
+            <h4> All your followed repos in INFOX: </h4>
+        </div>
+        <hr>
         {% include '_projects.html' %}
-    </div>
-    <div class="pagination">
+        <div class="pagination">
         {{ render_pagination(pagination, '.index') }}
+        </div>
     </div>
-{% endblock %}}
+    
+{% endblock %}

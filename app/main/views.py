@@ -217,6 +217,7 @@ def add():
         _input = form.project_name.data
         if db_add_project(_input):
             flash('The Project (%s) is added. The data is loading......' % _input)
+            db_followed_project(_input)
             return redirect(url_for('main.index'))
         else:
             flash('The Project (%s) has already added!' % _input)
@@ -364,10 +365,9 @@ def unfollowed_fork(fork_full_name):
 
 
 
-
+"""
 # ----------------------------  use for test ------------------------
 @main.route('/test', methods=['GET', 'POST'])
-@admin_required
 def test():
     from ..analyse.util import word_extractor
     fork_list = ProjectFork.objects()
@@ -377,3 +377,11 @@ def test():
             s+=commit["title"] + "\n"
             s+=commit["description"] + "\n"
     return jsonify(word_extractor.get_top_words_from_text(s, 50))
+
+from ..email import send_mail
+
+@main.route('/test2', methods=['GET', 'POST'])
+def test2():
+    send_mail('fancycoder0@gmail.com','test', 'email.html')
+    return 'hello'
+"""

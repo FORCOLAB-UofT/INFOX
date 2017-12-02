@@ -24,6 +24,15 @@ class Config:
     # secret key is a random string.
     SECRET_KEY = os.environ.get('INFOX_SECRET_KEY')
 
+    # E-mail Config
+    MAIL_USE_SSL = True
+    MAIL_SERVER = 'smtp.qq.com'
+    MAIL_PORT = 465
+    MAIL_USERNAME = os.environ.get('INFOX_MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('INFOX_MAIL_PASSWORD')
+    FLASK_MAIL_SENDER = '<375833274@qq.com>'
+    FLASK_MAIL_SUBJECT_PREFIX = '[INFOX]'
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
