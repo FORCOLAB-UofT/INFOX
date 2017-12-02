@@ -22,9 +22,11 @@ class ChangedFile(db.Document):
     key_stemmed_words_dict = db.DictField()
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
+    
     variable = db.ListField(db.StringField())
     class_name = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
+    
 
 
 class ProjectFork(db.Document):
@@ -47,11 +49,16 @@ class ProjectFork(db.Document):
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
     tags = db.ListField(db.StringField())
+    last_updated_time = db.DateTimeField()
 
     # For compatibility old version.
     key_words_by_tdidf = db.ListField(db.StringField())
     key_words_by_tfidf = db.ListField(db.StringField())
     key_words_counter_dict = db.DictField()
+
+    tags = db.ListField(db.StringField())
+    variable = db.ListField(db.StringField())
+    function_name = db.ListField(db.StringField())
 
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
@@ -61,6 +68,7 @@ class Project(db.Document):
     description = db.StringField()
     analyser_progress = db.StringField()
     project_name_show = db.StringField()
+    last_updated_time = db.DateTimeField()
 
 class User(UserMixin, db.Document):
     username = db.StringField(unique=True, required=True)
@@ -73,6 +81,8 @@ class User(UserMixin, db.Document):
     github_access_token = db.StringField()
     password_hash = db.StringField()
     github_name = db.StringField()
+
+    tag_list = db.DictField() # {fork_full_name: tag_list }
 
     def get_id(self):
         return self.username
@@ -95,9 +105,7 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
-
 login_manager.anonymous_user = AnonymousUser
-
 
 @login_manager.user_loader
 def load_user(username):
@@ -111,6 +119,14 @@ class Permission:
     REFRESH = 4
     DELETE = 8
     BASIC_USER = 1 # can follow
-    GITHUB_USER = 7 # can follow, add, refresh
+    GITHUB_USER = 3 # can follow, add
     ADMINISTER = 15 # all
 
+class TagType:
+    FEATURE = 1
+    REFACTORING = 2
+    BUG_FIX = 3
+    CONFIGURE = 4
+    OTHER = 5
+
+    

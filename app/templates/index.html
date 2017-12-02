@@ -3,12 +3,17 @@
 {% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %}
-    <div class="col-md-4">
-        <h1> INFOX </h1>
-        <h4> Forks Overview </h4>
+    <div>
+        <h1> Dashboard </h1>
     </div>
-
+    
     <div class="row"></div><hr>
+
+    <div>
+            <h4> Here is all your repos which have been loaded in INFOX. </h4>
+    </div>
+    <hr>
+    
     
     <div class="projects-tabs">
         {% include '_projects.html' %}

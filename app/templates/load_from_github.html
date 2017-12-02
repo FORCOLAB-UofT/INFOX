@@ -9,10 +9,11 @@
 </div>
 <h3> Following is your starred project on Github. </h3>
 <h3> Select them to load into INFOX. </h3>
+<hr>
     <form method="POST">
         {% for field in form %}
             {% if field.type == "BooleanField" %}
-                {{ field.label }} {{ field }} <br>
+                <h4> {{ field.label }} {{ field }} </h4> <br>
             {% else %}
                 {{ field }}
             {% endif %}
