@@ -12,14 +12,6 @@ from ..decorators import admin_required, permission_required
 from ..auth.views import get_user_repo_list, get_upperstream_repo
 
 
-@main.route('/test2', methods=['GET', 'POST'])
-def test2():
-    return render_template('test2.html')
-
-@main.route('/test', methods=['GET', 'POST'])
-def test():
-    return render_template('test.html', forks = ProjectFork.objects(project_name='maxcountryman_flask-login'))
-
 #------------------------------------------------------------------
 def db_find_project(project_name):
     return Project.objects(project_name=project_name).first()
