@@ -177,45 +177,17 @@ def project_overview(project_name):
         Args:
             project_name
     """
-
     if not db_find_project(project_name):
         abort(404)
 
-    _contain_key_word = request.args.get("key_word")
-    _page = request.args.get('page', 1, type=int) # default is 1st page
-    _order = request.args.get('order', "-last_committed_time", type=str) 
-
-    search_form = SearchForm()
-    if search_form.validate_on_submit():
-        return redirect(url_for('main.project_overview', project_name=project_name, key_word=search_form.content.data, order=_order))
-
     _project = Project.objects(project_name=project_name).first()
-    # if _project.analyser_progress and _project.analyser_progress != "100%":
-    #     flash('The Project (%s) is updating!' % project_name)
-
-    _all_changed_files = {}
+    _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[])
     _changed_files = ChangedFile.objects(project_name=project_name)
+    _all_changed_files = {}
     for file in _changed_files:
         _all_changed_files[(file.fork_name, file.file_name)] = file
-        
-    _marked_files = set()
-    pagination = None
-    if _contain_key_word:
-        _forks = ProjectFork.objects(project_name=project_name, key_words_tfidf=_contain_key_word, file_list__ne=[]).order_by(_order)
-        _contain_key_words_changed_files = ChangedFile.objects(project_name=project_name, key_words_tfidf=_contain_key_word)
-        for file in _contain_key_words_changed_files:
-            _marked_files.add((file.fork_name, file.file_name))
-    else:
-        _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[]).order_by(_order)
-        
-    pagination = _forks.paginate(page=_page, per_page=current_app.config['SHOW_NUMBER_FOR_FORKS'])
-    _show_forks = pagination.items
-
-    _active_fork_number = _forks.count()
-    return render_template('project_overview.html', project=_project, forks=_show_forks, key_word=_contain_key_word, page=_page, order=_order,
-                           active_fork_number=_active_fork_number, search_form=search_form,
-                           all_changed_files=_all_changed_files, marked_files=_marked_files, pagination=pagination)
-
+    
+    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files)
 
 @main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
