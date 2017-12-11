@@ -17,7 +17,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Logout Successfully!')
     return redirect(url_for('main.start'))
 
 @github.access_token_getter
@@ -53,7 +52,6 @@ def github_login(access_token):
         User(username=_github_username,
              email=_github_user_email,
              permission=Permission.GITHUB_USER).save()
-        flash('Login with Github successfully!')
     User.objects(username=_github_username).update(github_access_token=access_token)
     User.objects(username=_github_username).update(last_seen=datetime.utcnow())
     _user = User.objects(username=_github_username).first()
