@@ -62,6 +62,7 @@ def welcome():
 def discover():
     form = SearchProjectForm()
     if form.validate_on_submit():
+        _input_project_name = form.project_name.data
         _find_result = db_approximate_find_project_project_name(
             _input_project_name)
         if _find_result:
