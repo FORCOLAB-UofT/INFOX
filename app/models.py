@@ -64,6 +64,7 @@ class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     language = db.StringField()
     fork_number = db.IntField(default=-1)
+    activate_fork_number = db.IntField(default=-1)
     feature_number = db.IntField(default=-1)
     description = db.StringField()
     analyser_progress = db.StringField()
@@ -77,12 +78,16 @@ class User(UserMixin, db.Document):
     last_seen = db.DateTimeField()
     followed_projects = db.ListField(db.StringField())
     followed_forks = db.ListField(db.StringField())
+    followed_projects_time = db.DictField()
 
     github_access_token = db.StringField()
     password_hash = db.StringField()
     github_name = db.StringField()
 
     tag_list = db.DictField() # {fork_full_name: tag_list }
+    
+    owned_repo = db.ListField(db.StringField())
+    owned_repo_sync_time = db.DateTimeField()
 
     def get_id(self):
         return self.username

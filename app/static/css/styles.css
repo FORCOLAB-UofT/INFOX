@@ -15,41 +15,10 @@ ul.projects li.project div.project-name {
     font-weight: bold;
 }
 
-div.pagination {
-    width: 100%;
-    text-align: right;
-    padding: 0px;
-    margin: 0px;
-}
-
 div.welcome_word {
     font-family: Georgia;
     font-style: oblique;
     font-size: larger;
 }
-
-html {
-   height:100%;
-}
-
-body{  
-    min-height:100%;
-    padding-left: 10px
-    position: relative;   
-}  
-
-.footer
-{
-	position: fixed;
-	bottom: 0px;
-	width: 100%;
-	height: 20px;
-	background-color: rgba(0,0,0,0.3);
-	vertical-align: middle;
-	line-height: 20px;
-	color: white;
-	text-align: center;
-}
-
 
 

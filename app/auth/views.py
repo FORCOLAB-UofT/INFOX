@@ -29,9 +29,17 @@ def token_getter():
         # print("token get from g! %s" % g.github_access_token)
         return g.get('github_access_token', None)
 
-def get_user_starred_list(username):
+def get_user_repo_list(username):
     raw_data = github.request('GET', 'users' + '/' + username + '/' + 'repos', True)
     return [x["full_name"] for x in raw_data]
+
+def get_upperstream_repo(repo):
+    raw_data = github.request('GET', 'repos' + '/' + repo)
+    if raw_data["fork"] == True:
+        # print("R=",raw_data["source"]["full_name"])
+        return raw_data["source"]["full_name"]
+    else:
+        return None
 
 @auth.route('/callback', methods=['GET', 'POST'])
 @github.authorized_handler

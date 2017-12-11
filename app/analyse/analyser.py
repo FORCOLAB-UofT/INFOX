@@ -5,24 +5,24 @@ from . import project_updater
 
 current_analysing = set()
 
-def start_analyse(app, project_full_name, analyse_github):
-    if project_full_name in current_analysing:
+def start_analyse(app, project_name, analyse_github):
+    if project_name in current_analysing:
         return
 
-    print("-----start analysing for %s-----" % project_full_name)
-    current_analysing.add(project_full_name)
+    print("-----start analysing for %s-----" % project_name)
+    current_analysing.add(project_name)
 
     with app.app_context():
-        author, repo = project_full_name.split('_')
-        repo_info = analyse_github.get('repos/%s/%s' % (author, repo))
-        print('finish fetch repo info for %s' % repo)
-        repo_forks_list = analyse_github.request('GET', 'repos/%s/%s/forks' % (author, repo), True)
-        print('finish fetch fork list for %s' % repo)
-        project_updater.start_update(project_full_name, repo_info, repo_forks_list)
+        repo_info = analyse_github.get('repos/%s' % project_name)
+        print('finish fetch repo info for %s' % project_name)
+        repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
+        print('finish fetch fork list for %s' % project_name)
+        project_updater.start_update(project_name, repo_info, repo_forks_list)
 
-    current_analysing.remove(project_full_name)
-    print("-----finish analysing for %s-----" % project_full_name)
-    
+    current_analysing.remove(project_name)
+    print("-----finish analysing for %s-----" % project_name)
+
+
 def start(project_name, analyser_access_token):
     app = current_app._get_current_object()
 
@@ -32,5 +32,11 @@ def start(project_name, analyser_access_token):
         # print("another place %s" % analyser_access_token)
         return analyser_access_token
 
+    try:
+        analyse_github.get('repos/%s' % project_name)
+    except:
+        return False
+
     Thread(target=start_analyse, args=[app, project_name, analyse_github]).start()
-    #return thread
+    return True
+
