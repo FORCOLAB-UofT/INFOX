@@ -5,7 +5,7 @@ import platform
 class Config:
     # Database config.
     MONGODB_SETTINGS = {
-        'db': 'test',
+        'db': 'infox_db',
         'host': '127.0.0.1',
         'port': 27017
     }

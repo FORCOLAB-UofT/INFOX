@@ -1,59 +1,57 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% from "bootstrap/pagination.html" import render_pagination %}
 
-{% block page_content %}
-    <div class="project-info">
-        <div class="col-md-6">
-            <div class="project_name" >
-                <a href="{{ "https://github.com/" + project.project_name.replace('_','/') }}">
-                    <h1> {{ project.project_name.replace('_', '/') }}</h1>
-                </a>        
-            </div>
-            <br>
-            <div class="project_info">
-                {% if project.language %}<h4>Language: {{ project.language }}</h4>{% endif %}
-                {% if project.fork_number %}<h4>Fork Number on Github: {{ project.fork_number }}</h4>{% endif %}  
-                {% if project.description %}<h4> Description: </h4> <p> {{ project.description }}</p>{% endif %}
-            </div>
-        </div>
+{% block page_content %} 
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Repo overview </a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#"> {{ project.project_name }} </a>
+        </li>
+    </ol>
+
+    <div class="card mb-3">
+      <div class="project-info">
+          <div class="col-md-6">
+              <div class="project_name" >
+                  <a href="{{ "https://github.com/" + project.project_name }}">
+                      <h1> {{ project.project_name }}</h1>
+                  </a>        
+              </div>
+              <br>
+              <div class="project_info">
+                  {% if project.language %}<h4>Language: {{ project.language }}</h4>{% endif %}
+                  {% if project.fork_number %}<h4>Fork Number on Github: {{ project.fork_number }}</h4>{% endif %}  
+                  {% if project.description %}<h4> Description: </h4> <p> {{ project.description }}</p>{% endif %}
+              </div>
+          </div>
+      </div>
+
+      <div class="row"></div><hr>
+
+      <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
+          <h4><p class="text-center"> Forks of {{ project.project_name }}</p></h4>         
+      </a>
+      
+      {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
+          <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="{{ "min-width: 2em; width:%s" % project.analyser_progress }}">
+                  {{ project.analyser_progress }}
+              </div>
+              Updating ... We will send you an updated email once we are done!
+          </div>
+      {% endif %}
+
+      <div class="forks-tabs">
+          {% include "_forks.html" %}
+      </div>
     </div>
-
-    <div class="row"></div><hr>
-
-    <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-        <h4><p class="text-center"> Forks of {{ project.project_name.replace('_', '/') }}</p></h4>         
-    </a>
-    
-    {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="{{ "min-width: 2em; width:%s" % project.analyser_progress }}">
-                {{ project.analyser_progress }}
-            </div>
-            Updating ... We will send you an updated email once we are done!
-        </div>
-    {% endif %}
-
-    <div class="col-lg-4 pull-right">
-        <div class="col-md-6">
-            {% if active_fork_number %}<h5> Active Fork: {{ active_fork_number }} </h5>{% endif %}
-            {% if key_word %}<h5> Search for:  {{ key_word }} </h5>{% endif %}
-        </div>
-
-        <div class="col-md-6">
-            {{ wtf.quick_form(search_form, button_map={'submit': 'primary'}) }}
-        </div>
-            
-    </div>
-
-    <div class="forks-tabs">
-        {% include "_forks.html" %}
-    </div>
-
-    {% if pagination %}
-        <div class="pagination">
-            {{ render_pagination(pagination, '.project_overview', args={ 'project_name':project.project_name , 'key_word':key_word, 'order':order }) }}
-        </div>
-    {% endif %}
 
 {% endblock %}
+
+    
+

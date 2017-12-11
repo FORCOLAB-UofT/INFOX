@@ -148,12 +148,21 @@ class ForkUpdater:
             # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 100, False),
         ).save()
 
+def get_activate_fork_number(forks_info):
+    number = 0
+    for fork in forks_info:
+        if fork["pushed_at"] > fork["created_at"]:
+            number += 1
+    return number
+
 def start_update(project_name, repo_info, forks_info):
+    
     # Update project in database.
     Project(
         project_name=project_name,
         language=repo_info["language"],
         fork_number=repo_info["forks"],
+        activate_fork_number=get_activate_fork_number(forks_info),
         description=str(repo_info["description"]),
         analyser_progress="0%",
         last_updated_time=datetime.utcnow(),
@@ -164,7 +173,9 @@ def start_update(project_name, repo_info, forks_info):
     code_clone_crawler = CloneCrawler(project_name)
     for fork in forks_info:
         forks_count += 1
-        Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
         ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
 
+        Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
+        Project.objects(project_name=project_name).update(last_updated_time=datetime.utcnow())
+        
 

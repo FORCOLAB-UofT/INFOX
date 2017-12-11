@@ -1,107 +1,25 @@
-{% extends "bootstrap/base.html" %}
+{% include "_head.html" %}
 
-{% block title %}INFOX{% endblock %}
-
-{% block head %}
-    {{super()}}
-    <link rel="icon" href="{{ url_for('static', filename='fav.ico')}}" type="image/x-coin">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% block javascript %}
+    {% include "_js.html" %}
 {% endblock %}
 
-{% block navbar %}
-    <div class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">INFOX - beta</a>
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+    {% include "_nav.html" %}
+
+    <div class="content-wrapper">
+
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/">
-                            <span class="glyphicon glyphicon-home" aria-hidden="true">
-                            </span>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('main.discover') }}">
-                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                            Find
-                        </a>
-                    </li>
-                    {#
-                    <li>
-                        <a href="{{ url_for('main.compare_forks') }}">
-                            <span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>
-                            Compare
-                        </a>
-                    </li>
-                    #}
-                    {#
-                    {% if current_user.is_authenticated %}
-                        <li>
-                            <a href="{{ url_for('main.add') }}">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                Add
-                            </a>
-                        </li>
-                    {% endif %}
-                    #}
-                    <li>
-                        <a href="{{ url_for('main.about') }}">
-                            <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
-                            About
-                        </a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                                {{ current_user.username }}<b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                {% if current_user.is_administrator %}
-                                    <li><a href="{{ url_for('main.admin_manage') }}"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>Admin</a></li>
-                                {% endif %}
-                                <li><a href="{{ url_for('main.load_from_github') }}"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>Load from Github</a></li>
-                                <li><a href="{{ url_for('main.add') }}"><span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>Add Repo Manually</a></li>
-                                <li><a href="{{ url_for('auth.logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
+        {% endfor %}
+        
+      <div class="container-fluid">
+        {% block page_content %} {% endblock %}
+        
+        <script type="text/javascript" src="{{ url_for('static', filename='js/sb-admin.min.js') }}"></script>
+      </div>
     </div>
-{% endblock %}
-
-{% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-        </div>
-    {% endfor %}
-    {% block page_content %}{% endblock %}
-</div>
-
-
-<div class="footer">
-    <div class="container">
-        <a href="{{ url_for('main.about') }}"> About Us </a> .
-        <a href="#"> Join Us </a> .
-        <a href="https://github.com/FancyCoder0/INFOX"> Source Code for INFOX </a> .
-        <a href="https://github.com/FancyCoder0/INFOX/issues"> Open An Issue </a> 
-    </div>
-</div>
-
-{% endblock %}
+</body>

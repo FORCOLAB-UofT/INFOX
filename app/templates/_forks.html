@@ -1,9 +1,5 @@
-<script type="text/javascript"
-src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-
-<script type="text/javascript">
-var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-</script>
+    
+<script type="text/javascript"> var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
 
 <script type="text/javascript">   
     $(function() {
@@ -37,6 +33,35 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     });
 </script>
 
+<script>
+$(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#forks-list tfoot th').each( function () {
+        var title = $('#forks-list tfoot th').eq( $(this).index() ).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+
+    // DataTable
+    var table = $('#forks-list').DataTable({
+        "bFilter": true,
+        "bSort": true,
+        "order": [[ 6, "desc" ]],
+    });
+
+    // Apply the search
+    table.columns().eq( 0 ).each( function ( colIdx ) {
+        $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
+            table
+                .column( colIdx )
+                .search( this.value )
+                .draw();
+        } );
+    } );
+} );
+
+</script>
+
+
 <style type="text/css">
     tr.change:hover
     {
@@ -44,169 +69,99 @@ var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     }
 </style>
 
+<table id="forks-list" class="display" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Fork Full Name</th>
+            <th>Commits</th>
+            <th>Files of Changed</th>
+            <th>Lines of Changed</th>
+            <th>Tags</th>
+            <th>Key Words</th>
+            <th>Last Committed</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    
+    <tfoot>
+        <tr>
+            <th>Fork Full Name</th>
+            <th>Commits</th>
+            <th>Files of Changed</th>
+            <th>Lines of Changed</th>
+            <th>Tags</th>
+            <th>Key Words</th>
+            <th>Last Committed</th>
+            <th>Created At</th>
+        </tr>
+    </tfoot>
 
-    <table id="forks-list" class="display" cellspacing="0" width="100%">
-        <colgroup>
-            <col style>
-            <col style="width:10%">
-            <col style="width:10%">
-            <col style="width:10%">
-            <col style>
-            <col style>
-            {#
-            <col style>
-            <col style>
-            #}
-            <col style="width:10%">
-            <col style="width:10%">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>
-                    <p class="text-center">Fork Full Name</p>
-                </th>
-                <th>
-                    <p class="text-center">Commits</p>
-                </th>
-                <th>
-                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_file_number') }}">        
-                        <p class="text-center"> Files of Changed <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> </p>
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-total_changed_line_number') }}">
-                        <p class="text-center"> Lines of Changed <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span> </p>
-                    </a>
-                </th>
-                <th>
-                    <p class="text-center">Tags</p>
-                </th>
-                <th>
-                    <p class="text-center">Key Words</p>
-                </th>
-                {#
-                <th>
-                    <p class="text-center">Key Variables</p>
-                </th>
-                <th>
-                    <p class="text-center">Key Functions</p>
-                </th>
-                #}
-                <th>
-                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-last_committed_time') }}">        
-                        Last Committed
-                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ url_for('main.project_overview', project_name=project.project_name, key_word=key_word, page=page, order='-created_time') }}">        
-                        Created At
-                        <span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>
-                    </a>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for fork in forks %}
-            <tr class="change">
-                <td>
-                    <p class="text-center">
-                        <a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
-                    </p>
-                </td>
-                <td>
-                    <div class="dropdown text-center">
-                        <button class="btn-group-sm dropdown-toggle " type="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            {{ fork.total_commit_number }}
-                            <span class="caret"></span>
+    <tbody>
+        {% for fork in forks %}
+        <tr class="change">
+            <td><a href="{{ "https://github.com/" + fork.fork_name + "/compare" }}"> {{ fork.fork_name }} </a>
+            </td>
+            <td>
+                <div class="dropdown show">
+                  <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ fork.total_commit_number }}
+                  </a>
+
+                  <div class="dropdown-menu" aria-labelledby="commit_list">
+                    {% for commit in fork.commit_list %}
+                        <a class="dropdown-item" href="{{ commit["link"] }}">{{ commit["title"] }}</a>
+                    {% endfor %}
+                  </div>
+                </div>                  
+            </td>
+
+            <td>
+                <div class="dropdown show">
+                  <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ fork.total_changed_file_number }}
+                    <span class="caret"></span>
+                  </a>
+
+                  <div class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
+                    {% for file_name in fork.file_list %}
+                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}</a>
+                    {% endfor %}
+                  </div>
+                </div>                  
+            </td>
+
+            <td>
+                {{ fork.total_changed_line_number }}
+            </td>
+            
+            <td style="word-break:break-all;">
+                <div class="tag" id="{{ fork.full_name }}">
+                    <span id="tag_list" style="float:left;">
+                        {{ ",".join(fork.tags) }}
+                    </span>
+                    {% if current_user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-xs" type="button" id="edit_tag_list" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="fa fa-pencil" aria-hidden="true"></span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="commit_list">
-                            {% for commit in fork.commit_list %}
-                            <li>
-                                <a href="{{ commit["link"] }}">
-                                    {{ commit["title"] }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>                   
-                </td>
-                <td>
-                    <div class="dropdown text-center">
-                        <button class="btn-group-sm dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            {{ fork.total_changed_file_number }}
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
-                            {% for file_name in fork.file_list %}
-                            <li>
-                                {% if all_changed_files[(fork.fork_name, file_name)].changed_line_number %}
-                                    {% if marked_files %}
-                                        {% if (fork.fork_name, file_name) in marked_files %}
-                                            <a class="label-success" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
-                                                {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
-                                            </a>
-                                        {% else %}
-                                            <a class="label-default" href='{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}'>
-                                                {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
-                                            </a>
-                                        {% endif %}
-                                    {% else %}
-                                        <a href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">
-                                            {{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}
-                                        </a>
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                            {% endfor %}
+                        <ul class="dropdown-menu" aria-labelledby="edit_tag_list">
+                            <input type="text" size="7" name="add">
+                            <a href=# id="add">add</a>
+                            <a href=# id="clear">clear-all</a>
                         </ul>
                     </div>
-                </td>
+                    {% endif %}
+                </div>
+            </td>
 
-                <td>
-                    <div class="text-center">
-                        {{ fork.total_changed_line_number }}
-                    </div>
-                </td>
-                
-                <td style="word-break:break-all;">
-                    <div class="tag" id="{{ fork.full_name }}">
-                        <span id="tag_list" style="float:left;">
-                            {{ ",".join(fork.tags) }}
-                        </span>
-                        {% if current_user.is_authenticated %}
-                        <div class="dropdown">
-                            <button class="btn btn-default btn-xs" type="button" id="edit_tag_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="edit_tag_list">
-                                <input type="text" size="7" name="add">
-                                <a href=# id="add">add</a>
-                                <a href=# id="clear">clear-all</a>
-                            </ul>
-                        </div>
-                        {% endif %}
-                    </div>
-                </td>
+            <td style="word-break:break-all;">
+                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
+            </td>
 
-                <td style="word-break:break-all;">
-                    {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
-                </td>
+            <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
 
-                {# 
-                <td style="word-break:break-all;">
-                    {{ ", ".join(fork.variable[:6]) }}
-                </td>
-
-                <td style="word-break:break-all;">
-                    {{ ", ".join(fork.function_name[:6]) }}
-                </td>
-                #}
-
-                <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
-
-                <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

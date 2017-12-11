@@ -5,7 +5,7 @@
                 <div class="form-inline">  
                     <div class="project-name">
                         <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-                            <h4> {{ project.project_name.replace('_', '/') }} <h4>
+                            <h4> {{ project.project_name }} <h4>
                         </a>
                     </div>
                     {% if current_user.is_authenticated %}
@@ -35,6 +35,7 @@
                 <div class="project-body">
                     <div class="language"> {{ "Language: %s" % project.language }} </div>
                     <div class="github_fork_number"> {{ "Fork on Github: %d" % project.fork_number }} </div>
+                    <div class="activate_fork_number"> {{ "Activate Fork: %d" % project.activate_fork_number }} </div>
                 </div>
         </li>
     {% endfor %}

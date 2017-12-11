@@ -9,7 +9,16 @@ from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
-from ..auth.views import get_user_starred_list
+from ..auth.views import get_user_repo_list, get_upperstream_repo
+
+
+@main.route('/test2', methods=['GET', 'POST'])
+def test2():
+    return render_template('test2.html')
+
+@main.route('/test', methods=['GET', 'POST'])
+def test():
+    return render_template('test.html', forks = ProjectFork.objects(project_name='maxcountryman_flask-login'))
 
 #------------------------------------------------------------------
 def db_find_project(project_name):
@@ -25,9 +34,8 @@ def db_approximate_find_project_project_name(project_name):
 
 
 def db_add_project(project_name):
-    _project_name = project_name.replace('/', '_')
-    if not db_find_project(_project_name):
-        analyser.start(_project_name, current_user.github_access_token)
+    if not db_find_project(project_name):
+        analyser.start(project_name, current_user.github_access_token)
         return True
     else:
         return False
@@ -40,8 +48,9 @@ def db_delete_project(project_name):
 
 
 def db_followed_project(project_name):
-    _project_name = project_name.replace('/', '_')
-    User.objects(username=current_user.username).update_one(push__followed_projects=_project_name)
+    User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+    # Update project followed time
+    # User.objects(username=current_user.username).update(push__followed_projects_time=(project_name, datetime.utcnow()))
 
 #------------------------------------------------------------------
 
@@ -61,7 +70,6 @@ def welcome():
 def discover():
     form = SearchProjectForm()
     if form.validate_on_submit():
-        _input_project_name = form.project_name.data.replace('/', '_')
         _find_result = db_approximate_find_project_project_name(
             _input_project_name)
         if _find_result:
@@ -111,13 +119,17 @@ def compare_forks():
 
 @main.route('/load_from_github', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.ADD)
 def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
     
-    _starred_project = get_user_starred_list(current_user.username)
-    for project in _starred_project:
+    _ownered_project = get_user_repo_list(current_user.username)
+    for project in _ownered_project:
         setattr(ProjectSelection, project, BooleanField(project))
+        upperstream_repo = get_upperstream_repo(project)
+        if upperstream_repo is not None:
+            setattr(ProjectSelection, upperstream_repo, BooleanField(upperstream_repo + "(Upperstream of %s)" % project))
     setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
     form = ProjectSelection()
     if form.validate_on_submit():
@@ -129,23 +141,44 @@ def load_from_github():
         return redirect(url_for('main.index'))
     return render_template('load_from_github.html', form=form)
 
+@main.route('/_sync', methods=['GET', 'POST'])
+@login_required
+def _sync():
+    pass
+
+@main.route('/guide', methods=['GET', 'POST'])
+@login_required
+def guide():
+    return render_template('guide.html')
 
 @main.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    _search_form = SearchProjectForm()
+    if _search_form.validate_on_submit():
+        _find_result = db_approximate_find_project_project_name(_input)
+        if _find_result:
+            # TODO(make sure user to follow)
+            db_followed_project(_find_result.project_name)
+            flash('The Project (%s) is followed successfully!' % _find_result.project_name)
+            return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
+        else:
+            # TODO(not in our database, to add)
+            flash('The Project (%s) is not be in our database. Do you want to add it?' % _input)
+
+            return redirect(url_for('main.index'))
+
+
     project_list = Project.objects(
         project_name__in=current_user.followed_projects)
     
     if len(project_list) == 0:
-        return redirect(url_for('main.load_from_github'))
-    page = request.args.get('page', 1, type=int)  # default is 1st page
-    pagination = project_list.order_by(
-        '-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
-    projects = pagination.items
-    return render_template('index.html', projects=projects, pagination=pagination)
+        return redirect(url_for('main.guide'))
+    
+    return render_template('index.html', projects=project_list, search_form=_search_form)
 
 
-@main.route('/project/<project_name>', methods=['GET', 'POST'])
+@main.route('/project/<path:project_name>', methods=['GET', 'POST'])
 def project_overview(project_name):
     """ Overview of the project
         Args:
@@ -191,7 +224,7 @@ def project_overview(project_name):
                            all_changed_files=_all_changed_files, marked_files=_marked_files, pagination=pagination)
 
 
-@main.route('/followed_project/<project_name>', methods=['GET', 'POST'])
+@main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.FOLLOW)
 def followed_project(project_name):
@@ -200,7 +233,7 @@ def followed_project(project_name):
     return redirect(url_for('main.discover'))
 
 
-@main.route('/unfollowed_project/<project_name>', methods=['GET', 'POST'])
+@main.route('/unfollowed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollowed_project(project_name):
@@ -208,21 +241,24 @@ def unfollowed_project(project_name):
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
 
-@main.route('/add', methods=['GET', 'POST'])
+@main.route('/add_manually', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.ADD)
-def add():
+def add_manually():
     form = AddProjectForm()
     if form.validate_on_submit():
         _input = form.project_name.data
-        if db_add_project(_input):
-            flash('The Project (%s) is added. The data is loading......' % _input)
+        if db_find_project(_input) is not None:
             db_followed_project(_input)
-            return redirect(url_for('main.index'))
+            flash('The Project (%s) is already in INFOX. Followed successfully!' % _input)
         else:
-            flash('The Project (%s) has already added!' % _input)
-            return redirect(url_for('main.add'))
-    return render_template('add.html', form=form)
+            exists = analyser.start(_input, current_user.github_access_token)
+            if exists:
+                db_followed_project(_input)
+                flash('The Project (%s) just starts loading into INFOX. Please wait.' % _input)
+            else:
+                flash('Not found!')
+    return render_template('add_manually.html', form=form)
 
 
 @main.route('/about')
@@ -247,7 +283,7 @@ def admin_manage():
     return render_template('admin_manage.html', projects=_projects, users=_users)
 
 
-@main.route('/project_refresh/<project_name>', methods=['GET', 'POST'])
+@main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def project_refresh(project_name):
@@ -272,7 +308,7 @@ def project_refresh_all():
     return redirect(url_for('main.admin_manage'))
 
 
-@main.route('/delete_project/<project_name>', methods=['GET', 'POST'])
+@main.route('/delete_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def delete_project(project_name):
@@ -317,6 +353,7 @@ def get_familar_fork():
         return jsonify(result=_result)
     else:
         return None
+
 
 """
 @main.route('/_add_tag', methods=['GET', 'POST'])

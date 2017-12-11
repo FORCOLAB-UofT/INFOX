@@ -1,23 +1,16 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% from "bootstrap/pagination.html" import render_pagination %}
 
-{% block page_content %}
-    <div>
-        <h1> Dashboard </h1>
+{% block page_content %} 
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Dashboard</a>
+        </li>
+    </ol>
+
+    <h3 class="text-center">Followed repositories</h3>
+    <div class="card mb-3">
+        {% include "_projects.html" %}
     </div>
-    
-    <div class="row"></div><hr>
-    
-    <div class="col-md-6 projects-tabs">
-        <div>
-            <h4> All your followed repos in INFOX: </h4>
-        </div>
-        <hr>
-        {% include '_projects.html' %}
-        <div class="pagination">
-        {{ render_pagination(pagination, '.index') }}
-        </div>
-    </div>
-    
+
 {% endblock %}
