@@ -4,6 +4,7 @@ ul.projects {
     margin: 16px 0px 0px 0px;
     border-top: 1px solid #e0e0e0;
 }
+
 ul.projects li.project {
     padding: 10px;
     border-bottom: 1px solid #e0e0e0;
@@ -11,11 +12,11 @@ ul.projects li.project {
 }
 
 ul.projects li.project div.project-name {
-    font-family: 'New Century Schoolbook';
+    font-family: Georgia;
     font-weight: bold;
 }
 
-div.welcome_word {
+ol.breadcrumb {
     font-family: Georgia;
     font-style: oblique;
     font-size: larger;
