@@ -31,15 +31,9 @@ class CompareForkForm(FlaskForm):
     fork2 = StringField('Fork2')
     submit = SubmitField('Compare')
 
-
-class FollowedButton():
-    submit = SubmitField('Followed')
-
-
-class UnFollowedButton():
-    submit = SubmitField('UnFollowed')
-
-
 class FeedbackForm(FlaskForm):
     feedback = TextAreaField('')
     submit = SubmitField('Send to us')
+
+class SyncButton(FlaskForm):
+    submit = SubmitField('Sync with Github')

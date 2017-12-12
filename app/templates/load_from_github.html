@@ -20,6 +20,8 @@
     Following is your repos(included upstream repo) on Github.
     Select them to load into INFOX.
     <hr>
+    {{ wtf.quick_form(sync_button, button_map={'submit': 'primary'}) }}
+
     <form method="POST">
         {% for field in form %}
             {% if field.type == "BooleanField" %}
