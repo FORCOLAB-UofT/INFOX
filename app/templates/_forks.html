@@ -46,6 +46,7 @@ $(document).ready(function() {
         "bFilter": true,
         "bSort": true,
         "order": [[ 6, "desc" ]],
+        "bAutoWidth": true,   
     });
 
     // Apply the search
@@ -57,6 +58,7 @@ $(document).ready(function() {
                 .draw();
         } );
     } );
+
 } );
 
 </script>
@@ -69,7 +71,7 @@ $(document).ready(function() {
     }
 </style>
 
-<table id="forks-list" class="display" cellspacing="0" width="100%">
+<table id="forks-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
     <thead>
         <tr>
             <th>Fork Full Name</th>

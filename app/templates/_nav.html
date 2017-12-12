@@ -10,7 +10,7 @@
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
           <a class="nav-link" href="{{ url_for('main.index') }}">
             <i class="fa fa-fw fa-area-chart"></i>
-            <span class="nav-link-text">Dashboard</span>
+            <span class="nav-link-text">Followed repositories</span>
           </a>
         </li>
 
@@ -24,10 +24,7 @@
               <a href="{{ url_for('main.load_from_github') }}">Load from Github</a>
             </li>
             <li>
-              <a href="{{ url_for('main.add_manually') }}">Add manually</a>
-            </li>
-            <li>
-              <a href="{{ url_for('main.discover') }}">Discover</a>
+              <a href="{{ url_for('main.find_repos') }}">Find repos</a>
             </li>
           </ul>
         </li>

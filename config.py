@@ -15,7 +15,6 @@ class Config:
 
     # Overview page config.
     SHOW_NUMBER_FOR_PAGE = 6 # Project number per page in index page.
-    SHOW_NUMBER_FOR_FORKS = 15 # Forks number per page in project overview page.
 
     # User manage config.
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
