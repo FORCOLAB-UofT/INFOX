@@ -59,32 +59,6 @@ def welcome():
     return render_template('welcome.html')
 
 
-@main.route('/discover', methods=['GET', 'POST'])
-def discover():
-    form = SearchProjectForm()
-    if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        _find_result = db_approximate_find_project_project_name(
-            _input_project_name)
-        if _find_result:
-            return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
-        else:
-            flash('The Project (%s) is not be added. You can turn to Add to add it!' %
-                  _input_project_name)
-            return redirect(url_for('main.discover'))
-
-    if current_user.is_authenticated:
-        project_list = Project.objects(
-            project_name__nin=current_user.followed_projects)
-    else:
-        project_list = Project.objects
-    page = request.args.get('page', 1, type=int)  # default is 1st page
-    pagination = project_list.order_by(
-        '-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
-    projects = pagination.items
-    return render_template('discover.html', form=form, projects=projects, pagination=pagination)
-
-
 @main.route('/compare_forks', methods=['GET', 'POST'])
 def compare_forks():
     """ Compare two forks by Key words
@@ -212,7 +186,7 @@ def project_overview(project_name):
 def followed_project(project_name):
     db_followed_project(project_name)
     flash('Followed Project %s successfully!' % project_name) 
-    return redirect(url_for('main.discover'))
+    return redirect(url_for('main.find_repos'))
 
 
 @main.route('/unfollowed_project/<path:project_name>', methods=['GET', 'POST'])
@@ -223,10 +197,10 @@ def unfollowed_project(project_name):
         pull__followed_projects=project_name)
     return redirect(url_for('main.index'))
 
-@main.route('/add_manually', methods=['GET', 'POST'])
+@main.route('/find_repos', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.ADD)
-def add_manually():
+def find_repos():
     form = AddProjectForm()
     if form.validate_on_submit():
         _input = form.project_name.data
@@ -240,7 +214,17 @@ def add_manually():
                 flash('The Project (%s) just starts loading into INFOX. Please wait.' % _input)
             else:
                 flash('Not found!')
-    return render_template('add_manually.html', form=form)
+
+    if current_user.is_authenticated:
+        project_list = Project.objects(
+            project_name__nin=current_user.followed_projects)
+    else:
+        project_list = Project.objects
+
+    page = request.args.get('page', 1, type=int)  # default is 1st page
+    pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    projects = pagination.items
+    return render_template('find_repos.html', form=form, projects=projects, pagination=pagination)
 
 
 @main.route('/about')

@@ -7,7 +7,7 @@ from wtforms.validators import Length
 class AddProjectForm(FlaskForm):
     project_name = StringField(
         'Input the full name of the project (author/repo)')
-    submit = SubmitField('Add')
+    submit = SubmitField('Add & Followed')
 
 
 class DeleteProjectForm(FlaskForm):
