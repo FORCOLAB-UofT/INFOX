@@ -85,8 +85,8 @@ class User(UserMixin, db.Document):
     github_name = db.StringField()
 
     tag_list = db.DictField() # {fork_full_name: tag_list }
-    
-    owned_repo = db.ListField(db.StringField())
+
+    owned_repo = db.DictField() # {repo_full_name: show_name}
     owned_repo_sync_time = db.DateTimeField()
 
     def get_id(self):

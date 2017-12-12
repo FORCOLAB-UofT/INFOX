@@ -1,5 +1,6 @@
 from flask import g, jsonify, render_template, redirect, url_for, current_app, abort, flash, request, make_response
 from flask_login import login_required, current_user
+from datetime import datetime
 
 from . import main
 from .forms import *
@@ -117,12 +118,17 @@ def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
     
-    _ownered_project = get_user_repo_list(current_user.username)
+    sync_button = SyncButton()
+    if sync_button.validate_on_submit():
+        return redirect(url_for('main.sync'))
+    
+    if current_user.owned_repo_sync_time is not None:
+        _ownered_project = list(current_user.owned_repo.items())
+    else:
+        return redirect(url_for('main.sync'))
+
     for project in _ownered_project:
-        setattr(ProjectSelection, project, BooleanField(project))
-        upperstream_repo = get_upperstream_repo(project)
-        if upperstream_repo is not None:
-            setattr(ProjectSelection, upperstream_repo, BooleanField(upperstream_repo + "(Upperstream of %s)" % project))
+        setattr(ProjectSelection, project[0], BooleanField(project[1]))
     setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
     form = ProjectSelection()
     if form.validate_on_submit():
@@ -132,12 +138,23 @@ def load_from_github():
                 db_followed_project(field.id)
         flash('Add & Follow successfully!')
         return redirect(url_for('main.index'))
-    return render_template('load_from_github.html', form=form)
+    return render_template('load_from_github.html', form=form, sync_button=sync_button)
 
-@main.route('/_sync', methods=['GET', 'POST'])
+@main.route('/sync', methods=['GET', 'POST'])
 @login_required
-def _sync():
-    pass
+def sync():
+    _ownered_project = []
+    _tmp_project_list = get_user_repo_list(current_user.username)
+    for project in _tmp_project_list:
+        _ownered_project.append((project, project))
+        # Add upperstream_repo
+        upperstream_repo = get_upperstream_repo(project)
+        if upperstream_repo is not None:
+            _ownered_project.append((upperstream_repo, upperstream_repo + "(Upperstream of %s)" % project))
+    User.objects(username=current_user.username).update_one(set__owned_repo_sync_time=datetime.utcnow())
+    User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
+    flash('Sync with Github successfully!')
+    return redirect(url_for('main.load_from_github'))
 
 @main.route('/guide', methods=['GET', 'POST'])
 @login_required
