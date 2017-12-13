@@ -3,6 +3,20 @@
 
 <script type="text/javascript">   
     $(function() {
+        var add_tag = function(e) {
+            var tag_obj = $(this).parents('.tag')
+            var tag_list = tag_obj.find('span[id="tag_list"]')
+            var input_tag = $(this).attr('id')
+            $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
+                full_name: tag_obj.attr('id'),
+                oper: 'add',
+                tag: input_tag,
+            }, function(data) {
+                tag_list.text(data.tags);
+            });
+            return false;
+        };
+
         var add_form = function(e) {
             var tag_obj = $(this).parents('.tag')
             var tag_list = tag_obj.find('span[id="tag_list"]')
@@ -17,6 +31,7 @@
             });
             return false;
         };
+
         var clear_form = function(e) {
             var tag_obj = $(this).parents('.tag')
             var tag_list = tag_obj.find('span[id="tag_list"]')
@@ -28,6 +43,7 @@
             });
             return false;
         };
+        $('.tag .dropdown-menu button').bind('click', add_tag)
         $('.tag a#add').bind('click', add_form);
         $('.tag a#clear').bind('click', clear_form);
     });
@@ -147,9 +163,14 @@ $(document).ready(function() {
                             <span class="fa fa-pencil" aria-hidden="true"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="edit_tag_list">
+                            <button type="button" class="btn btn-primary btn-sm" id="New feature">New feature</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="Bug fix">Bug fix</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="Refactoring">Refactoring</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="Configuration">Configuration</button>
+                            
                             <input type="text" size="7" name="add">
-                            <a href=# id="add">add</a>
-                            <a href=# id="clear">clear-all</a>
+                            <a href=# id="add">Add</a>
+                            <a href=# id="clear">Clear-all</a>
                         </ul>
                     </div>
                     {% endif %}
