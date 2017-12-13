@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
+</script>
+
 {% block page_content %} 
 
     <ol class="breadcrumb">
@@ -14,10 +20,12 @@
     <div class="card mb-3">
       <div class="project-info">
           <div class="col-md-6">
-              <div class="project_name" >
-                  <a href="{{ "https://github.com/" + project.project_name }}">
-                      <h1> {{ project.project_name }}</h1>
-                  </a>        
+              <div class="project_name form-inline">
+                <h3>{{ project.project_name }} </h3>
+                <a class="btn btn-social-icon btn-twitter" href="{{ 'https://github.com/' + project.project_name }}" data-toggle="tooltip" data-placement="top" title="Github Link">
+                  <span class="fa fa-github"></span>
+                </a>
+
               </div>
               <br>
               <div class="project_info">
@@ -30,16 +38,19 @@
 
       <div class="row"></div><hr>
 
+      {#
       <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
           <h4><p class="text-center"> Forks of {{ project.project_name }}</p></h4>         
       </a>
-      
+      #}
+
+
       {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
-          <div class="progress">
+          <div class="progress" style="height: 30px;">
               <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="{{ "min-width: 2em; width:%s" % project.analyser_progress }}">
-                  {{ project.analyser_progress }}
+                  <h3> {{ project.analyser_progress }} <h3>
               </div>
-              Updating ... We will send you an updated email once we are done!
+              <h5> It's updating ... we will send you an updated email once we are done!<h5>
           </div>
       {% endif %}
 

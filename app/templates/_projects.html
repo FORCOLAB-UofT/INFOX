@@ -5,9 +5,22 @@
                 <div class="form-inline">  
                     <div class="project-name">
                         <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-                            <h4> {{ project.project_name }} <h4>
+                            {{ project.project_name }}
                         </a>
                     </div>
+                </div>
+
+                {% if current_user.is_administrator %}
+                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
+                        Refresh
+                    </a>
+                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
+                            Delete
+                    </a>
+                    <div> {{ "Progress = %s" % project.analyser_progress }} </div>
+                {% endif %}
+
+                <div class="project-body">
                     {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
                             <a type="button" class="btn btn-warning btn-xs pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
@@ -19,23 +32,10 @@
                             </a>
                         {% endif %}
                     {% endif %}
-                </div>
-
-                {% if current_user.is_administrator %}
-                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
-                        Refresh
-                    </a>
-                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
-                            Delete
-                    </a>
-                    <div> {{ "Progress = %s" % project.analyser_progress }} </div>
-                    
-                {% endif %}
-
-                <div class="project-body">
-                    <div class="language"> {{ "Language: %s" % project.language }} </div>
+                    <div class="language"> <h4> {{ "Language: %s" % project.language }} <h4> </div>
                     <div class="github_fork_number"> {{ "Fork on Github: %d" % project.fork_number }} </div>
                     <div class="activate_fork_number"> {{ "Activate Fork: %d" % project.activate_fork_number }} </div>
+
                 </div>
         </li>
     {% endfor %}

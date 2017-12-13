@@ -1,16 +1,3 @@
-ul.projects {
-    list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-    border-top: 1px solid #e0e0e0;
-}
-
-ul.projects li.project {
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
-    text-decoration: none;
-}
-
 ul.projects li.project div.project-name {
     font-family: Georgia;
     font-weight: bold;
