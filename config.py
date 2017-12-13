@@ -1,6 +1,4 @@
 import os
-import platform
-
 
 class Config:
     # Database config.
@@ -16,7 +14,7 @@ class Config:
     # Overview page config.
     SHOW_NUMBER_FOR_PAGE = 6 # Project number per page in index page.
 
-    # User manage config.
+    # Github Oauth Apps config.
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
     GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
 
