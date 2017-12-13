@@ -19,21 +19,22 @@
 
     <div class="card mb-3">
       <div class="project-info">
-          <div class="col-md-6">
-              <div class="project_name form-inline">
-                <h3>{{ project.project_name }} </h3>
+              <div class="project_name text-center">
+                <h2> {{ project.project_name }} </h2>
+              </div>
+            <br>
+            <div class="base-info text-right">
                 <a class="btn btn-social-icon btn-twitter" href="{{ 'https://github.com/' + project.project_name }}" data-toggle="tooltip" data-placement="top" title="Github Link">
                   <span class="fa fa-github"></span>
                 </a>
+                <div class="language"> <h4>Language: <em> {{ project.language }} </em> </h4> </div>
+                <div class="github_fork_number"> <h4>Fork Number on Github: <em> {{ project.fork_number }} </em></h4> </div>
+                <div class="activate_fork_number"> <h4> Activate Fork:  <em>{{ project.activate_fork_number }}</em> </h4> </div>
+                <div class="activate_fork_number"> <h4> Analyzed Fork:  <em>{{ forks.count() }}</em> </h4> </div>
+                
+                <div class="description"> <div> <h4> Description: &nbsp;&nbsp; </h4> <em> {{ project.description }} </em> </div>
 
-              </div>
-              <br>
-              <div class="project_info">
-                  {% if project.language %}<h4>Language: {{ project.language }}</h4>{% endif %}
-                  {% if project.fork_number %}<h4>Fork Number on Github: {{ project.fork_number }}</h4>{% endif %}  
-                  {% if project.description %}<h4> Description: </h4> <p> {{ project.description }}</p>{% endif %}
-              </div>
-          </div>
+            </div>
       </div>
 
       <div class="row"></div><hr>
