@@ -1,0 +1,85 @@
+name: p3
+channels:
+- conda-forge
+- defaults
+dependencies:
+- ca-certificates=2017.7.27.1=0
+- certifi=2017.7.27.1=py36_0
+- ncurses=5.9=10
+- openssl=1.0.2l=0
+- pip=9.0.1=py36_0
+- python=3.6.3=0
+- readline=6.2=0
+- setuptools=36.6.0=py36_1
+- sqlite=3.13.0=1
+- tk=8.5.19=2
+- wheel=0.30.0=py_1
+- xz=5.2.3=0
+- zlib=1.2.8=3
+- pip:
+  - alembic==0.9.6
+  - aniso8601==1.3.0
+  - appnope==0.1.0
+  - beautifulsoup4==4.6.0
+  - blinker==1.4
+  - boto==2.48.0
+  - bs4==0.0.1
+  - cairocffi==0.8.0
+  - cffi==1.11.2
+  - chardet==3.0.4
+  - click==6.7
+  - decorator==4.1.2
+  - dominate==2.3.1
+  - flask==0.12.2
+  - flask-bootstrap==3.3.7.1
+  - flask-login==0.4.0
+  - flask-mail==0.9.1
+  - flask-migrate==2.1.1
+  - flask-mongoengine==0.9.3
+  - flask-restful==0.3.6
+  - flask-script==2.0.6
+  - flask-sqlalchemy==2.3.2
+  - flask-wtf==0.14.2
+  - github-flask==3.2.0
+  - idna==2.6
+  - ipython==6.2.1
+  - ipython-genutils==0.2.0
+  - itsdangerous==0.24
+  - jedi==0.11.0
+  - jinja2==2.9.6
+  - mako==1.0.7
+  - markupsafe==1.0
+  - mistune==0.8.1
+  - mongoengine==0.14.3
+  - nltk==3.2.5
+  - numpy==1.13.3
+  - parso==0.1.0
+  - pexpect==4.3.0
+  - pickleshare==0.7.4
+  - prompt-toolkit==1.0.15
+  - ptyprocess==0.5.2
+  - pycparser==2.18
+  - pygments==2.2.0
+  - pymongo==3.5.1
+  - python-dateutil==2.6.1
+  - python-editor==1.0.3
+  - python-igraph==0.7.1.post6
+  - pytz==2017.3
+  - requests==2.18.4
+  - scikit-learn==0.19.1
+  - scipy==1.0.0
+  - selenium==3.6.0
+  - shelljob==0.5.6
+  - simplegeneric==0.8.1
+  - six==1.11.0
+  - sklearn==0.0
+  - sqlalchemy==1.1.15
+  - traitlets==4.3.2
+  - urllib3==1.22
+  - visitor==0.1.3
+  - wcwidth==0.1.7
+  - werkzeug==0.12.2
+  - wtforms==2.1
+  - z3==0.1.15
+prefix: /anaconda3/envs/p3
+
