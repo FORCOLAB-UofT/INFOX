@@ -43,6 +43,7 @@
             });
             return false;
         };
+
         $('.tag .dropdown-menu button').bind('click', add_tag)
         $('.tag a#add').bind('click', add_form);
         $('.tag a#clear').bind('click', clear_form);
@@ -143,9 +144,16 @@ $(document).ready(function() {
     <tbody>
         {% for fork in forks %}
         <tr class="change">
-            <td>
+            <td style="word-break:break-all;">
                 <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
                     {{ fork.fork_name }}
+                </a>
+                <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}">
+                    <span class="fa fa-search"></span>
+                </a>
+                
+                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}">
+                    <span class="fa fa-book"></span>
                 </a>
             </td>
             <td>
