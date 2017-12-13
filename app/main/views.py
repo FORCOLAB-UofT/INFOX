@@ -308,65 +308,40 @@ def _fork_edit_tag():
         ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
     return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
 
-@main.route('/get_familar_fork', methods=['GET', 'POST'])
-def get_familar_fork():
-    _repo_name = request.args.get('repo_name')
-    _fork_name = request.args.get('fork_name')
-    if (_repo_name is not None) and (_fork_name is not None):
-        _fork_list = ProjectFork.objects(project_name=_repo_name)
-        _fork = ProjectFork.objects(fork_name=_fork_name).first()
+@main.route('/_get_familar_fork', methods=['GET', 'POST'])
+def _get_familar_fork():
+    _full_name = request.args.get('full_name')
+    print(_full_name)
+    if _full_name is not None:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork is None:
+            return None
+        _fork_list = ProjectFork.objects(project_name=_fork.project_name)
         _result = fork_comparer.get_familiar_fork(_fork_list, _fork)
         return jsonify(result=_result)
     else:
         return None
 
 
-"""
-@main.route('/_add_tag', methods=['GET', 'POST'])
-@login_required
-@permission_required(Permission.ADD)
-def _add_tag():
+@main.route('/_get_predict_tag', methods=['GET', 'POST'])
+def _get_predict_tag():
     _full_name = request.args.get('full_name')
-    _tag = request.args.get('tag')
-    User.objects(username=current_user.username).update_one(push__tag_list(_full_name, _tag))
-    _tag_now = User.objects(username=current_user.username).first().tag_list
-    if (_tag_now is not None) and ()
-        return jsonify(tags=_tag_now[_full_name])
-    else:
+    _tag_list = ["merge", "update", "fix", "add", "branch", "pull", "request", "update", "version", "readme", "master", "change", "delete", "release", "remote", "track", "test", "remove", "patch", "configuration", "upstream", "support", "missing", "move", "conflict", "config"]
+    _tag_value = dict([(x, 0.0) for x in _tag_list])
+    if _full_name is None:
         return None
-"""
 
-"""
-@main.route('/localadd', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def localadd():
-    form = AddProjectForm()
-    if form.validate_on_submit():
-        _input_project_name = form.project_name.data
-        analyser.analyse_project(_input_project_name, False)
-        return redirect(url_for('main.project_overview', project_name=_input_project_name))
-    return render_template('localadd.html', form=form)
+    _fork = ProjectFork.objects(full_name=_full_name).first()
+    if _fork is None:
+        return None
 
-@main.route('/followed_fork/<fork_name>', methods=['GET', 'POST'])
-@login_required
-def followed_fork(fork_full_name):
-    _fork = ProjectFork.objects(full_name = fork_full_name).first()
-    if _fork:
-        current_user.update_one(push__followed_forks=fork_full_name)
-        current_user.update_one(push__followed_projects=_fork.project_name)
-        return True
-    else:
-        return False
+    for commit in _fork.commit_list:
+        for tag in _tag_list:
+            _tag_value[tag] += commit["title"].lower().count(tag) * 3 + commit["description"].lower().count(tag)
 
-@main.route('/unfollowed_fork/<fork_name>', methods=['GET', 'POST'])
-@login_required
-def unfollowed_fork(fork_full_name):
-    current_user.update_one(pull__followed_forks=fork_full_name)
- 
-"""
-
-
+    _sorted_tag = [(x,y) for x, y in sorted(_tag_value.items(), key=lambda x: x[1], reverse=True)]
+    _sorted_tag = [x for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
+    return jsonify(result=_sorted_tag)
 
 """
 # ----------------------------  use for test ------------------------
