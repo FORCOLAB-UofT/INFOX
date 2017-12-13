@@ -32,11 +32,14 @@
                             </a>
                         {% endif %}
                     {% endif %}
-                    <div class="language"> <h4> {{ "Language: %s" % project.language }} <h4> </div>
-                    <div class="github_fork_number"> {{ "Fork on Github: %d" % project.fork_number }} </div>
-                    <div class="activate_fork_number"> {{ "Activate Fork: %d" % project.activate_fork_number }} </div>
-
+                    <div class="project-info form-inline">
+                        <div class="language"> Language:  <em>{{ project.language }}</em> &nbsp;&nbsp;</div>
+                        <div class="github_fork_number"> Fork on Github:  <em>{{ project.fork_number }}</em> &nbsp;&nbsp;</div>
+                        <div class="activate_fork_number"> Activate Fork:  <em>{{ project.activate_fork_number }}</em> &nbsp;&nbsp;</div>
+                    </div>
                 </div>
+            </div>
         </li>
+        <hr>
     {% endfor %}
 </ul>
