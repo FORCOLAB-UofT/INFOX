@@ -108,7 +108,7 @@ $(document).ready(function() {
 <table id="forks-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
     <thead>
         <tr>
-            <th>Fork Full Name</th>
+            <th>Fork Name</th>
             <th>Commits</th>
             <th>
                 <div data-toggle="tooltip" data-placement="top" title="Files of Change">FOC</a>
@@ -129,7 +129,7 @@ $(document).ready(function() {
     
     <tfoot>
         <tr>
-            <th>Fork Full Name</th>
+            <th>Fork Name</th>
             <th>Commits</th>
             <th>FOC</th>
             <th>LOC</th>
@@ -145,7 +145,7 @@ $(document).ready(function() {
         <tr class="change">
             <td>
                 <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
-                    {{ fork.fork_name.split('/')[0] }}
+                    {{ fork.fork_name }}
                 </a>
             </td>
             <td>
