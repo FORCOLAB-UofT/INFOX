@@ -1,22 +1,101 @@
-{% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% from "bootstrap/pagination.html" import render_pagination %}
 
-{% block page_content %}
-    <div class="col-md-4">
-        <h1> INFOX </h1>
-        <h4> Forks Overview </h4>
-    </div>
-    <div class="row"></div><hr>
+<head>
+    <link rel="icon" href="{{ url_for('static', filename='img/fav.ico')}}" type="image/x-coin">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/docs.js') }}"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/one-page-wonder.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/doc.css') }}" rel="stylesheet">
+</head>
+
+<body>
+        <!-- Navigation Begin -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <div class="container">
+            <a class="navbar-brand" href="#">INFOX</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="btn btn-block btn-social btn-github" onclick="" href="{{ url_for('auth.login') }}">
+                      <span class="fa fa-github"></span>Github Sign in 
+                    </a>
+                </li>
+                
+              </ul>
+            </div>
     
-    <div class="welcome_word">
-            <br><br>
-            INFOX is a tool that can generate an overview of active forks in a project on Github and identify not-merged features in forks.
-            <br><br>
-            For a quick start, you can reach <a href="{{ url_for('main.discover') }}"> Find </a> page. And we recommend you to <a href="{{ url_for('auth.login') }}"> login </a> with your github account to follow the projects & forks, load data from your own account.
-            <br><br>
-            Now, the INFOX is just a test version and we will improve continuously. So, your feedback is really helpful for us. Feel free to <a href="{{ url_for('main.about') }}" > contact us </a> !
-            <br><br>
-    </div>
+          </div>
+        </nav>
+        <!-- Navigation End -->
+
+        <header class="masthead">
+          <div class="overlay">
+            <div class="container">
+              <h1 class="display-1 text-white">INFOX</h1>
+              <h2 class="display-4 text-white">Deep Insight in Forks</h2>
+            </div>
+          </div>
+        </header>
     
-{% endblock %}
+     
+    
+        <section>
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="p-5">
+                  <img class="img-fluid rounded" src="{{ url_for('static', filename='img/overview.png') }}" alt="">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="p-5">
+                  <h2 class="display-4">Overview of a repository</h2>
+                  <p>See a list of forks that have unmerged code changes of a repository, including commit messages, changed files, size of changed code, keyword summary. </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+       <section>
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-md-6 order-2">
+                <div class="p-5">
+                  <img class="img-fluid rounded" src="{{ url_for('static', filename='img/forkList.png') }}" alt="">
+                </div>
+              </div>
+              <div class="col-md-6 order-1">
+                <div class="p-5">
+                  <h2 class="display-4">Subscribe repositories on Github </h2>
+                  <p> If you would like to track the activity of a community on Github, follow it! We will keep you updated. We support loading projects that you forked or watched on Github. You could also find and follow the repository from our website!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+    
+  <footer class="sticky-footer">
+    <div class="container">
+      <div class="text-center">
+        <a href="{{ url_for('main.about') }}"> About Us </a> .
+        <a href="#"> Join Us </a> .
+        <a href="https://github.com/FancyCoder0/INFOX"> Source Code for INFOX </a> .
+        <a href="https://github.com/FancyCoder0/INFOX/issues"> Open An Issue </a> 
+        <hr>
+        <small>Copyright © 2017</small>
+      </div>
+    </div>
+  </footer>
+<body>
