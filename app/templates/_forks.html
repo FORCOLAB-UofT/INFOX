@@ -164,7 +164,7 @@ $(document).ready(function() {
                     {{ fork.total_commit_number }}
                   </a>
 
-                  <div class="dropdown-menu" aria-labelledby="commit_list">
+                  <div class="dropdown-menu scrollable-menu" aria-labelledby="commit_list">
                     {% for commit in fork.commit_list %}
                         <a class="dropdown-item" href="{{ commit["link"] }}">{{ commit["title"] }}</a>
                     {% endfor %}
@@ -181,7 +181,7 @@ $(document).ready(function() {
                     <span class="caret"></span>
                   </a>
 
-                  <div class="dropdown-menu scrollable-menu"aria-labelledby="fork_chanegd_file_list">
+                  <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
                     {% for file_name in fork.file_list %}
                         <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "%s" % (file_name) }}</a>
                     {% endfor %}
