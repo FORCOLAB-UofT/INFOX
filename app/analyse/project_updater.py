@@ -39,26 +39,14 @@ class ForkUpdater:
         file_name = file["file_full_name"]
         file_suffix = file["file_suffix"]
         diff_link = file["diff_link"]
-        changed_code = file["changed_code"]
-        changed_line = file["changed_line"]
-        common_tokens = []
-        common_stemmed_tokens = []
+        added_code = file["added_code"]
+        changed_line = file["added_line"]
 
-        # Add files into fork's changed file list.
-        self.file_list.append(file_name)
-
-        # process on changed code
-        # get the tokens from changed code
-        added_code = " ".join(filter(lambda x: (x) and (x[0] == '+'), changed_code.splitlines()))
-        # delete_code = " ".join(filter(lambda x: (x) and (x[0] == '-'), changed_code.splitlines()))
-
+        # process on changed code, get the tokens from changed code
         tokens = word_extractor.get_words_from_text(file_name, added_code)
         lemmatize_tokens = word_extractor.lemmatize_process(tokens)
         # stemmed_tokens = word_extractor.stem_process(tokens)
 
-        # Update Changed File in Database
-        full_name = self.project_name + '/' + self.fork_name + '/' + file_name
-        
         # Load changed files into database.
         ChangedFile(
             full_name=self.project_name + '/' + self.fork_name + '/' + file_name,
@@ -78,6 +66,9 @@ class ForkUpdater:
             # key_stemmed_words_dict=word_extractor.get_top_words(stemmed_tokens, 10, False),
         ).save()
 
+        # Add files into fork's changed file list.
+        self.file_list.append(file_name)
+
         # Load current file's key words to fork.
         for x in tokens:
             self.all_tokens.append(x)
@@ -92,8 +83,9 @@ class ForkUpdater:
             return
         
         last_update = ProjectFork.objects(full_name=self.project_name + '/' + self.fork_name).first()
+
         if (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
-                return
+            return
 
         if (not current_app.config['RECRAWLER_MODE']) and (os.path.exists(self.diff_result_path)):
             with open(self.diff_result_path) as read_file:
@@ -128,8 +120,8 @@ class ForkUpdater:
             full_name=self.project_name + '/' + self.fork_name,
             fork_name=self.fork_name,
             project_name=self.project_name,
-            total_changed_file_number=compare_result["changed_file_number"],
-            total_changed_line_number=compare_result["changed_line"],
+            total_changed_file_number=len(compare_result["file_list"]),
+            total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
             total_commit_number=len(compare_result["commit_list"]),
             commit_list=compare_result["commit_list"],
             last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
