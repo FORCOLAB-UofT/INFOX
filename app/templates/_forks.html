@@ -112,19 +112,19 @@ $(document).ready(function() {
             <th>Fork Name</th>
             <th>Commits</th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Files of Change">FOC</a>
+                <div data-toggle="tooltip" data-placement="top" title="Files of Change">Changed files</a>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Lines of Change">LOC</a>
-            </th>
-            <th>
-                <div data-toggle="tooltip" data-placement="top" title="You can tag it!">Tags</a>
+                <div data-toggle="tooltip" data-placement="top" title="Lines of Change">Lines of Code</a>
             </th>
             <th>
                 <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">Key Words</a>
             </th>
             <th>Last Committed</th>
             <th>Created At</th>
+            <th>
+                <div data-toggle="tooltip" data-placement="top" title="You can tag it!">Tags</a>
+            </th>
         </tr>
     </thead>
     
@@ -132,12 +132,12 @@ $(document).ready(function() {
         <tr>
             <th>Fork Name</th>
             <th>Commits</th>
-            <th>FOC</th>
-            <th>LOC</th>
-            <th>Tags</th>
+            <th>Changed files</th>
+            <th>Lines of Code</th>
             <th>Key Words</th>
             <th>Last Committed</th>
             <th>Created At</th>
+            <th>Tags</th>
         </tr>
     </tfoot>
 
@@ -193,6 +193,14 @@ $(document).ready(function() {
                 {{ fork.total_changed_line_number }}
             </td>
             
+            <td style="word-break:break-all;">
+                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
+            </td>
+
+            <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
+
+            <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
+
             <td>
                 <div class="tag" id="{{ fork.full_name }}">
                     <span id="tag_list" style="float:left;">
@@ -217,14 +225,6 @@ $(document).ready(function() {
                     {% endif %}
                 </div>
             </td>
-
-            <td style="word-break:break-all;">
-                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
-            </td>
-
-            <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
-
-            <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
         </tr>
         {% endfor %}
     </tbody>
