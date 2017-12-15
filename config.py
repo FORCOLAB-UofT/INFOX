@@ -34,7 +34,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    RECRAWLER_MODE = False # Refresh will re-crawler the forks' info.
+    RECRAWLER_MODE = True # Refresh will re-crawler the forks' info.
 
 class ProductionConfig(Config):
     RECRAWLER_MODE = False # Refresh will re-crawler the forks' info.

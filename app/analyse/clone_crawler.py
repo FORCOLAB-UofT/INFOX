@@ -20,7 +20,7 @@ class CloneCrawler:
     def __init__(self, project_name):
         self.project_name = project_name
         self.doc_sets = []
-        # self.get_doc_sets()
+        self.get_doc_sets()
 
     def get_doc_sets(self):
         """ Get all the text content.

@@ -94,6 +94,8 @@ def get_words_from_text(file, text):
     """
     if not language_tool.is_text(file):
         return []
+    if text is None:
+        return []
     raw_tokens = nltk.word_tokenize(text)
     origin_tokens = [word_process(x) for x in raw_tokens]
     tokens = origin_tokens

@@ -20,7 +20,6 @@ def get_info_from_fork_changed_code(project_full_name):
     
     diff_list = content.split('diff --git')
 
-    all_added_code = []
     all_name_list = []
     all_func_list = []
     """
@@ -44,18 +43,15 @@ def get_info_from_fork_changed_code(project_full_name):
                 lines_of_code = filter(lambda x: (x) and (x[0] == '+'), part.splitlines())
                 lines_of_code = [start_with_plus_regex.sub('', x) for x in lines_of_code]
                 added_code.extend(lines_of_code)
+    
             save_path = current_app.config['LOCAL_DATA_PATH']
             # save_path = '/Users/fancycoder/infox_data/result'
             file_path = '%s/added_code/%s/%s' % (save_path, project_full_name, file_full_name)
             file_dir = os.path.dirname(file_path)
             if not os.path.exists(file_dir):
                 os.makedirs(file_dir)
-
             with open(file_path, 'w') as f:
                 f.write("\n".join(added_code))
-
-            all_added_code.extend(added_code)
-
             
             try:
                 if platform.system() == 'Darwin':
