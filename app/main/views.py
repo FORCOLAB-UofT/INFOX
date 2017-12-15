@@ -35,9 +35,9 @@ def db_add_project(project_name):
 
 
 def db_delete_project(project_name):
-    Project(project_name=project_name).delete()
-    ProjectFork(project_name=project_name).delete()
-    ChangedFile(project_name=project_name).delete()
+    Project.objects(project_name=project_name).delete()
+    ProjectFork.objects(project_name=project_name).delete()
+    ChangedFile.objects(project_name=project_name).delete()
 
 
 def db_followed_project(project_name):
