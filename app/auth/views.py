@@ -17,7 +17,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Logout Successfully!')
     return redirect(url_for('main.start'))
 
 @github.access_token_getter
@@ -29,9 +28,17 @@ def token_getter():
         # print("token get from g! %s" % g.github_access_token)
         return g.get('github_access_token', None)
 
-def get_user_starred_list(username):
+def get_user_repo_list(username):
     raw_data = github.request('GET', 'users' + '/' + username + '/' + 'repos', True)
     return [x["full_name"] for x in raw_data]
+
+def get_upperstream_repo(repo):
+    raw_data = github.request('GET', 'repos' + '/' + repo)
+    if raw_data["fork"] == True:
+        # print("R=",raw_data["source"]["full_name"])
+        return raw_data["source"]["full_name"]
+    else:
+        return None
 
 @auth.route('/callback', methods=['GET', 'POST'])
 @github.authorized_handler
@@ -45,7 +52,6 @@ def github_login(access_token):
         User(username=_github_username,
              email=_github_user_email,
              permission=Permission.GITHUB_USER).save()
-        flash('Login with Github successfully!')
     User.objects(username=_github_username).update(github_access_token=access_token)
     User.objects(username=_github_username).update(last_seen=datetime.utcnow())
     _user = User.objects(username=_github_username).first()

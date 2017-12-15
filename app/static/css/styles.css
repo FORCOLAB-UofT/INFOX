@@ -1,0 +1,17 @@
+
+ol.breadcrumb {
+    font-family: Georgia;
+    font-style: oblique;
+    font-size: larger;
+}
+
+table thead tr th {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
