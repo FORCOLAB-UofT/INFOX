@@ -51,7 +51,7 @@ class CloneCrawler:
                             suceessful_file_number += 1
                         except:
                             pass
-                    print("finish")
+                    # print("finish")
                 else:
                     no_text_file_numer+=1
                     if no_text_file_numer > 50:
