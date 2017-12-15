@@ -148,6 +148,7 @@ $(document).ready(function() {
                 <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
                     {{ fork.fork_name }}
                 </a>
+                {% if current_user.is_administrator %}
                 <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}">
                     <span class="fa fa-search"></span>
                 </a>
@@ -155,6 +156,7 @@ $(document).ready(function() {
                 <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}">
                     <span class="fa fa-book"></span>
                 </a>
+                {% endif %}
             </td>
             <td>
                 <div class="dropdown show">
@@ -179,9 +181,9 @@ $(document).ready(function() {
                     <span class="caret"></span>
                   </a>
 
-                  <div class="dropdown-menu" aria-labelledby="fork_chanegd_file_list">
+                  <div class="dropdown-menu scrollable-menu"aria-labelledby="fork_chanegd_file_list">
                     {% for file_name in fork.file_list %}
-                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "+%d %s" % (all_changed_files[(fork.fork_name, file_name)].changed_line_number, file_name) }}</a>
+                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "%s" % (file_name) }}</a>
                     {% endfor %}
                   </div>
                 </div> 
