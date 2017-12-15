@@ -5,7 +5,8 @@ class Config:
     MONGODB_SETTINGS = {
         'db': 'infox_db',
         'host': '127.0.0.1',
-        'port': 27017
+        'port': 27017,
+        'connect': False,
     }
 
     # LOCAL_DATA_PATH used for storing the raw data from crawling the github.
