@@ -20,7 +20,7 @@ class CloneCrawler:
     def __init__(self, project_name):
         self.project_name = project_name
         self.doc_sets = []
-        self.get_doc_sets()
+        # self.get_doc_sets()
 
     def get_doc_sets(self):
         """ Get all the text content.
@@ -77,7 +77,10 @@ class CloneCrawler:
             for i in range(doc_num):
                 if word in self.doc_sets[i]:
                     number += 1
-            IDF = math.log(1.0 * doc_num / (number + 1))
+            if doc_num == 0:
+                IDF = 1
+            else:
+                IDF = math.log(1.0 * doc_num / (number + 1))
             TFIDF[word] = TF * IDF
         # print("finish calc!")
         return TFIDF
