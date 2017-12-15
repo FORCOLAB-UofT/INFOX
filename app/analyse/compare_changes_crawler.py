@@ -132,7 +132,6 @@ def fetch_compare_page(project_full_name):
     """
     print('start fetch fork: ', project_full_name)
     commit_list = fetch_commit_list(project_full_name)
-    commit_list = []
     file_list = fetch_diff_code(project_full_name)
 
     return {"file_list": file_list,

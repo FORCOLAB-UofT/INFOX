@@ -19,57 +19,39 @@ Database: mongo
 
 Code Overview:
 
-./config.py
-
-Config for Flask
+./config.py - Config for Flask
 
 
 
-./config.ini
-
-Config for using uWSGI
+./config.ini - Config for using uWSGI
 
 
 
-./app/main
-
-Entrance
+./app/main - Program Entrance
 
 
 
-./app/analyse
-
-Crawler & Do analysis
+./app/analyse - Crawler & Do analysis
 
 
 
-./models
-
-Database Model
+./models - Database Model
 
 
 
-./app/auth
-
-Logic about account
+./app/auth - Logic about account
 
 
 
-./app/templates
-
-HTML files
+./app/templates - HTML files
 
 
 
-./app/static
-
-CSS/Javascript/Img Resource
+./app/static - CSS/Javascript/Img Resource
 
 
 
-./app/email.py
-
-Send email
+./app/email.py - Send email
 
 
 

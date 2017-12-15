@@ -29,7 +29,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('INFOX_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('INFOX_MAIL_PASSWORD')
     FLASK_MAIL_SENDER = '<375833274@qq.com>'
-    FLASK_MAIL_SUBJECT_PREFIX = '[INFOX]'
+    FLASK_MAIL_SUBJECT_PREFIX = '[Forks-Insight]'
 
 
 class DevelopmentConfig(Config):
