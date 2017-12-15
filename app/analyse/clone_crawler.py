@@ -39,7 +39,7 @@ class CloneCrawler:
             for file_name in fs:
                 file_full_name = os.path.join(fpath, file_name)
                 if language_tool.is_text(file_name) and os.path.getsize(file_full_name) <= 1024 * 100:
-                    print(file_full_name)
+                    # print(file_full_name)
                     # file_lists.append(file_full_name)
                     with codecs.open(file_full_name, 'rU', 'utf-8') as f:
                         try:
