@@ -23,6 +23,7 @@ def get_info_from_fork_changed_code(project_full_name):
     all_added_code = []
     all_name_list = []
     all_func_list = []
+    """
     for diff in diff_list[1:]:
         try:
             file_full_name = re.findall('a\/.*? b\/(.*?)\n', diff)[0]
@@ -35,8 +36,6 @@ def get_info_from_fork_changed_code(project_full_name):
         if st is None:
             continue
         parts = re.split('@@.*?-.*?\+.*?@@', diff[st.start():])
-
-        print(file_full_name)
 
         start_with_plus_regex = re.compile('^\++')
         if file_suffix in ['.java','.cpp','.cc','.c','.h','.cs']:
@@ -57,7 +56,7 @@ def get_info_from_fork_changed_code(project_full_name):
 
             all_added_code.extend(added_code)
 
-            """
+            
             try:
                 if platform.system() == 'Darwin':
                     srcML_name = 'srcML'
@@ -80,7 +79,7 @@ def get_info_from_fork_changed_code(project_full_name):
                 all_func_list.extend(func_list)
             except:
                 pass
-            """
+    """
             
     return {'name_list': all_name_list, 'func_list': all_func_list}
 
