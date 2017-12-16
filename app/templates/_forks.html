@@ -112,13 +112,17 @@ $(document).ready(function() {
             <th>Fork</th>
             <th>Commits</th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">Changed files</a>
+                <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">
+                    <font size="1px">Changed files</font>
+                </div>
             </th>
             <th>
-                Lines of code changed
+                <font size="1px">Lines of code changed</font>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">Representative Keywords</a>
+                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">
+                    <font size="1px">Representative Keyword </font>
+                </div>
             </th>
             <th>Last Commit</th>
             <th>Create</th>
@@ -141,7 +145,7 @@ $(document).ready(function() {
 
     <tbody>
         {% for fork in forks %}
-        <tr class="change">
+        <tr class="fork">
             <td style="word-break:break-all;">
                 <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
                     {{ fork.fork_name }}
