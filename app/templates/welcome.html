@@ -21,7 +21,7 @@
         <!-- Navigation Begin -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
           <div class="container">
-            <a class="navbar-brand" href="#">INFOX</a>
+            <a class="navbar-brand" href="#">INFOX<sub>beta</sub></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -29,7 +29,7 @@
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="btn btn-block btn-social btn-github" onclick="" href="{{ url_for('auth.login') }}">
-                      <span class="fa fa-github"></span>Github Sign in 
+                      <span class="fa fa-github"></span> Sign in 
                     </a>
                 </li>
                 
@@ -43,8 +43,10 @@
         <header class="masthead">
           <div class="overlay">
             <div class="container">
-              <h1 class="display-1 text-white">INFOX</h1>
-              <h2 class="display-4 text-white">Deep Insight in Forks</h2>
+              <h1 class="display-1 text-white">INFOX<sub>beta</sub></h1>
+              <h2 class="display-4 text-white">Insights into Forks</h2>
+              <p class="text-white">Overwhelmed with the activities in forks of a project? Which forks are active? Which contain interesting ideas? Which contain already finished features to build upon, rather than reimplement?</p>
+              <p class="text-white">INFOX provides tools to analyze and monitor contributions in forks. Explore now by logging in with your GitHub account.</p>
             </div>
           </div>
         </header>
@@ -61,15 +63,11 @@
               </div>
               <div class="col-md-6">
                 <div class="p-5">
-                  <h2 class="display-4">Overview of a repository</h2>
-                  <p>See a list of forks that have unmerged code changes of a repository, including commit messages, changed files, size of changed code, keyword summary. </p>
+                  <h2 class="display-5">Concise Overview a Project's Forks</h2>
+                  <p>Explore a compact list of all forks highlighting key insights, rather than scrolling forever in a network graph. We sift all forks and summarize changes with statistics and representative keywords. Sort forks by activity volume and recency or search for keywords.</p>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-       <section>
-          <div class="container">
             <div class="row align-items-center">
               <div class="col-md-6 order-2">
                 <div class="p-5">
@@ -78,8 +76,18 @@
               </div>
               <div class="col-md-6 order-1">
                 <div class="p-5">
-                  <h2 class="display-4">Subscribe repositories on Github </h2>
-                  <p> If you would like to track the activity of a community on Github, follow it! We will keep you updated. We support loading projects that you forked or watched on Github. You could also find and follow the repository from our website!</p>
+                  <h2 class="display-5">Label and Monitor Forks</h2>
+                  <p>Identify and label forks with interesting activities, for example to scout for ideas and pull requests.
+                  Monitor interesting forks to keep up with changes. Track the activity of an entire community on GitHub. Get started by <a href="{{ url_for('auth.login') }}">signing in</a> with your GitHub account.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row align-items-center">
+              <div class="col-md-12 order-1">
+                <div class="p-5">
+                  <h2 class="display-5">Research and Contribution</h2>
+                  <p>INFOX comes out of an NSF-funded research project at Carnegie Mellon University, exploring how to improve collaboration and coordination in open-source software development.
+                  	INFOX is open source and hosted for the community. We would love to hear your ideas and feedback. Explore the <a href="https://github.com/FancyCoder0/INFOX">source</a> or <a href="https://github.com/FancyCoder0/INFOX/issues">open an issue</a>.</p>
                 </div>
               </div>
             </div>
@@ -89,10 +97,9 @@
   <footer class="sticky-footer">
     <div class="container">
       <div class="text-center">
-        <a href="{{ url_for('main.about') }}"> About Us </a> .
-        <a href="#"> Join Us </a> .
-        <a href="https://github.com/FancyCoder0/INFOX"> Source Code for INFOX </a> .
-        <a href="https://github.com/FancyCoder0/INFOX/issues"> Open An Issue </a> 
+        <a href="{{ url_for('main.about') }}">Contact</a> &middot;
+        <a href="https://github.com/FancyCoder0/INFOX">INFOX on GitHub</a> &middot;
+        <a href="https://github.com/FancyCoder0/INFOX/issues">Open an Issue</a> 
         <hr>
         <small>Copyright © 2017</small>
       </div>
