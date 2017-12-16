@@ -71,6 +71,14 @@ class Project(db.Document):
     project_name_show = db.StringField()
     last_updated_time = db.DateTimeField()
 
+
+class ForkTag(db.Document):
+    fork_full_name = db.StringField(required=True)
+    project_name = db.StringField(required=True)
+    username = db.StringField(required=True)
+    tags = db.ListField(db.StringField())
+
+
 class User(UserMixin, db.Document):
     username = db.StringField(unique=True, required=True)
     email = db.StringField()

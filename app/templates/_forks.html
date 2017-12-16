@@ -89,7 +89,7 @@ $(document).ready(function() {
         "bSort": true,
         "order": [[ 6, "desc" ]],
     });
-    
+
     // Apply the search
     table.columns().eq( 0 ).each( function ( colIdx ) {
         $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
@@ -206,7 +206,9 @@ $(document).ready(function() {
             <td>
                 <div class="tag" id="{{ fork.full_name }}">
                     <span id="tag_list" style="float:left;">
-                        {{ ",".join(fork.tags) }}
+                        {% if current_user.is_authenticated %}
+                            {{ ",".join(all_tags.get(fork.full_name,[])) }}
+                        {% endif %}
                     </span>
                     {% if current_user.is_authenticated %}
                     <div class="dropdown">
@@ -218,7 +220,6 @@ $(document).ready(function() {
                             <button type="button" class="btn btn-primary btn-sm" id="Bug fix">Bug fix</button>
                             <button type="button" class="btn btn-primary btn-sm" id="Refactoring">Refactoring</button>
                             <button type="button" class="btn btn-primary btn-sm" id="Configuration">Configuration</button>
-                            
                             <input type="text" size="7" name="add">
                             <a href=# id="add">Add</a>
                             <a href=# id="clear">Clear-all</a>
