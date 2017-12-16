@@ -5,11 +5,6 @@ ol.breadcrumb {
     font-size: larger;
 }
 
-table thead tr th {
-    word-wrap: break-word;
-    word-break: break-all;
-}
-
 .scrollable-menu {
     height: auto;
     max-height: 200px;
