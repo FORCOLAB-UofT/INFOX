@@ -25,14 +25,12 @@ def db_approximate_find_project_project_name(project_name):
     else:
         return Project.objects(project_name__endswith=project_name).first()
 
-
 def db_add_project(project_name):
     if not db_find_project(project_name):
         analyser.start(project_name, current_user.github_access_token)
         return True
     else:
         return False
-
 
 def db_delete_project(project_name):
     Project.objects(project_name=project_name).delete()
@@ -89,30 +87,32 @@ def compare_forks():
 @login_required
 @permission_required(Permission.ADD)
 def load_from_github():
-    class ProjectSelection(FlaskForm):
-        pass
-    
-    sync_button = SyncButton()
-    if sync_button.validate_on_submit():
-        return redirect(url_for('main.sync'))
-    
     if current_user.owned_repo_sync_time is not None:
         _ownered_project = list(current_user.owned_repo.items())
     else:
         return redirect(url_for('main.sync'))
 
+    class ProjectSelection(FlaskForm):
+        pass
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1]))
-    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
+    setattr(ProjectSelection, 'load_button', SubmitField('Load'))
+    setattr(ProjectSelection, 'sync_button', SubmitField('Sync with Github'))
+
     form = ProjectSelection()
-    if form.validate_on_submit():
+    if form.load_button.data:
         for field in form:
             if field.type == "BooleanField" and field.data:
                 db_add_project(field.id)
                 db_followed_project(field.id)
         flash('Add & Follow successfully!')
         return redirect(url_for('main.index'))
-    return render_template('load_from_github.html', form=form, sync_button=sync_button)
+    elif form.sync_button.data:
+        return redirect(url_for('main.sync'))
+
+    return render_template('load_from_github.html', form=form)
+
+
 
 @main.route('/sync', methods=['GET', 'POST'])
 @login_required
@@ -125,7 +125,12 @@ def sync():
         upperstream_repo = get_upperstream_repo(project)
         if upperstream_repo is not None:
             _ownered_project.append((upperstream_repo, upperstream_repo + "(Upperstream of %s)" % project))
+
     User.objects(username=current_user.username).update_one(set__owned_repo_sync_time=datetime.utcnow())
+
+    # mongoDB don't support key value contains '.'
+    for i in range(len(_ownered_project)):
+        _ownered_project[i] = (_ownered_project[i][0].replace('.', '[dot]'), _ownered_project[i][1])
     User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
     flash('Sync with Github successfully!')
     return redirect(url_for('main.load_from_github'))
@@ -149,7 +154,6 @@ def index():
         else:
             # TODO(not in our database, to add)
             flash('The Project (%s) is not be in our database. Do you want to add it?' % _input)
-
             return redirect(url_for('main.index'))
 
 
@@ -159,7 +163,11 @@ def index():
     if len(project_list) == 0:
         return redirect(url_for('main.guide'))
     
-    return render_template('index.html', projects=project_list, search_form=_search_form)
+    
+    page = request.args.get('page', 1, type=int)  # default is 1st page
+    pagination = project_list.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    projects = pagination.items
+    return render_template('index.html', projects=projects, pagination=pagination)
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])
@@ -174,11 +182,20 @@ def project_overview(project_name):
     _project = Project.objects(project_name=project_name).first()
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[])
     _changed_files = ChangedFile.objects(project_name=project_name)
+
+
+    # TODO all_changed_files & _all_tags could be opted by AJAX
+    _all_tags = {}
+    if current_user.is_authenticated:
+        _project_tags = ForkTag.objects(project_name=project_name, username=current_user.username)
+        for tag in _project_tags:
+            _all_tags[tag.fork_full_name] = tag.tags
+    
     _all_changed_files = {}
     for file in _changed_files:
         _all_changed_files[(file.fork_name, file.file_name)] = file
     
-    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files)
+    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files, all_tags=_all_tags)
 
 @main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -299,14 +316,20 @@ def _fork_edit_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     _oper = request.args.get('oper')
-    # print(_full_name, _tag, _oper)
+    print(current_user.username, _full_name, _tag, _oper)
+    _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+    if _user_fork_tag is None:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork is None:
+            return None
+        ForkTag(fork_full_name=_full_name, project_name=_fork.project_name, username=current_user.username).save()
     if _oper == 'delete':
-        ProjectFork.objects(full_name=_full_name).update_one(pull__tags=_tag)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
     elif _oper == 'add':
-        ProjectFork.objects(full_name=_full_name).update_one(push__tags=_tag)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
-        ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
-    return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
+    return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
 
 @main.route('/_get_familar_fork', methods=['GET', 'POST'])
 def _get_familar_fork():

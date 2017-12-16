@@ -2,6 +2,12 @@
     {% for project in projects %}
         <li class="project">
             <div class="project-content">
+
+                <div class="project-name">
+                    <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
+                        {{ project.project_name }}
+                    </a>
+                </div>
                  {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
                             <a type="button" class="btn btn-warning btn-xs pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
@@ -14,14 +20,6 @@
                         {% endif %}
                 {% endif %}
 
-                <div class="form-inline">  
-                    <div class="project-name">
-                        <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-                            {{ project.project_name }}
-                        </a>
-                    </div>
-                </div>
-
                 {% if current_user.is_administrator %}
                     <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
                         Refresh
@@ -33,11 +31,11 @@
                 {% endif %}
 
                 <div class="project-body">
-
                     <div class="project-info form-inline">
                         <div class="language"> Language:  <em>{{ project.language }}</em> &nbsp;&nbsp;</div>
                         <div class="github_fork_number"> Forks on Github:  <em>{{ project.fork_number }}</em> &nbsp;&nbsp;</div>
                         <div class="active_fork_number"> Active Fork:  <em>{{ project.activate_fork_number }}</em> &nbsp;&nbsp;</div>
+                        <div class="last_analyzed_time"> Last Analyzed: <em> </em> {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }} </div>
                     </div>
                 </div>
             </div>

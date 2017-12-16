@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% import "bootstrap/wtf.html" as wtf %}
-{% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %} 
 
@@ -15,16 +14,20 @@
     </ol>
 
     <div class="row">
+        <div class="col-md-2">
+          <h3 class="text-center"> Find repositories on Github </h3>
+        </div>
         <div class="col-md-4">
+            
             {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
         </div>
-
-        <div class="col-md-6">
-            <h3 class="text-center">Hot Repos in INFOX</h3>
+        
+        <div class="col-md-4">
+            <h4 class="text-center">Hot Repos in INFOX</h4>
             {% include "_projects.html" %}
-            <div class="pagination">
-                {{ render_pagination(pagination, 'main.find_repos') }}
-            </div>
+            
+            {% from "_render_pagination.html" import render_pagination %}
+            {{ render_pagination(pagination) }}
         </div>
     </div>
 
