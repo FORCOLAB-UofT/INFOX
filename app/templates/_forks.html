@@ -147,7 +147,7 @@ $(document).ready(function() {
         {% for fork in forks %}
         <tr class="fork">
             <td style="word-break:break-all;">
-                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
+                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" target="_blank" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
                     {{ fork.fork_name }}
                 </a>
                 {% if current_user.is_administrator %}
