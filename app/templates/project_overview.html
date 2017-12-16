@@ -8,32 +8,27 @@
 
 {% block page_content %} 
 
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="#">Repo overview</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="#"> {{ project.project_name }} </a>
-        </li>
-    </ol>
-
     <div class="card mb-3">
       <div class="project-info">
               <div class="project_name text-center">
-                <h2> {{ project.project_name }} </h2>
+                <h2>
+                  {{ project.project_name }}
+                  <a class="btn btn-social-icon btn-twitter" href="{{ 'https://github.com/' + project.project_name }}" data-toggle="tooltip" data-placement="top" title="Github Link">
+                    <span class="fa fa-github"></span>
+                  </a> 
+                </h2>
+                <br>
+                <div class="project_description text-center"> {{ project.description }} </div>
+                <br>
               </div>
             <br>
             <div class="base-info text-right">
-                <a class="btn btn-social-icon btn-twitter" href="{{ 'https://github.com/' + project.project_name }}" data-toggle="tooltip" data-placement="top" title="Github Link">
-                  <span class="fa fa-github"></span>
-                </a>
-                <div class="language"> <h4>Language: <em> {{ project.language }} </em> </h4> </div>
-                <div class="github_fork_number"> <h4>Forks Number on Github: <em> {{ project.fork_number }} </em></h4> </div>
-                <div class="active_fork_number"> <h4> Active Fork:  <em>{{ project.activate_fork_number }}</em> </h4> </div>
-                <div class="analyzed_fork_number"> <h4> Analyzed Fork:  <em>{{ forks.count() }}</em> </h4> </div>
                 
-                <div class="description"> <div> <h4> Description: &nbsp;&nbsp; </h4> <em> {{ project.description }} </em> </div>
-
+                <div class="language"> Language: <em> {{ project.language }} </em>  </div>
+                <div class="github_fork_number"> Forks Number on Github: <em> {{ project.fork_number }} </em> </div>
+                <div class="active_fork_number"> Active Fork:  <em>{{ project.activate_fork_number }}</em>  </div>
+                <div class="analyzed_fork_number"> Analyzed Fork:  <em>{{ forks.count() }}</em>  </div>
+                <div class="last_analyzed_time"> Last Analyzed: <em> </em> {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }} </div>
             </div>
       </div>
 
