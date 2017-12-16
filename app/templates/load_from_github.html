@@ -12,22 +12,28 @@
         </li>
     </ol>
 
-    <h3 class="text-center">Load from Github</h3>
+
+    <h3 class="text-center">
+        Load from Github 
+        <form method="POST">
+            {{ form.sync_button(class="btn btn-primary") }}
+        </form>
+    </h3>
+
     <hr>
     Following is your repos(included upstream repo) on Github.
     Select them to load into INFOX.
     <hr>
-    {{ wtf.quick_form(sync_button, button_map={'submit': 'primary'}) }}
-
+    
+    
     <form method="POST">
         {% for field in form %}
             {% if field.type == "BooleanField" %}
-                <h4> {{ field.label }} {{ field }} </h4> <br>
-            {% else %}
-                {{ field }}
+                <h4> {{ field }} {{ field.label }} </h4> 
+                <br>
             {% endif %}
         {% endfor %}
+        <h3 class="text-center"> {{ form.load_button(class="btn btn-success") }} </h3>
     </form>
-
 {% endblock %}
 
