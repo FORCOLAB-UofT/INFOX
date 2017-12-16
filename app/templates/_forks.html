@@ -109,43 +109,45 @@ $(document).ready(function() {
 <table id="forks-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
     <thead>
         <tr>
-            <th>Fork Name</th>
+            <th>Fork</th>
             <th>Commits</th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Files of Change">Changed files</a>
+                <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">
+                    <font size="1px">Changed files</font>
+                </div>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Lines of Change">Lines of Code</a>
+                <font size="1px">Lines of code changed</font>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">Key Words</a>
+                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">
+                    <font size="1px">Representative Keyword </font>
+                </div>
             </th>
-            <th>Last Committed</th>
-            <th>Created At</th>
-            <th>
-                <div data-toggle="tooltip" data-placement="top" title="You can tag it!">Tags</a>
-            </th>
+            <th>Last Commit</th>
+            <th>Create</th>
+            <th>Add Tags</th>
         </tr>
     </thead>
     
     <tfoot>
         <tr>
-            <th>Fork Name</th>
+            <th>Fork</th>
             <th>Commits</th>
             <th>Changed files</th>
-            <th>Lines of Code</th>
-            <th>Key Words</th>
-            <th>Last Committed</th>
-            <th>Created At</th>
-            <th>Tags</th>
+            <th>Lines of code changed</th>
+            <th>Representative Keywords</th>
+            <th>Last Commit</th>
+            <th>Create</th>
+            <th>Add Tags</th>
         </tr>
     </tfoot>
 
     <tbody>
         {% for fork in forks %}
-        <tr class="change">
+        <tr class="fork">
             <td style="word-break:break-all;">
-                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
+                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" target="_blank" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
                     {{ fork.fork_name }}
                 </a>
                 {% if current_user.is_administrator %}
@@ -193,7 +195,7 @@ $(document).ready(function() {
                 {{ fork.total_changed_line_number }}
             </td>
             
-            <td style="word-break:break-all;">
+            <td>
                 {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
             </td>
 
