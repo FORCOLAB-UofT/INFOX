@@ -89,7 +89,7 @@ $(document).ready(function() {
         "bSort": true,
         "order": [[ 6, "desc" ]],
     });
-    
+
     // Apply the search
     table.columns().eq( 0 ).each( function ( colIdx ) {
         $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {

@@ -25,7 +25,6 @@ def db_approximate_find_project_project_name(project_name):
     else:
         return Project.objects(project_name__endswith=project_name).first()
 
-
 def db_add_project(project_name):
     if not db_find_project(project_name):
         analyser.start(project_name, current_user.github_access_token)
@@ -89,30 +88,32 @@ def compare_forks():
 @login_required
 @permission_required(Permission.ADD)
 def load_from_github():
-    class ProjectSelection(FlaskForm):
-        pass
-    
-    sync_button = SyncButton()
-    if sync_button.validate_on_submit():
-        return redirect(url_for('main.sync'))
-    
     if current_user.owned_repo_sync_time is not None:
         _ownered_project = list(current_user.owned_repo.items())
     else:
         return redirect(url_for('main.sync'))
 
+    class ProjectSelection(FlaskForm):
+        pass
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1]))
-    setattr(ProjectSelection, 'button_submit', SubmitField('Confirm'))
+    setattr(ProjectSelection, 'load_button', SubmitField('Load'))
+    setattr(ProjectSelection, 'sync_button', SubmitField('Sync'))
+
     form = ProjectSelection()
-    if form.validate_on_submit():
+    if form.load_button.data:
         for field in form:
             if field.type == "BooleanField" and field.data:
                 db_add_project(field.id)
                 db_followed_project(field.id)
         flash('Add & Follow successfully!')
         return redirect(url_for('main.index'))
-    return render_template('load_from_github.html', form=form, sync_button=sync_button)
+    elif form.sync_button.data:
+        return redirect(url_for('main.sync'))
+
+    return render_template('load_from_github.html', form=form)
+
+
 
 @main.route('/sync', methods=['GET', 'POST'])
 @login_required
@@ -125,7 +126,12 @@ def sync():
         upperstream_repo = get_upperstream_repo(project)
         if upperstream_repo is not None:
             _ownered_project.append((upperstream_repo, upperstream_repo + "(Upperstream of %s)" % project))
+
     User.objects(username=current_user.username).update_one(set__owned_repo_sync_time=datetime.utcnow())
+
+    # mongoDB don't support key value contains '.'
+    for i in range(len(_ownered_project)):
+        _ownered_project[i] = (_ownered_project[i][0].replace('.', '[dot]'), _ownered_project[i][1])
     User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
     flash('Sync with Github successfully!')
     return redirect(url_for('main.load_from_github'))
@@ -159,7 +165,8 @@ def index():
     if len(project_list) == 0:
         return redirect(url_for('main.guide'))
     
-    return render_template('index.html', projects=project_list, search_form=_search_form)
+    return render_template('index.html', projects=project_list)
+
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])
