@@ -25,39 +25,9 @@
         <div class="col-md-4">
             <h4 class="text-center">Hot Repos in INFOX</h4>
             {% include "_projects.html" %}
-
-
-            <ul class="pagination pull-right">
-                {% if pagination.has_prev %}
-                <li class="page-item" >
-                {% else %}
-                <li class="page-item disabled" >
-                {% endif %}
-                  <a class="page-link" href="{{ url_for('main.find_repos', page=pagination.page-1) }}"> Previous </a>
-                </li>
-
-                {% for page in pagination.iter_pages() %}
-                  {% if page %}
-                    {% if page != pagination.page %}
-                    <li class="page-item">
-                    {% else %}
-                    <li class="page-item active">
-                    {% endif %}
-                      <a class="page-link" href="{{ url_for('main.find_repos', page=page) }}">{{ page }}</a>
-                    </li>
-                  {% else %}
-                    <span class="ellipsis">…</span>
-                  {% endif %}
-                {% endfor %}
-                {% if pagination.has_next %}
-                <li class="page-item">
-                {% else %}
-                <li class="page-item disabled" >
-                  {% endif %}
-                      <a class="page-link" href="{{ url_for('main.find_repos', page=pagination.page+1) }}"> Next </a>
-                </li>
-              </ul>
-              
+            
+            {% from "_render_pagination.html" import render_pagination %}
+            {{ render_pagination(pagination) }}
         </div>
     </div>
 

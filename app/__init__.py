@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request, url_for
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
 from flask_login import LoginManager
@@ -15,13 +16,22 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
-
 def create_app(config_name):
     """ factory function for create app
     :param config_name
     :return: app object
     """
     app = Flask(__name__, static_folder='static')
+
+    def url_for_other_page(page):
+        args = request.view_args.copy()
+        #args = request.view_args.items()
+        #args.append(request.args.to_dict().items())
+        #args = dict(args)
+        args['page'] = page
+        return url_for(request.endpoint, **args)
+     
+    app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
     # set up config
     app.config.from_object(config[config_name])
