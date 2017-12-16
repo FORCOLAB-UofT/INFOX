@@ -98,7 +98,7 @@ def load_from_github():
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1]))
     setattr(ProjectSelection, 'load_button', SubmitField('Load'))
-    setattr(ProjectSelection, 'sync_button', SubmitField('Sync'))
+    setattr(ProjectSelection, 'sync_button', SubmitField('Sync with Github'))
 
     form = ProjectSelection()
     if form.load_button.data:
@@ -155,7 +155,6 @@ def index():
         else:
             # TODO(not in our database, to add)
             flash('The Project (%s) is not be in our database. Do you want to add it?' % _input)
-
             return redirect(url_for('main.index'))
 
 
@@ -165,8 +164,11 @@ def index():
     if len(project_list) == 0:
         return redirect(url_for('main.guide'))
     
-    return render_template('index.html', projects=project_list)
-
+    
+    page = request.args.get('page', 1, type=int)  # default is 1st page
+    pagination = project_list.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
+    projects = pagination.items
+    return render_template('index.html', projects=projects, pagination=pagination)
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])
