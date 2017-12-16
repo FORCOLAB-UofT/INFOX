@@ -32,7 +32,6 @@ def db_add_project(project_name):
     else:
         return False
 
-
 def db_delete_project(project_name):
     Project.objects(project_name=project_name).delete()
     ProjectFork.objects(project_name=project_name).delete()
@@ -183,11 +182,20 @@ def project_overview(project_name):
     _project = Project.objects(project_name=project_name).first()
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[])
     _changed_files = ChangedFile.objects(project_name=project_name)
+
+
+    # TODO all_changed_files & _all_tags could be opted by AJAX
+    _all_tags = {}
+    if current_user.is_authenticated:
+        _project_tags = ForkTag.objects(project_name=project_name, username=current_user.username)
+        for tag in _project_tags:
+            _all_tags[tag.fork_full_name] = tag.tags
+    
     _all_changed_files = {}
     for file in _changed_files:
         _all_changed_files[(file.fork_name, file.file_name)] = file
     
-    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files)
+    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files, all_tags=_all_tags)
 
 @main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -308,14 +316,20 @@ def _fork_edit_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     _oper = request.args.get('oper')
-    # print(_full_name, _tag, _oper)
+    print(current_user.username, _full_name, _tag, _oper)
+    _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+    if _user_fork_tag is None:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork is None:
+            return None
+        ForkTag(fork_full_name=_full_name, project_name=_fork.project_name, username=current_user.username).save()
     if _oper == 'delete':
-        ProjectFork.objects(full_name=_full_name).update_one(pull__tags=_tag)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
     elif _oper == 'add':
-        ProjectFork.objects(full_name=_full_name).update_one(push__tags=_tag)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
-        ProjectFork.objects(full_name=_full_name).update_one(set__tags=[])
-    return jsonify(tags=ProjectFork.objects(full_name=_full_name).first().tags)
+        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
+    return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
 
 @main.route('/_get_familar_fork', methods=['GET', 'POST'])
 def _get_familar_fork():
