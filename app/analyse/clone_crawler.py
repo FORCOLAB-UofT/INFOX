@@ -35,9 +35,11 @@ class CloneCrawler:
         # file_lists = []
         suceessful_file_number = 0
         for (fpath, dirs, fs) in os.walk(folder):
+            no_text_file_numer = 0
             for file_name in fs:
                 file_full_name = os.path.join(fpath, file_name)
-                if language_tool.is_text(file_name):
+                if language_tool.is_text(file_name) and os.path.getsize(file_full_name) <= 1024 * 100:
+                    # print(file_full_name)
                     # file_lists.append(file_full_name)
                     with codecs.open(file_full_name, 'rU', 'utf-8') as f:
                         try:
@@ -49,6 +51,11 @@ class CloneCrawler:
                             suceessful_file_number += 1
                         except:
                             pass
+                    # print("finish")
+                else:
+                    no_text_file_numer+=1
+                    if no_text_file_numer > 50:
+                        break
         print('%s suceessful_file_number: %d' %
               (self.project_name, suceessful_file_number))
 
