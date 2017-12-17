@@ -35,7 +35,11 @@
                         <div class="language"> Language:  <em>{{ project.language }}</em> &nbsp;&nbsp;</div>
                         <div class="github_fork_number"> Forks on Github:  <em>{{ project.fork_number }}</em> &nbsp;&nbsp;</div>
                         <div class="active_fork_number"> Active Fork:  <em>{{ project.activate_fork_number }}</em> &nbsp;&nbsp;</div>
-                        <div class="last_analyzed_time"> Last Analyzed: <em> </em> {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }} </div>
+                        <div class="last_analyzed_time"> Last Analyzed: <em> </em> 
+                            {% if project.last_updated_time %}
+                                {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

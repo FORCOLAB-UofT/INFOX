@@ -5,7 +5,7 @@ from . import project_updater
 
 current_analysing = set()
 
-def start_analyse(app, project_name, analyse_github):
+def start_analyse(app, project_name, analyse_github, email_sender):
     if project_name in current_analysing:
         return
 
@@ -15,15 +15,23 @@ def start_analyse(app, project_name, analyse_github):
     with app.app_context():
         repo_info = analyse_github.get('repos/%s' % project_name)
         print('finish fetch repo info for %s' % project_name)
+        
+        project_updater.project_init(project_name, repo_info) # First updata for quick view.
+
         repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
         print('finish fetch fork list for %s' % project_name)
+
         project_updater.start_update(project_name, repo_info, repo_forks_list)
+
+        # Send email to user.
+        if email_sender is not None:
+            email_sender.repo_finish(project_name)
 
     current_analysing.remove(project_name)
     print("-----finish analysing for %s-----" % project_name)
 
 
-def start(project_name, analyser_access_token):
+def start(project_name, analyser_access_token, email_sender=None):
     app = current_app._get_current_object()
 
     analyse_github = GitHub(app)
@@ -37,6 +45,6 @@ def start(project_name, analyser_access_token):
     except:
         return False
 
-    Thread(target=start_analyse, args=[app, project_name, analyse_github]).start()
+    Thread(target=start_analyse, args=[app, project_name, analyse_github, email_sender]).start()
     return True
 
