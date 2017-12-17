@@ -25,12 +25,12 @@ class Config:
     SECRET_KEY = os.environ.get('INFOX_SECRET_KEY')
 
     # E-mail Config
-    MAIL_SERVER = 'smtp.qq.com'
+    MAIL_SERVER = 'smtp.126.com'
     MAIL_PORT = 465
     MAIL_USERNAME = os.environ.get('INFOX_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('INFOX_MAIL_PASSWORD')
     MAIL_USE_SSL = True
-    FLASK_MAIL_SENDER = '<375833274@qq.com>'
+    FLASK_MAIL_SENDER = '<infox_help@126.com>'
     FLASK_MAIL_SUBJECT_PREFIX = '[INFOX(Forks-Insight)]'
 
 
