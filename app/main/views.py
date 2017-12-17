@@ -99,7 +99,7 @@ def load_from_github():
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1]))
     setattr(ProjectSelection, 'load_button', SubmitField('Load'))
-    setattr(ProjectSelection, 'sync_button', SubmitField('Sync with Github'))
+    setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
     form = ProjectSelection()
     if form.load_button.data:
