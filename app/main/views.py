@@ -6,11 +6,13 @@ from . import main
 from .forms import *
 from ..models import *
 
+from ..email import EmailSender
+
 from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
-from ..auth.views import get_user_repo_list, get_upperstream_repo
+from ..auth.views import get_user_repo_list, get_upperstream_repo, get_user_email_from_commit
 
 
 #------------------------------------------------------------------
@@ -25,13 +27,6 @@ def db_approximate_find_project_project_name(project_name):
     else:
         return Project.objects(project_name__endswith=project_name).first()
 
-def db_add_project(project_name):
-    if not db_find_project(project_name):
-        analyser.start(project_name, current_user.github_access_token)
-        return True
-    else:
-        return False
-
 def db_delete_project(project_name):
     Project.objects(project_name=project_name).delete()
     ProjectFork.objects(project_name=project_name).delete()
@@ -43,7 +38,14 @@ def db_followed_project(project_name):
     # Update project followed time
     # User.objects(username=current_user.username).update(push__followed_projects_time=(project_name, datetime.utcnow()))
 
+def db_update_email(username):
+    _user = User.objects(username=username).first()
+    if _user:
+        if _user.email is None:
+            User.objects(username=username).update_one(set__email=get_user_email_from_commit(username))
+
 #------------------------------------------------------------------
+
 
 @main.route('/', methods=['GET', 'POST'])
 def start():
@@ -76,9 +78,9 @@ def compare_forks():
             return render_template('compare_forks.html', form=form, common_files=_common_files, common_words=_common_words)
         else:
             if _fork1 is None:
-                flash('(%s) is not found!' % form.fork1.data)
+                flash('(%s) is not found!' % form.fork1.data, 'warning')
             if _fork2 is None:
-                flash('(%s) is not found!' % form.fork2.data)
+                flash('(%s) is not found!' % form.fork2.data, 'warning')
             return redirect(url_for('main.compare_fork'))
     return render_template('compare_forks.html', form=form)
 
@@ -97,21 +99,27 @@ def load_from_github():
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1]))
     setattr(ProjectSelection, 'load_button', SubmitField('Load'))
-    setattr(ProjectSelection, 'sync_button', SubmitField('Sync with Github'))
+    setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
     form = ProjectSelection()
     if form.load_button.data:
+        at_least_one_load = False
         for field in form:
             if field.type == "BooleanField" and field.data:
-                db_add_project(field.id)
-                db_followed_project(field.id)
-        flash('Add & Follow successfully!')
+                at_least_one_load = True
+                _project_name = field.id
+                db_update_email(current_user.username)
+                email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
+                if not db_find_project(_project_name):
+                    analyser.start(_project_name, current_user.github_access_token, email_sender)
+                db_followed_project(_project_name)
+        if at_least_one_load:
+            flash('Add & Follow successfully!', 'success')
         return redirect(url_for('main.index'))
     elif form.sync_button.data:
         return redirect(url_for('main.sync'))
 
     return render_template('load_from_github.html', form=form)
-
 
 
 @main.route('/sync', methods=['GET', 'POST'])
@@ -132,7 +140,8 @@ def sync():
     for i in range(len(_ownered_project)):
         _ownered_project[i] = (_ownered_project[i][0].replace('.', '[dot]'), _ownered_project[i][1])
     User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
-    flash('Sync with Github successfully!')
+
+    flash('Refresh your Github repo list successfully!', 'success')
     return redirect(url_for('main.load_from_github'))
 
 @main.route('/guide', methods=['GET', 'POST'])
@@ -149,11 +158,11 @@ def index():
         if _find_result:
             # TODO(make sure user to follow)
             db_followed_project(_find_result.project_name)
-            flash('The Project (%s) is followed successfully!' % _find_result.project_name)
+            flash('The Project (%s) is followed successfully!' % _find_result.project_name, 'success')
             return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
         else:
             # TODO(not in our database, to add)
-            flash('The Project (%s) is not be in our database. Do you want to add it?' % _input)
+            flash('The Project (%s) is not be in our database. Do you want to add it?' % _input, 'warning')
             return redirect(url_for('main.index'))
 
 
@@ -202,7 +211,7 @@ def project_overview(project_name):
 @permission_required(Permission.FOLLOW)
 def followed_project(project_name):
     db_followed_project(project_name)
-    flash('Followed Project %s successfully!' % project_name) 
+    flash('Followed Project %s successfully!' % project_name, 'success') 
     return redirect(url_for('main.find_repos'))
 
 
@@ -223,14 +232,16 @@ def find_repos():
         _input = form.project_name.data
         if db_find_project(_input) is not None:
             db_followed_project(_input)
-            flash('The Project (%s) is already in INFOX. Followed successfully!' % _input)
+            flash('The Project (%s) is already in INFOX. Followed successfully!' % _input, 'success')
         else:
-            exists = analyser.start(_input, current_user.github_access_token)
+            db_update_email(current_user.username)
+            email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
+            exists = analyser.start(_input, current_user.github_access_token, email_sender)
             if exists:
                 db_followed_project(_input)
-                flash('The Project (%s) just starts loading into INFOX. Please wait.' % _input)
+                flash('The Project (%s) just starts loading into INFOX. We will send you email when it is finished. Please wait.' % _input, 'info')
             else:
-                flash('Not found!')
+                flash('Not found!', 'danger')
 
     if current_user.is_authenticated:
         project_list = Project.objects(
@@ -250,7 +261,7 @@ def about():
     """
     form = FeedbackForm()
     if form.validate_on_submit():
-        flash('Feedback received successfully!')
+        flash('Feedback received successfully!', 'success')
         print(form.feedback.data)
         return redirect(url_for('main.about'))
     return render_template('about.html', form=form)
@@ -264,7 +275,6 @@ def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
     return render_template('admin_manage.html', projects=_projects, users=_users)
-
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -287,7 +297,7 @@ def project_refresh_all():
     analyser.current_analysing = set()
     for project in project_list:
         analyser.start(project.project_name, current_user.github_access_token)
-    flash('refresh all successfully!')
+    flash('refresh all successfully!', 'success')
     return redirect(url_for('main.admin_manage'))
 
 
@@ -296,7 +306,7 @@ def project_refresh_all():
 @admin_required
 def delete_project(project_name):
     db_delete_project(project_name)
-    flash('The project (%s) is deleted!' % project_name) 
+    flash('The project (%s) is deleted!' % project_name, 'success') 
     return redirect(url_for('main.admin_manage'))
 
 
@@ -305,7 +315,7 @@ def delete_project(project_name):
 @admin_required
 def delete_user(username):
     User.objects(username=username).delete()
-    flash('User (%s) is deleted!' % username)
+    flash('User (%s) is deleted!' % username, 'success')
     return redirect(url_for('main.admin_manage'))
 
 
@@ -368,6 +378,16 @@ def _get_predict_tag():
 
 """
 # ----------------------------  use for test ------------------------
+
+@main.route('/admin_email_update')
+@login_required
+@admin_required
+def admin_email_update():
+    _users = User.objects()
+    for user in _users:
+        db_update_email(user.username)
+    return redirect(url_for('main.admin_manage'))
+
 @main.route('/test', methods=['GET', 'POST'])
 def test():
     from ..analyse.util import word_extractor
@@ -379,10 +399,12 @@ def test():
             s+=commit["description"] + "\n"
     return jsonify(word_extractor.get_top_words_from_text(s, 50))
 
-from ..email import send_mail
 
-@main.route('/test2', methods=['GET', 'POST'])
-def test2():
-    send_mail('fancycoder0@gmail.com','test', 'email.html')
-    return 'hello'
+
+@main.route('/test_send_email', methods=['GET', 'POST'])
+def test_send_email():
+    email_sender = EmailSender('Luyao Ren', '375833274@qq.com', 'Repo Status Update', 'email.html')
+    email_sender.repo_finish('test_repo')
+    return 'Finish Send!'
+
 """
