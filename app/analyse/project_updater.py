@@ -26,7 +26,6 @@ class ForkUpdater:
         self.all_tokens = []
         # self.all_stemmed_tokens = []
         self.all_lemmatize_tokens = []
-        self.file_list = []
     
     def get_tf_idf(self, tokens, top_number, list_option = True):
         tf_idf_dict = self.code_clone_crawler.calc_key_words_tfidf(word_extractor.get_counter(tokens))
@@ -67,9 +66,6 @@ class ForkUpdater:
             # key_stemmed_words_dict=word_extractor.get_top_words(stemmed_tokens, 10, False),
         ).save()
 
-        # Add files into fork's changed file list.
-        self.file_list.append(file_name)
-
         # Load current file's key words to fork.
         for x in tokens:
             self.all_tokens.append(x)
@@ -85,7 +81,7 @@ class ForkUpdater:
         
         last_update = ProjectFork.objects(full_name=self.project_name + '/' + self.fork_name).first()
 
-        if (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
+        if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
             return
 
         if (not current_app.config['RECRAWLER_MODE']) and (os.path.exists(self.diff_result_path)):
@@ -116,18 +112,19 @@ class ForkUpdater:
         # Update forks in database.
         full_name = self.project_name + '/' + self.fork_name
 
+        file_distinct = list(OrderedDict.fromkeys(compare_result["file_list"]))
         # Update forks into database.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,
             fork_name=self.fork_name,
             project_name=self.project_name,
-            total_changed_file_number=len(compare_result["file_list"]),
+            total_changed_file_number=len(file_distinct),
             total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
             total_commit_number=len(compare_result["commit_list"]),
             commit_list=compare_result["commit_list"],
             last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
             created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
-            file_list=list(OrderedDict.fromkeys(self.file_list)),
+            file_list=file_distinct,
             key_words=word_extractor.get_top_words(self.all_tokens, 10),
             key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
             key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
