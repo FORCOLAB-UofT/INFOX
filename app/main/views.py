@@ -271,12 +271,18 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
-    
-    # Delete for later
+    return render_template('admin_manage.html', projects=_projects, users=_users)
+
+
+# Delete for later
+@main.route('/admin_email_update')
+@login_required
+@admin_required
+def admin_email_update():
+    _users = User.objects()
     for user in _users:
         db_update_email(user.username)
-
-    return render_template('admin_manage.html', projects=_projects, users=_users)
+    return redirect(url_for('main.admin_manage'))
 
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])

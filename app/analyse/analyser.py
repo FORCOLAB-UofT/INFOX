@@ -23,7 +23,7 @@ def start_analyse(app, project_name, analyse_github, email_sender):
 
         project_updater.start_update(project_name, repo_info, repo_forks_list)
 
-        # Send email to user.
+        # Send email to user
         if email_sender is not None:
             email_sender.repo_finish(project_name)
 
