@@ -28,7 +28,7 @@
             <form method="POST">
                 {% for field in form %}
                     {% if field.type == "BooleanField" %}
-                        <h4> {{ field }} {{ field.label }} </h4> 
+                       {{ field }} {{ field.label }} 
                         <br>
                     {% endif %}
                 {% endfor %}
