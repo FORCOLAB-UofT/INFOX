@@ -84,18 +84,17 @@ class ForkUpdater:
         if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
             return
 
-        if (not current_app.config['RECRAWLER_MODE']) and (os.path.exists(self.diff_result_path)):
-            with open(self.diff_result_path) as read_file:
-                compare_result = json.load(read_file)
-        else:
-            # If the compare result is not crawled, start to crawl.
-            try:
-                compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
-            except:
-                return
+        # If the compare result is not crawled, start to crawl.
+        try:
+            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
             if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
-        
+        except:
+            # Something error! Just load from local.
+            if os.path.exists(self.diff_result_path):
+                with open(self.diff_result_path) as read_file:
+                    compare_result = json.load(read_file)
+
         for file in compare_result["file_list"]:
             self.file_analyse(file)
 
