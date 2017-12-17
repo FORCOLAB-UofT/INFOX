@@ -273,18 +273,6 @@ def admin_manage():
     _users = User.objects()
     return render_template('admin_manage.html', projects=_projects, users=_users)
 
-
-# Delete for later
-@main.route('/admin_email_update')
-@login_required
-@admin_required
-def admin_email_update():
-    _users = User.objects()
-    for user in _users:
-        db_update_email(user.username)
-    return redirect(url_for('main.admin_manage'))
-
-
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -387,6 +375,16 @@ def _get_predict_tag():
 
 """
 # ----------------------------  use for test ------------------------
+
+@main.route('/admin_email_update')
+@login_required
+@admin_required
+def admin_email_update():
+    _users = User.objects()
+    for user in _users:
+        db_update_email(user.username)
+    return redirect(url_for('main.admin_manage'))
+
 @main.route('/test', methods=['GET', 'POST'])
 def test():
     from ..analyse.util import word_extractor
@@ -402,6 +400,8 @@ def test():
 
 @main.route('/test_send_email', methods=['GET', 'POST'])
 def test_send_email():
-    send_mail('375833274@qq.com', 'Repo Analysis Finish', 'email.html')
+    email_sender = EmailSender('Luyao Ren', '375833274@qq.com', 'Repo Status Update', 'email.html')
+    email_sender.repo_finish('test_repo')
     return 'Finish Send!'
+
 """
