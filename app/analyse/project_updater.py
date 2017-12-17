@@ -159,7 +159,7 @@ def project_init(project_name, repo_info):
     ).save()
 
 def start_update(project_name, repo_info, forks_info):
-    project_init(project_name, repo_info)
+    Project.objects(project_name=project_name).update(activate_fork_number=get_activate_fork_number(forks_info))
 
     forks_number = len(forks_info)
     forks_count = 0
