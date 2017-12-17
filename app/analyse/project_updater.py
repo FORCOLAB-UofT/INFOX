@@ -147,18 +147,19 @@ def get_activate_fork_number(forks_info):
             number += 1
     return number
 
-def start_update(project_name, repo_info, forks_info):
-    
+def project_init(project_name, repo_info):
     # Update project in database.
     Project(
         project_name=project_name,
         language=repo_info["language"],
         fork_number=repo_info["forks"],
-        activate_fork_number=get_activate_fork_number(forks_info),
+        activate_fork_number=-1,
         description=str(repo_info["description"]),
         analyser_progress="0%",
-        last_updated_time=datetime.utcnow(),
     ).save()
+
+def start_update(project_name, repo_info, forks_info):
+    project_init(project_name, repo_info)
 
     forks_number = len(forks_info)
     forks_count = 0

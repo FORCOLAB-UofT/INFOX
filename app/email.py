@@ -27,3 +27,15 @@ def send_mail(to, subject, template, **kwargs):
     thread = Thread(target=send_async_email, args=[app, msg])
     thread.start()
     return thread
+
+
+class EmailSender:
+    def __init__(self, username, email_address, subject, template):
+        self.username = username
+        self.email_address = email_address
+        self.subject = subject
+        self.template = template
+
+    def repo_finish(self, repo_list):
+        if (self.email_address is not None) and (repo_list is not None):
+            send_mail(self.email_address, self.subject, self.template, username=self.username, repo_list=repo_list)

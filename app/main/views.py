@@ -6,11 +6,13 @@ from . import main
 from .forms import *
 from ..models import *
 
+from ..email import EmailSender
+
 from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
-from ..auth.views import get_user_repo_list, get_upperstream_repo
+from ..auth.views import get_user_repo_list, get_upperstream_repo, get_user_email_from_commit
 
 
 #------------------------------------------------------------------
@@ -25,13 +27,6 @@ def db_approximate_find_project_project_name(project_name):
     else:
         return Project.objects(project_name__endswith=project_name).first()
 
-def db_add_project(project_name):
-    if not db_find_project(project_name):
-        analyser.start(project_name, current_user.github_access_token)
-        return True
-    else:
-        return False
-
 def db_delete_project(project_name):
     Project.objects(project_name=project_name).delete()
     ProjectFork.objects(project_name=project_name).delete()
@@ -43,7 +38,14 @@ def db_followed_project(project_name):
     # Update project followed time
     # User.objects(username=current_user.username).update(push__followed_projects_time=(project_name, datetime.utcnow()))
 
+def db_update_email(username):
+    _user = User.objects(username=username).first()
+    if _user:
+        if _user.email is None:
+            User.objects(username=username).update_one(set__email=get_user_email_from_commit(username))
+
 #------------------------------------------------------------------
+
 
 @main.route('/', methods=['GET', 'POST'])
 def start():
@@ -103,15 +105,18 @@ def load_from_github():
     if form.load_button.data:
         for field in form:
             if field.type == "BooleanField" and field.data:
-                db_add_project(field.id)
-                db_followed_project(field.id)
+                _project_name = field.id
+                db_update_email(current_user.username)
+                email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
+                if not db_find_project(_project_name):
+                    analyser.start(_project_name, current_user.github_access_token, email_sender)
+                db_followed_project(_project_name)
         flash('Add & Follow successfully!')
         return redirect(url_for('main.index'))
     elif form.sync_button.data:
         return redirect(url_for('main.sync'))
 
     return render_template('load_from_github.html', form=form)
-
 
 
 @main.route('/sync', methods=['GET', 'POST'])
@@ -132,6 +137,7 @@ def sync():
     for i in range(len(_ownered_project)):
         _ownered_project[i] = (_ownered_project[i][0].replace('.', '[dot]'), _ownered_project[i][1])
     User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
+
     flash('Sync with Github successfully!')
     return redirect(url_for('main.load_from_github'))
 
@@ -225,7 +231,9 @@ def find_repos():
             db_followed_project(_input)
             flash('The Project (%s) is already in INFOX. Followed successfully!' % _input)
         else:
-            exists = analyser.start(_input, current_user.github_access_token)
+            db_update_email(current_user.username)
+            email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
+            exists = analyser.start(_input, current_user.github_access_token, email_sender)
             if exists:
                 db_followed_project(_input)
                 flash('The Project (%s) just starts loading into INFOX. Please wait.' % _input)
@@ -263,6 +271,11 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
+    
+    # Delete for later
+    for user in _users:
+        db_update_email(user.username)
+
     return render_template('admin_manage.html', projects=_projects, users=_users)
 
 
@@ -379,10 +392,10 @@ def test():
             s+=commit["description"] + "\n"
     return jsonify(word_extractor.get_top_words_from_text(s, 50))
 
-from ..email import send_mail
 
-@main.route('/test2', methods=['GET', 'POST'])
-def test2():
-    send_mail('fancycoder0@gmail.com','test', 'email.html')
-    return 'hello'
+
+@main.route('/test_send_email', methods=['GET', 'POST'])
+def test_send_email():
+    send_mail('375833274@qq.com', 'Repo Analysis Finish', 'email.html')
+    return 'Finish Send!'
 """
