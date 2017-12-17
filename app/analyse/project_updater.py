@@ -90,10 +90,12 @@ class ForkUpdater:
             if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
         except:
-            # Something error! Just load from local.
+            # Something error(maybe it's empty)! Just load from local.
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
                     compare_result = json.load(read_file)
+            else:
+                return
 
         for file in compare_result["file_list"]:
             self.file_analyse(file)
