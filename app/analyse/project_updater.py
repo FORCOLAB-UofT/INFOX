@@ -1,5 +1,6 @@
 import os
 import json
+from collections import OrderedDict
 from datetime import datetime
 from flask import current_app
 
@@ -126,7 +127,7 @@ class ForkUpdater:
             commit_list=compare_result["commit_list"],
             last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
             created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
-            file_list=self.file_list,
+            file_list=list(OrderedDict.fromkeys(self.file_list)),
             key_words=word_extractor.get_top_words(self.all_tokens, 10),
             key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
             key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),

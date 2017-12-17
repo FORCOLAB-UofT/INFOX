@@ -15,6 +15,8 @@ class Config:
     # Overview page config.
     SHOW_NUMBER_FOR_PAGE = 6 # Project number per page in index page.
 
+    # API_CALL_RETRY_TIMES = 5
+
     # Github Oauth Apps config.
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
     GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
@@ -30,6 +32,7 @@ class Config:
     MAIL_USE_SSL = True
     FLASK_MAIL_SENDER = '<infox_help@126.com>'
     FLASK_MAIL_SUBJECT_PREFIX = '[INFOX(Forks-Insight)]'
+
 
 
 class DevelopmentConfig(Config):
