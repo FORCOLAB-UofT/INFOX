@@ -37,12 +37,10 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    FORCED_UPDATING = True 
-    RECRAWLER_MODE = True # Refresh will re-crawler the forks' info.
+    FORCED_UPDATING = True # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
-    FORCED_UPDATING = True
-    RECRAWLER_MODE = True # Refresh will re-crawler the forks' info.
+    FORCED_UPDATING = False # Refresh will not re-crawler the up-to-date forks' info.
 
 config = {
     'production': ProductionConfig,
