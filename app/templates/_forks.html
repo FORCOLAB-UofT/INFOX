@@ -149,11 +149,11 @@ $(document).ready(function() {
                     {{ fork.fork_name }}
                 </a>
                 {% if current_user.is_administrator %}
-                <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}">
+                <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}" target="_blank">
                     <span class="fa fa-search"></span>
                 </a>
                 
-                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}">
+                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}" target="_blank">
                     <span class="fa fa-book"></span>
                 </a>
                 {% endif %}
@@ -165,7 +165,7 @@ $(document).ready(function() {
                   </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
                     {% for commit in fork.commit_list %}
-                        <a class="dropdown-item" href="{{ commit["link"] }}">{{ commit["title"] }}</a>
+                        <a class="dropdown-item" href="{{ commit["link"] }}" target="_blank">{{ commit["title"] }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -178,7 +178,7 @@ $(document).ready(function() {
                   </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
                     {% for file_name in fork.file_list %}
-                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "%s" % (file_name) }}</a>
+                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}" target="_blank">{{ "%s" % (file_name) }}</a>
                     {% endfor %}
                   </div>
                 </div>
