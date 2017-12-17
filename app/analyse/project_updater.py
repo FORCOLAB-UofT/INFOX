@@ -112,7 +112,7 @@ class ForkUpdater:
         # Update forks in database.
         full_name = self.project_name + '/' + self.fork_name
 
-        file_distinct = list(OrderedDict.fromkeys(compare_result["file_list"]))
+        file_distinct = list(OrderedDict.fromkeys([x["file_full_name"] for x in compare_result["file_list"]]))
         # Update forks into database.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,
