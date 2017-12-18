@@ -89,7 +89,7 @@ $(document).ready(function() {
         "bSort": true,
         "order": [[ 6, "desc" ]],
     });
-    
+
     // Apply the search
     table.columns().eq( 0 ).each( function ( colIdx ) {
         $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
@@ -104,97 +104,95 @@ $(document).ready(function() {
 </script>
 
 
-
-
 <table id="forks-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
     <thead>
         <tr>
-            <th>Fork Name</th>
+            <th>Fork</th>
             <th>Commits</th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Files of Change">Changed files</a>
+                <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">
+                    <font size="1px">Changed files</font>
+                </div>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="Lines of Change">Lines of Code</a>
+                <font size="1px">Lines of code changed</font>
             </th>
             <th>
-                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">Key Words</a>
+                <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">
+                    <font size="1px">Representative Keyword </font>
+                </div>
             </th>
-            <th>Last Committed</th>
-            <th>Created At</th>
-            <th>
-                <div data-toggle="tooltip" data-placement="top" title="You can tag it!">Tags</a>
-            </th>
+            <th>Last Commit</th>
+            <th>Create</th>
+            <th>Add Tags</th>
         </tr>
     </thead>
     
     <tfoot>
         <tr>
-            <th>Fork Name</th>
+            <th>Fork</th>
             <th>Commits</th>
             <th>Changed files</th>
-            <th>Lines of Code</th>
-            <th>Key Words</th>
-            <th>Last Committed</th>
-            <th>Created At</th>
-            <th>Tags</th>
+            <th>Lines of code changed</th>
+            <th>Representative Keywords</th>
+            <th>Last Commit</th>
+            <th>Create</th>
+            <th>Add Tags</th>
         </tr>
     </tfoot>
 
     <tbody>
         {% for fork in forks %}
-        <tr class="change">
+        <tr class="fork">
             <td style="word-break:break-all;">
-                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" data-toggle="tooltip" data-placement="top" title="See diff with upstream on Github">
+                <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Compare all changes on GitHub">
                     {{ fork.fork_name }}
                 </a>
                 {% if current_user.is_administrator %}
-                <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}">
+                <a href="{{ url_for('main._get_familar_fork',full_name=fork.full_name) }}" target="_blank">
                     <span class="fa fa-search"></span>
                 </a>
                 
-                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}">
+                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}" target="_blank">
                     <span class="fa fa-book"></span>
                 </a>
                 {% endif %}
             </td>
             <td>
-                <div class="dropdown show">
-                  <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                 <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ fork.total_commit_number }}
-                  </a>
-
-                  <div class="dropdown-menu scrollable-menu" aria-labelledby="commit_list">
+                  </button>
+                  <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
                     {% for commit in fork.commit_list %}
-                        <a class="dropdown-item" href="{{ commit["link"] }}">{{ commit["title"] }}</a>
+                        <a class="dropdown-item" href="{{ commit["link"] }}" target="_blank">{{ commit["title"] }}</a>
                     {% endfor %}
                   </div>
-                </div>      
-                
-
+                </div>
             </td>
 
             <td>
-                <div class="dropdown show">
-                  <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown">
+                  <button class="btn dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ fork.total_changed_file_number }}
-                    <span class="caret"></span>
-                  </a>
-
+                  </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
                     {% for file_name in fork.file_list %}
-                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}">{{ "%s" % (file_name) }}</a>
+                        <a class="dropdown-item" href="{{ all_changed_files[(fork.fork_name, file_name)].diff_link }}" target="_blank">{{ "%s" % (file_name) }}</a>
                     {% endfor %}
                   </div>
-                </div> 
+                </div>
             </td>
 
             <td>
-                {{ fork.total_changed_line_number }}
+                <div class="container">
+                    {{ fork.total_changed_line_number }}
+                </div>
+                
             </td>
             
-            <td style="word-break:break-all;">
-                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}</td>
+            <td>
+                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}
             </td>
 
             <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>
@@ -204,7 +202,9 @@ $(document).ready(function() {
             <td>
                 <div class="tag" id="{{ fork.full_name }}">
                     <span id="tag_list" style="float:left;">
-                        {{ ",".join(fork.tags) }}
+                        {% if current_user.is_authenticated %}
+                            {{ ",".join(all_tags.get(fork.full_name,[])) }}
+                        {% endif %}
                     </span>
                     {% if current_user.is_authenticated %}
                     <div class="dropdown">
@@ -216,7 +216,6 @@ $(document).ready(function() {
                             <button type="button" class="btn btn-primary btn-sm" id="Bug fix">Bug fix</button>
                             <button type="button" class="btn btn-primary btn-sm" id="Refactoring">Refactoring</button>
                             <button type="button" class="btn btn-primary btn-sm" id="Configuration">Configuration</button>
-                            
                             <input type="text" size="7" name="add">
                             <a href=# id="add">Add</a>
                             <a href=# id="clear">Clear-all</a>

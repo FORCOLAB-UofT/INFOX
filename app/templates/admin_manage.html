@@ -3,19 +3,18 @@
 {% from "bootstrap/pagination.html" import render_pagination %}
 
 {% block page_content %}
-    <div class="col-md-4">
         <h1> INFOX </h1>
         <h4> Admin Manage</h4>
-    </div>
+        <hr>
+    <div class="row">
 
-    <div class="row"></div><hr>
-    
-    <div class="col-md-6">
-        {% include '_projects.html' %}
-    </div>
+        <div class="col-sm-6">
+            {% include '_projects.html' %}
+        </div>
 
-    <div class="col-md-6">
-        {% include '_users.html' %}
+        <div class="col-sm-4">
+            {% include '_users.html' %}
+        </div>
     </div>
 
 {% endblock %}}

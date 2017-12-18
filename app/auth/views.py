@@ -40,6 +40,20 @@ def get_upperstream_repo(repo):
     else:
         return None
 
+def get_user_email_from_commit(username):
+    _repo_list = get_user_repo_list(username)
+    for repo in _repo_list:
+        try:
+            commits = github.request('GET', 'repos' + '/' + repo + '/commits?author=%s' % username)
+            for commit in commits:
+                if commit["author"]["login"] == username:
+                    email_address = commit["commit"]["author"]["email"]
+                    if 'noreply' not in email_address:
+                        return email_address
+        except:
+            pass
+    return None
+
 @auth.route('/callback', methods=['GET', 'POST'])
 @github.authorized_handler
 def github_login(access_token):

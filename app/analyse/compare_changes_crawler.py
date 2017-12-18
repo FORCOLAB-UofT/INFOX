@@ -95,7 +95,7 @@ def fetch_diff_code(project_full_name):
 
         if not language_tool.is_text(file_full_name):
             file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
-                              "diff_link": url, "added_line": 0, "added_code": None})
+                              "diff_link": '#', "added_line": 0, "added_code": None})
             continue
 
         st = re.search('@@.*?-.*?\+.*?@@', diff)
@@ -115,7 +115,7 @@ def fetch_diff_code(project_full_name):
         
         # TODO change diff_link to code position
         file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
-                          "diff_link": url, "added_line": diff_code_line, "added_code": diff_code})
+                          "diff_link": '#', "added_line": diff_code_line, "added_code": diff_code})
     return file_list
     
 
