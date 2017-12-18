@@ -12,9 +12,9 @@ Framework: Flask
 
 Database: mongo
 
-Http server: uwsgi  (./config.ini - Config for using uWSGI)
+Http server: uwsgi 
 
-Reverse Agent: nginx (/etc/init.d/nginx)
+Reverse Agent: nginx
 
 How to run:
 
