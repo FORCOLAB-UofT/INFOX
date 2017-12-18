@@ -52,7 +52,7 @@ Http server: uwsgi & nginx
 
          export GITHUB_CLIENT_SECRET=[your_github_oAuth_Client_Secret]
 
-         export INFOX_LOCAL_DATA_PATH=[local path for storing analyzed result (like /Users/fancycoder/infox_data/)]
+         export INFOX_LOCAL_DATA_PATH=[local path for storing analyzed result (like /Users/fancycoder/infox_data)]
 
          export INFOX_SECRET_KEY=[a random string(like abcd1234)]
 
