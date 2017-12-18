@@ -42,7 +42,10 @@ How to run:
    export INFOX_MAIL_USERNAME= [smtp_username]<br />
    export INFOX_MAIL_PASSWORD= [smtp_password]  <br /> 
 
-3. Run on localhost: python manage.py runserver
+3. Serve Flask Applications with uWSGI and Nginx on Ubuntu 16.04
+https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
+
+4. Run on localhost: python manage.py runserver
 
 
 Code Overview:
