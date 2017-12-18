@@ -35,12 +35,12 @@ How to run:
  
    source activate p3
 
-   export GITHUB_CLIENT_ID= [your_github_oAuth_Client_ID]
-   export GITHUB_CLIENT_SECRET= [your_github_oAuth_Client_Secret]
-   export INFOX_LOCAL_DATA_PATH= [local path for storing analyzed result]
-   export INFOX_SECRET_KEY=[random string]
-   export INFOX_MAIL_USERNAME= [smtp_username]
-   export INFOX_MAIL_PASSWORD= [smtp_password]    
+   export GITHUB_CLIENT_ID= [your_github_oAuth_Client_ID] <br />
+   export GITHUB_CLIENT_SECRET= [your_github_oAuth_Client_Secret]<br />
+   export INFOX_LOCAL_DATA_PATH= [local path for storing analyzed result]<br />
+   export INFOX_SECRET_KEY=[random string]<br />
+   export INFOX_MAIL_USERNAME= [smtp_username]<br />
+   export INFOX_MAIL_PASSWORD= [smtp_password]  <br /> 
 
 3. Run on localhost: python manage.py runserver
 
