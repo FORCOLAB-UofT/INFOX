@@ -27,7 +27,7 @@ How to run:
  - install dependencies (https://github.com/FancyCoder0/INFOX/blob/master/environment.yaml)
    conda env create -f environment.yaml
 
- - install mongo (install brew mongo)
+ - install mongodb (install brew mongo)
 
 
 2. Edit the config.py & env variable (see in config.py) 
