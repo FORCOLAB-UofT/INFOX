@@ -2,40 +2,44 @@
     {% for project in projects %}
         <li class="project">
             <div class="project-content">
-                <div class="form-inline">  
-                    <div class="project-name">
-                        <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
-                            {{ project.project_name }}
-                        </a>
-                    </div>
+
+                <div class="project-name">
+                    <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
+                        {{ project.project_name }}
+                    </a>
                 </div>
+                 {% if current_user.is_authenticated %}
+                        {% if project.project_name in current_user.followed_projects %}
+                            <a type="button" class="btn btn-warning btn-xs pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
+                                Remove
+                            </a>
+                        {% else %}
+                            <a type="button" class="btn btn-success btn-xs pull-right" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
+                                Follow
+                            </a>
+                        {% endif %}
+                {% endif %}
 
                 {% if current_user.is_administrator %}
                     <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
                         Refresh
                     </a>
                     <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
-                            Delete
+                        Delete
                     </a>
                     <div> {{ "Progress = %s" % project.analyser_progress }} </div>
                 {% endif %}
 
                 <div class="project-body">
-                    {% if current_user.is_authenticated %}
-                        {% if project.project_name in current_user.followed_projects %}
-                            <a type="button" class="btn btn-warning btn-xs pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
-                                Unfollowed
-                            </a>
-                        {% else %}
-                            <a type="button" class="btn btn-success btn-xs pull-right" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
-                                Followed
-                            </a>
-                        {% endif %}
-                    {% endif %}
                     <div class="project-info form-inline">
                         <div class="language"> Language:  <em>{{ project.language }}</em> &nbsp;&nbsp;</div>
-                        <div class="github_fork_number"> Fork on Github:  <em>{{ project.fork_number }}</em> &nbsp;&nbsp;</div>
-                        <div class="activate_fork_number"> Activate Forks:  <em>{{ project.activate_fork_number }}</em> &nbsp;&nbsp;</div>
+                        <div class="github_fork_number"> Forks on GitHub:  <em>{{ project.fork_number }}</em> &nbsp;&nbsp;</div>
+                        <div class="active_fork_number"> Active Forks:  <em>{{ project.activate_fork_number }}</em> &nbsp;&nbsp;</div>
+                        <div class="last_analyzed_time"> Last Analyzed: <em> </em> 
+                            {% if project.last_updated_time %}
+                                {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
