@@ -59,7 +59,7 @@ Http server: uwsgi & nginx
          export INFOX_MAIL_USERNAME=[smtp_username]
 
          export INFOX_MAIL_PASSWORD=[smtp_password]
-      ```
+         ```
 
 4. Run on localhost: 
 
@@ -83,6 +83,8 @@ Http server: uwsgi & nginx
 
 
 Code Overview:
+
+![code_architecture](./app/static/img/code_architecture.png)
 
 ./config.py - Config for Flask
 
