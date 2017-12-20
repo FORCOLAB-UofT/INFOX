@@ -391,7 +391,7 @@ def _get_fork_changed_file_list():
             _changed_files = ChangedFile.objects(fork_name=_fork.fork_name)
             result_list = []
             for file in _changed_files:
-                result_list.append({'link':file.diff_link, 'title':file.full_name})
+                result_list.append({'link':file.diff_link, 'title':file.file_name})
             return jsonify(result_list)
     return None
 
