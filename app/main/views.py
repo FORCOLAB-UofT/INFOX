@@ -372,9 +372,17 @@ def _get_predict_tag():
     _sorted_tag = [x for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
     return jsonify(result=_sorted_tag)
 
-
 @main.route('/_get_fork_commit_list', methods=['GET', 'POST'])
 def _get_fork_commit_list():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork:
+            return jsonify(_fork.commit_list)
+    return None
+
+@main.route('/_get_fork_changed_file_list', methods=['GET', 'POST'])
+def _get_fork_changed_file_list():
     _full_name = request.args.get('full_name')
     if _full_name:
         _fork = ProjectFork.objects(full_name=_full_name).first()
@@ -383,18 +391,10 @@ def _get_fork_commit_list():
             _changed_files = ChangedFile.objects(fork_name=_fork.fork_name)
             result_list = []
             for file in _changed_files:
-                result_list.append({'link':file.full_name,'title':file.diff_link})
-            return jsonify(_fork.commit_list)
+                result_list.append({'link':file.diff_link, 'title':file.file_name})
+            return jsonify(result_list)
     return None
 
-@main.route('/_get_fork_chanegd_file_list', methods=['GET', 'POST'])
-def _get_fork_chanegd_file_list():
-    _full_name = request.args.get('full_name')
-    if _full_name:
-        _fork = ProjectFork.objects(full_name=_full_name).first()
-        if _fork:
-            return jsonify(_fork.commit_list)
-    return None
 
 
 """
