@@ -190,8 +190,7 @@ def project_overview(project_name):
 
     _project = Project.objects(project_name=project_name).first()
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
-    _changed_files = ChangedFile.objects(project_name=project_name)
-
+    
 
     # TODO all_changed_files & _all_tags could be opted by AJAX
     _all_tags = {}
@@ -200,11 +199,8 @@ def project_overview(project_name):
         for tag in _project_tags:
             _all_tags[tag.fork_full_name] = tag.tags
     
-    _all_changed_files = {}
-    for file in _changed_files:
-        _all_changed_files[(file.fork_name, file.file_name)] = file
-    
-    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files, all_tags=_all_tags)
+    return render_template('project_overview.html', project=_project, forks=_forks, all_tags=_all_tags)
+
 
 @main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -375,6 +371,31 @@ def _get_predict_tag():
     _sorted_tag = [(x,y) for x, y in sorted(_tag_value.items(), key=lambda x: x[1], reverse=True)]
     _sorted_tag = [x for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
     return jsonify(result=_sorted_tag)
+
+
+@main.route('/_get_fork_commit_list', methods=['GET', 'POST'])
+def _get_fork_commit_list():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork:
+            # TODO(use fullname)
+            _changed_files = ChangedFile.objects(fork_name=_fork.fork_name)
+            result_list = []
+            for file in _changed_files:
+                result_list.append({'link':file.full_name,'title':file.diff_link})
+            return jsonify(_fork.commit_list)
+    return None
+
+@main.route('/_get_fork_chanegd_file_list', methods=['GET', 'POST'])
+def _get_fork_chanegd_file_list():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork:
+            return jsonify(_fork.commit_list)
+    return None
+
 
 """
 # ----------------------------  use for test ------------------------
