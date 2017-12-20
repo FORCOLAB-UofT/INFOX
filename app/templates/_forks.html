@@ -63,11 +63,11 @@
                 }
             });
         };
-        var fetch_fork_chanegd_file = function(e) {
+        var fetch_fork_changed_file = function(e) {
             var obj = $(this)
             $.ajax({
                 type: "POST",
-                url: $SCRIPT_ROOT + '/_get_fork_chanegd_file_list?full_name=' + obj.attr('id'),
+                url: $SCRIPT_ROOT + '/_get_fork_changed_file_list?full_name=' + obj.attr('id'),
                 success: function(data) {
                     helpers.buildDropdown(data, obj.children('.dropdown-menu'));
                 }
@@ -85,7 +85,7 @@
         }
 
         $('.fork_commit').bind('click', fetch_fork_commit);
-        $('.fork_chanegd_file').bind('click', fetch_fork_chanegd_file)
+        $('.fork_changed_file').bind('click', fetch_fork_changed_file);
     });
 </script>
 
@@ -132,16 +132,6 @@ $(document).ready(function() {
 } );
 
 </script>
-
-<!--
-<div class="dropdown show" id="test">
-  <a class="btn btn-secondary dropdown-toggle" href="https://example.com" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown link
-  </a>
-  <div class="dropdown-menu" id="dropdownMenuLinkMenu" aria-labelledby="dropdownMenuLink">
-  </div>
-</div>
-!-->
 
 <table id="forks-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
     <thead>
@@ -208,11 +198,11 @@ $(document).ready(function() {
             </td>
 
             <td>
-                <div class="fork_chanegd_file" id="{{ fork.full_name }}">
-                  <button class="btn dropdown-toggle" type="button" id="fork_chanegd_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="fork_changed_file" id="{{ fork.full_name }}">
+                  <button class="btn dropdown-toggle" type="button" id="fork_changed_file_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ fork.total_changed_file_number }}
                   </button>
-                  <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_chanegd_file_list">
+                  <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_changed_file_list">
                   </div>
                 </div>
             </td>
