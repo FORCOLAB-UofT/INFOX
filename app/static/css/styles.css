@@ -1,4 +1,3 @@
-
 ol.breadcrumb {
     font-family: Georgia;
     font-style: oblique;
@@ -9,4 +8,8 @@ ol.breadcrumb {
     height: auto;
     max-height: 200px;
     overflow-x: hidden;
+}
+
+tr.change:hover {
+    background-color:rgba(20, 157, 221, 0.166)
 }
