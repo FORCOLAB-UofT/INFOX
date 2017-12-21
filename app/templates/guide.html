@@ -1,19 +1,16 @@
 {% extends "base.html" %}
 
 {% block page_content %} 
-
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="#">Guide</a>
-        </li>
-    </ol>
-
-    <div class="card">
-	  <div class="card-block">
-	    <h4 class="card-title">Welcome to INFOX!</h4>
-	    <p class="card-text">To get started, load a repository:</p>
-	    <a href="{{ url_for('main.load_from_github') }}" class="btn btn-primary">Load repository</a>
-	  </div>
-	</div>
-
+	<div class="row">
+        <div class="col-md-2">
+          <h3 class="text-center"> Welcome </h3>
+        </div>
+        <div class="col-md-6">
+        		To get started, try add some repositories to your followed list.
+        		<br>
+        		<br>
+            <a href="{{ url_for('main.load_from_github') }}" class="btn btn-primary">Import your repository</a>
+	    			<a href="{{ url_for('main.find_repos') }}" class="btn btn-primary">Search on GitHub</a>
+        </div>
+  </div>
 {% endblock %}
