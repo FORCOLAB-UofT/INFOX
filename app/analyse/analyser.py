@@ -17,28 +17,32 @@ def start_analyse(app, project_name, analyse_github, email_sender):
     with app.app_context():
         for try_time in range(5):
             try:
+                print('try fetch repo info for %s' % project_name)
                 repo_info = analyse_github.get('repos/%s' % project_name)
+                print('finish fetch repo info for %s' % project_name)
                 break
             except:
                 time.sleep(10 * 60) # 10 mins
 
-        print('finish fetch repo info for %s' % project_name)
+        
         
         project_updater.project_init(project_name, repo_info) # First updata for quick view.
 
         for try_time in range(5):
             try:
+                print('try fetch fork list for %s' % project_name)
                 repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
+                print('finish fetch fork list for %s' % project_name)
                 break
             except:
                 time.sleep(10 * 60) # 10 mins
 
-        print('finish fetch fork list for %s' % project_name)
+        
 
         project_updater.start_update(project_name, repo_info, repo_forks_list)
 
         # Send email to user
-        if (email_sender is not None) and (repo_forks_list is not None):
+        if (email_sender is not None) and (len(repo_forks_list) > 0):
             email_sender.repo_finish(project_name)
 
     current_analysing.remove(project_name)
