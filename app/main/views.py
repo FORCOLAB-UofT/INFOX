@@ -97,7 +97,8 @@ def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
     for project in _ownered_project:
-        setattr(ProjectSelection, project[0], BooleanField(project[1]))
+        if project[0] not in current_user.followed_projects:
+            setattr(ProjectSelection, project[0], BooleanField(project[1]))
     setattr(ProjectSelection, 'load_button', SubmitField('Load'))
     setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
