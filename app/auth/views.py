@@ -29,16 +29,22 @@ def token_getter():
         return g.get('github_access_token', None)
 
 def get_user_repo_list(username):
-    raw_data = github.request('GET', 'users' + '/' + username + '/' + 'repos', True)
-    return [x["full_name"] for x in raw_data]
+    try:
+        raw_data = github.request('GET', 'users' + '/' + username + '/' + 'repos', True)
+        return [x["full_name"] for x in raw_data]
+    except:
+        pass
+    return None
 
 def get_upperstream_repo(repo):
-    raw_data = github.request('GET', 'repos' + '/' + repo)
-    if raw_data["fork"] == True:
-        # print("R=",raw_data["source"]["full_name"])
-        return raw_data["source"]["full_name"]
-    else:
-        return None
+    try:
+        raw_data = github.request('GET', 'repos' + '/' + repo)
+        if raw_data["fork"] == True:
+            # print("R=",raw_data["source"]["full_name"])
+            return raw_data["source"]["full_name"]
+    except:
+        pass
+    return None
 
 def get_user_email_from_commit(username):
     _repo_list = get_user_repo_list(username)
