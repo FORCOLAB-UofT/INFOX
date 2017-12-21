@@ -11,7 +11,7 @@ from ..analyse.util import localfile_tool
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return github.authorize()
+    return github.authorize(scope="user:email,repo")
 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -46,27 +46,22 @@ def get_upperstream_repo(repo):
         pass
     return None
 
-def get_user_email_from_commit(username):
-    _repo_list = get_user_repo_list(username)
-    for repo in _repo_list:
-        try:
-            commits = github.request('GET', 'repos' + '/' + repo + '/commits?author=%s' % username)
-            for commit in commits:
-                if commit["author"]["login"] == username:
-                    email_address = commit["commit"]["author"]["email"]
-                    if 'noreply' not in email_address:
-                        return email_address
-        except:
-            pass
-    return None
-
 @auth.route('/callback', methods=['GET', 'POST'])
 @github.authorized_handler
 def github_login(access_token):
     g.github_access_token = access_token
     _github_user_info = github.get('user')
     _github_username = _github_user_info["login"]
-    _github_user_email = _github_user_info["email"]
+    _github_user_email_list = github.get('user/emails')
+    _github_user_email = None
+    for email in _github_user_email_list:
+        if email["primary"]:
+            _github_user_email = email["email"]
+    if _github_user_email is None:
+        for email in _github_user_email_list:
+            if 'noreply' not in email["email"]:
+                _github_user_email = email["email"]
+    
     _user = User.objects(username=_github_username).first()
     if _user is None:
         User(username=_github_username,

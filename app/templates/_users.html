@@ -12,6 +12,10 @@
                     <div class="last-seen">
                         Last Login: {{ user.last_seen }}
                     </div>
+                    <div class="followed_projects">
+                        Followed Projects : {{ ", ".join(user.followed_projects) }}
+                    </div>    
+                    
                     <a type="button" class="btn btn-default btn-xs" href="{{ url_for('main.delete_user', username = user.username) }}">
                         Delete
                     </a>
