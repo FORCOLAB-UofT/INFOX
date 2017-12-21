@@ -36,12 +36,18 @@ def db_delete_project(project_name):
 def db_followed_project(project_name):
     User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
     # Update project followed time
-    """
     tmp_dict = current_user.followed_projects_time
     tmp_dict[project_name] = datetime.utcnow()
     User.objects(username=current_user.username).update_one(set__followed_projects_time=tmp_dict)
-    """
-    
+
+def db_unfollowed_project(project_name):
+    User.objects(username=current_user.username).update_one(
+        pull__followed_projects=project_name)
+    tmp_dict = current_user.followed_projects_time
+    if project_name in tmp_dict:
+        tmp_dict.pop(project_name)
+    User.objects(username=current_user.username).update_one(set__followed_projects_time=tmp_dict)
+
 def db_update_email(username):
     _user = User.objects(username=username).first()
     if _user:
@@ -176,11 +182,13 @@ def index():
     if len(project_list) == 0:
         return redirect(url_for('main.guide'))
     
-    
+    current_user.followed_projects_time
+
+
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', projects=projects, pagination=pagination)
+    return render_template('index.html', projects=projects, pagination=pagination, time_now=datetime.utcnow())
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])
@@ -214,13 +222,11 @@ def followed_project(project_name):
     flash('Followed Project %s successfully!' % project_name, 'success') 
     return redirect(url_for('main.find_repos'))
 
-
 @main.route('/unfollowed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollowed_project(project_name):
-    User.objects(username=current_user.username).update_one(
-        pull__followed_projects=project_name)
+    db_unfollowed_project(project_name)
     return redirect(url_for('main.index'))
 
 @main.route('/find_repos', methods=['GET', 'POST'])
@@ -252,7 +258,7 @@ def find_repos():
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('find_repos.html', form=form, projects=projects, pagination=pagination)
+    return render_template('find_repos.html', form=form, projects=projects, pagination=pagination, time_now=datetime.utcnow())
 
 
 @main.route('/about')

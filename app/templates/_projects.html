@@ -7,6 +7,15 @@
                     <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
                         {{ project.project_name }}
                     </a>
+                    {% if current_user.is_authenticated %}
+                        {% if project.project_name in current_user.followed_projects %}
+                        {% if current_user.followed_projects_time.get(project.project_name) %}
+                        {% if (current_user.followed_projects_time.get(project.project_name, time_now) - time_now).days <= 3 %}
+                            <span class="badge badge-pill badge-danger"> New </span>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                    {% endif %}
                 </div>
                  {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
