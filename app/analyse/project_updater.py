@@ -114,6 +114,9 @@ class ForkUpdater:
         full_name = self.project_name + '/' + self.fork_name
 
         file_distinct = list(OrderedDict.fromkeys([x["file_full_name"] for x in compare_result["file_list"]]))
+        
+        # all_lemmatize_tokens = list(filter(lambda x: x != self.project_name, all_lemmatize_tokens))
+
         # Update forks into database.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,

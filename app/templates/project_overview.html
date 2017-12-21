@@ -24,16 +24,9 @@
             <br>
 
             <div class="base-info">
-                <div class="language"> Language: <em> {{ project.language }} </em>  </div>
-                <div class="github_fork_number"> Forks Number on GitHub: <em> {{ project.fork_number }} </em> </div>
-                <div class="active_fork_number"> Active Forks:  <em>{{ project.activate_fork_number }}</em>  </div>
-                <div class="analyzed_fork_number"> Analyzed Forks:  <em>{{ forks.count() }}</em>  </div>
-                <div class="last_analyzed_time">
-                  Last Analyzed: <em> </em>
-                  {% if project.last_updated_time %}
-                      {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }}
-                  {% endif %}
-                </div>
+                {% with overview_flag=True %}
+                  {% include "_project_info.html" %}
+                {% endwith %}
             </div>
       </div>
 
