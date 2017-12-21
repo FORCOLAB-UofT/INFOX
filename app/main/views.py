@@ -322,17 +322,20 @@ def _fork_edit_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     _oper = request.args.get('oper')
-    print(current_user.username, _full_name, _tag, _oper)
+    # print(current_user.username, _full_name, _tag, _oper)
     _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
     if _user_fork_tag is None:
         _fork = ProjectFork.objects(full_name=_full_name).first()
         if _fork is None:
             return None
         ForkTag(fork_full_name=_full_name, project_name=_fork.project_name, username=current_user.username).save()
+        _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+
     if _oper == 'delete':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
     elif _oper == 'add':
-        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
+        if _tag not in _user_fork_tag.tags:
+            ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
     return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
