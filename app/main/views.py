@@ -103,7 +103,7 @@ def load_from_github():
         pass
     for project in _ownered_project:
         setattr(ProjectSelection, project[0], BooleanField(project[1], default=project[0] in current_user.followed_projects))
-    setattr(ProjectSelection, 'load_button', SubmitField('Load'))
+    setattr(ProjectSelection, 'load_button', SubmitField('Follow'))
     setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
     form = ProjectSelection()
@@ -196,7 +196,7 @@ def project_overview(project_name):
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
     
 
-    # TODO all_changed_files & _all_tags could be opted by AJAX
+    # TODO _all_tags could be opted by AJAX
     _all_tags = {}
     if current_user.is_authenticated:
         _project_tags = ForkTag.objects(project_name=project_name, username=current_user.username)
