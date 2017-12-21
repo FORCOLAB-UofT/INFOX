@@ -10,23 +10,22 @@
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
           <a class="nav-link" href="{{ url_for('main.index') }}">
             <i class="fa fa-fw fa-area-chart"></i>
-            <span class="nav-link-text">Repositories</span>
+            <span class="nav-link-text">Followed repositories</span>
           </a>
         </li>
 
         <li class="nav-item" data-toggle="tooltip" data-placement="right">
-          <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#add_reposComponents" data-parent="#exampleAccordion">
-            <i class="fa fa-fw fa-wrench"></i>
-            <span class="nav-link-text">Add repository</span>
+          <a class="nav-link" href="{{ url_for('main.load_from_github') }}">
+            <i class="fa fa-fw fa-area-chart"></i>
+            <span class="nav-link-text">Import your repository</span>
           </a>
-          <ul class="sidenav-second-level collapse" id="add_reposComponents">
-            <li>
-              <a href="{{ url_for('main.load_from_github') }}">Import from GitHub</a>
-            </li>
-            <li>
-              <a href="{{ url_for('main.find_repos') }}">Add manually</a>
-            </li>
-          </ul>
+        </li>
+
+        <li class="nav-item" data-toggle="tooltip" data-placement="right">
+          <a class="nav-link" href="{{ url_for('main.find_repos') }}">
+            <i class="fa fa-fw fa-area-chart"></i>
+            <span class="nav-link-text">Search on GitHub</span>
+          </a>
         </li>
 
         <li class="nav-item" data-toggle="tooltip" data-placement="right">

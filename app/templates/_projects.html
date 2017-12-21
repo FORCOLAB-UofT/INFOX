@@ -25,21 +25,21 @@
                 </div>
                  {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
-                            <a type="button" class="btn btn-warning btn-xs pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
+                            <a type="button" class="btn btn-outline-info btn-sm pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
                                 Remove
                             </a>
                         {% else %}
-                            <a type="button" class="btn btn-success btn-xs pull-right" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
+                            <a type="button" class="btn btn-outline-primary btn-sm pull-right" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
                                 Follow
                             </a>
                         {% endif %}
                 {% endif %}
 
                 {% if current_user.is_administrator %}
-                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
+                    <a type="button" class="btn btn-outline-success btn-sm" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
                         Refresh
                     </a>
-                    <a type="button" class="btn btn-default btn-xs" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
+                    <a type="button" class="btn btn-outline-danger btn-sm" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
                         Delete
                     </a>
                     <div> {{ "Progress = %s" % project.analyser_progress }} </div>
