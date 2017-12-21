@@ -118,7 +118,8 @@ def load_from_github():
                     analyser.start(_project_name, current_user.github_access_token, email_sender)
                 db_followed_project(_project_name)
         if at_least_one_load:
-            flash('Load successfully!', 'success')
+            flash('All the selected repos start loading into INFOX. We will send you emails to update status. Please wait.' % _input, 'info')
+
         return redirect(url_for('main.index'))
     elif form.sync_button.data:
         return redirect(url_for('main.sync'))
