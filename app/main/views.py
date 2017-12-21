@@ -280,7 +280,7 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
-    return render_template('admin_manage.html', projects=_projects, users=_users)
+    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow())
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
