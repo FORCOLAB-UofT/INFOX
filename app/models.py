@@ -85,14 +85,14 @@ class User(UserMixin, db.Document):
     permission = db.IntField()
     last_seen = db.DateTimeField()
     followed_projects = db.ListField(db.StringField())
-    followed_forks = db.ListField(db.StringField())
+    followed_forks = db.ListField(db.StringField()) # not used
     followed_projects_time = db.DictField()
 
     github_access_token = db.StringField()
     password_hash = db.StringField()
     github_name = db.StringField()
 
-    tag_list = db.DictField() # {fork_full_name: tag_list }
+    tag_list = db.DictField() # not used
 
     owned_repo = db.DictField() # {repo_full_name: show_name}
     owned_repo_sync_time = db.DateTimeField()

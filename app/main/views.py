@@ -36,8 +36,12 @@ def db_delete_project(project_name):
 def db_followed_project(project_name):
     User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
     # Update project followed time
-    # User.objects(username=current_user.username).update(push__followed_projects_time=(project_name, datetime.utcnow()))
-
+    """
+    tmp_dict = current_user.followed_projects_time
+    tmp_dict[project_name] = datetime.utcnow()
+    User.objects(username=current_user.username).update_one(set__followed_projects_time=tmp_dict)
+    """
+    
 def db_update_email(username):
     _user = User.objects(username=username).first()
     if _user:
@@ -97,8 +101,7 @@ def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
     for project in _ownered_project:
-        if project[0] not in current_user.followed_projects:
-            setattr(ProjectSelection, project[0], BooleanField(project[1]))
+        setattr(ProjectSelection, project[0], BooleanField(project[1], default=project[0] in current_user.followed_projects))
     setattr(ProjectSelection, 'load_button', SubmitField('Load'))
     setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
