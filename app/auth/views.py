@@ -11,7 +11,7 @@ from ..analyse.util import localfile_tool
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return github.authorize(scope="user:email,repo")
+    return github.authorize(scope="user:email")
 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
