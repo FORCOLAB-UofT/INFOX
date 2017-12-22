@@ -10,6 +10,7 @@ current_analysing = set()
 current_analysing_lock = threading.Lock()
 
 def get_current_analysing():
+    global current_analysing, current_analysing_lock
     if current_analysing_lock.acquire():
         result = current_analysing.copy()
         current_analysing_lock.release()
