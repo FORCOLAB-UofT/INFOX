@@ -3,7 +3,7 @@
 <div class="active_fork_number">
   Active Forks:  
   {% if overview_flag %}
-  <a href="#" data-toggle="tooltip" title="Number of fork(s) which have extra commit(s) after forking">
+  <a href="#" data-toggle="tooltip" title="Number of fork(s) that have extra commit(s) after forking">
     <em>{{ project.activate_fork_number }}</em>
   </a>
   {% else %}
@@ -15,7 +15,7 @@
 {% if overview_flag %}
 <div class="analyzed_fork_number">
   Analyzed Forks:  
-  <a href="#" data-toggle="tooltip" title="Only analyze on un-merged forks"> <em>{{ forks.count() }}</em> </a>
+  <a href="#" data-toggle="tooltip" title="Number of fork(s) that have unmerged code"> <em>{{ forks.count() }}</em> </a>
   &nbsp;&nbsp; 
 </div>
 {% endif %}
