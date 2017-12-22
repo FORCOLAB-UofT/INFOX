@@ -32,6 +32,7 @@ def fetch_commit_list(project_full_name):
     commit_list = []
     try:
         commit_list_on_page = driver.find_elements_by_class_name('commit-message ')
+        print("start fetch %s's commit" % project_full_name)
         for commit in commit_list_on_page:
             href = commit.find_element_by_class_name('message').get_attribute('href')
             soup = BeautifulSoup(requests.get(href).content, 'html.parser')
@@ -54,9 +55,8 @@ def fetch_commit_list(project_full_name):
                     "description":desc,
                     "link":href
                     })
-                print("fetch" + author + "'s commit")
     except:
-        print("Can not get commit list!")
+        print("Can not get commit list on %s!" % project_full_name)
 
     return commit_list
 
@@ -77,7 +77,7 @@ def fetch_diff_code(project_full_name):
     url = 'https://github.com/%s/compare' % project_full_name
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
-    url = requests.get(url).url + '.patch'
+    url = requests.get(url).url + '.diff'
     r = requests.get(url)
     if r.status_code == requests.codes.ok:
         content = r.text
@@ -140,8 +140,13 @@ def fetch_compare_page(project_full_name):
 """
 if __name__ == '__main__':
     # Used for testing
+    # print(fetch_diff_code('shuiblue/INFOX-1'))
     # fetch_compare_page('Nutz95/Smoothieware')
     #fetch_compare_page('mkosieradzki/protobuf')
-    fetch_compare_page('SkyNet3D/Marlin')
+    t = fetch_compare_page('SkyNet3D/Marlin')
+    sum = 0
+    for i in t["file_list"]:
+        sum += i["added_line"]
+    print(sum)
     #fetch_compare_page('aJanker/TypeChef')
 """

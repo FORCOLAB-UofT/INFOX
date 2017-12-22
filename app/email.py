@@ -4,7 +4,7 @@ from flask import current_app, render_template
 from flask_mail import Message
 
 from . import mail
-
+from .models import *
 
 def send_async_email(app, msg):
     with app.app_context():  # make sure it works
@@ -28,14 +28,11 @@ def send_mail(to, subject, template, **kwargs):
     thread.start()
     return thread
 
+def send_mail_for_repo_finish(project_name):
+    _user_list = User.objects(followed_projects=project_name)
+    for user in _user_list:
+        if user.email is not None:
+            send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name)
 
-class EmailSender:
-    def __init__(self, username, email_address, subject, template):
-        self.username = username
-        self.email_address = email_address
-        self.subject = subject
-        self.template = template
 
-    def repo_finish(self, repo_list):
-        if (self.email_address is not None) and (repo_list is not None):
-            send_mail(self.email_address, self.subject, self.template, username=self.username, repo_list=repo_list)
+            
