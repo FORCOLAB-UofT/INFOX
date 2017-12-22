@@ -15,7 +15,7 @@
                     {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
                         {% if current_user.followed_projects_time.get(project.project_name) %}
-                        {% if (current_user.followed_projects_time.get(project.project_name, time_now) - time_now).days <= 1 %}
+                        {% if (time_now - current_user.followed_projects_time.get(project.project_name, time_now)).days <= 1 %}
                             <span class="badge badge-pill badge-danger"> Newly Added </span>
                         {% endif %}
                         {% endif %}
