@@ -1,37 +1,68 @@
+import time
+
 from flask import current_app
 from flask_github import GitHub
-from threading import Thread
+import threading
 from . import project_updater
+from .. import email
 
 current_analysing = set()
+current_analysing_lock = threading.Lock()
 
-def start_analyse(app, project_name, analyse_github, email_sender):
+def get_current_analysing():
+    global current_analysing, current_analysing_lock
+    if current_analysing_lock.acquire():
+        result = current_analysing.copy()
+        current_analysing_lock.release()
+    return result
+
+def start_analyse(app, project_name, analyse_github):
+    global current_analysing, current_analysing_lock
+
     if project_name in current_analysing:
         return
 
     print("-----start analysing for %s-----" % project_name)
-    current_analysing.add(project_name)
+
+    if current_analysing_lock.acquire():
+        current_analysing.add(project_name)
+        # print('current_analysing',current_analysing)
+        current_analysing_lock.release()
 
     with app.app_context():
-        repo_info = analyse_github.get('repos/%s' % project_name)
-        print('finish fetch repo info for %s' % project_name)
-        
+        for try_time in range(5):
+            try:
+                print('try fetch repo info for %s' % project_name)
+                repo_info = analyse_github.get('repos/%s' % project_name)
+                print('finish fetch repo info for %s' % project_name)
+                break
+            except:
+                time.sleep(10 * 60) # 10 mins
+
         project_updater.project_init(project_name, repo_info) # First updata for quick view.
 
-        repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
-        print('finish fetch fork list for %s' % project_name)
+        for try_time in range(5):
+            try:
+                print('try fetch fork list for %s' % project_name)
+                repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
+                print('finish fetch fork list for %s' % project_name)
+                break
+            except:
+                time.sleep(10 * 60) # 10 mins
 
         project_updater.start_update(project_name, repo_info, repo_forks_list)
 
         # Send email to user
-        if email_sender is not None:
-            email_sender.repo_finish(project_name)
+        email.send_mail_for_repo_finish(project_name)
 
-    current_analysing.remove(project_name)
+    if current_analysing_lock.acquire():
+        current_analysing.remove(project_name)
+        current_analysing_lock.release()
+
     print("-----finish analysing for %s-----" % project_name)
 
 
-def start(project_name, analyser_access_token, email_sender=None):
+def start(project_name, analyser_access_token):
     app = current_app._get_current_object()
 
     analyse_github = GitHub(app)
@@ -45,6 +76,6 @@ def start(project_name, analyser_access_token, email_sender=None):
     except:
         return False
 
-    Thread(target=start_analyse, args=[app, project_name, analyse_github, email_sender]).start()
+    threading.Thread(target=start_analyse, args=[app, project_name, analyse_github]).start()
     return True
 

@@ -13,9 +13,7 @@ class Config:
     LOCAL_DATA_PATH = os.environ.get('INFOX_LOCAL_DATA_PATH')
 
     # Overview page config.
-    SHOW_NUMBER_FOR_PAGE = 6 # Project number per page in index page.
-
-    # API_CALL_RETRY_TIMES = 5
+    SHOW_NUMBER_FOR_PAGE = 10 # Project number per page in index page.
 
     # Github Oauth Apps config.
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
@@ -25,12 +23,12 @@ class Config:
     SECRET_KEY = os.environ.get('INFOX_SECRET_KEY')
 
     # E-mail Config
-    MAIL_SERVER = 'smtp.126.com'
+    MAIL_SERVER = 'smtp.126.com' # Change it to your mail server
     MAIL_PORT = 465
     MAIL_USERNAME = os.environ.get('INFOX_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('INFOX_MAIL_PASSWORD')
     MAIL_USE_SSL = True
-    FLASK_MAIL_SENDER = '<infox_help@126.com>'
+    FLASK_MAIL_SENDER = '<infox_help@126.com>' # Change it to your mail sender
     FLASK_MAIL_SUBJECT_PREFIX = '[INFOX(Forks-Insight)]'
 
 

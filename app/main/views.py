@@ -6,13 +6,11 @@ from . import main
 from .forms import *
 from ..models import *
 
-from ..email import EmailSender
-
 from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
 
-from ..auth.views import get_user_repo_list, get_upperstream_repo, get_user_email_from_commit
+from ..auth.views import get_user_repo_list, get_upperstream_repo
 
 
 #------------------------------------------------------------------
@@ -36,13 +34,18 @@ def db_delete_project(project_name):
 def db_followed_project(project_name):
     User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
     # Update project followed time
-    # User.objects(username=current_user.username).update(push__followed_projects_time=(project_name, datetime.utcnow()))
+    tmp_dict = current_user.followed_projects_time
+    tmp_dict[project_name] = datetime.utcnow()
+    User.objects(username=current_user.username).update_one(set__followed_projects_time=tmp_dict)
 
-def db_update_email(username):
-    _user = User.objects(username=username).first()
-    if _user:
-        if _user.email is None:
-            User.objects(username=username).update_one(set__email=get_user_email_from_commit(username))
+def db_unfollowed_project(project_name):
+    User.objects(username=current_user.username).update_one(
+        pull__followed_projects=project_name)
+    tmp_dict = current_user.followed_projects_time
+    if project_name in tmp_dict:
+        tmp_dict.pop(project_name)
+    User.objects(username=current_user.username).update_one(set__followed_projects_time=tmp_dict)
+
 
 #------------------------------------------------------------------
 
@@ -97,8 +100,8 @@ def load_from_github():
     class ProjectSelection(FlaskForm):
         pass
     for project in _ownered_project:
-        setattr(ProjectSelection, project[0], BooleanField(project[1]))
-    setattr(ProjectSelection, 'load_button', SubmitField('Load'))
+        setattr(ProjectSelection, project[0], BooleanField(project[1], default=project[0] in current_user.followed_projects))
+    setattr(ProjectSelection, 'load_button', SubmitField('Follow'))
     setattr(ProjectSelection, 'sync_button', SubmitField('Refresh List'))
 
     form = ProjectSelection()
@@ -108,13 +111,12 @@ def load_from_github():
             if field.type == "BooleanField" and field.data:
                 at_least_one_load = True
                 _project_name = field.id
-                db_update_email(current_user.username)
-                email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
                 if not db_find_project(_project_name):
-                    analyser.start(_project_name, current_user.github_access_token, email_sender)
+                    analyser.start(_project_name, current_user.github_access_token)
                 db_followed_project(_project_name)
         if at_least_one_load:
-            flash('Add & Follow successfully!', 'success')
+            flash('All the selected repos start loading into INFOX. We will send you emails to update status. Please wait.', 'info')
+
         return redirect(url_for('main.index'))
     elif form.sync_button.data:
         return redirect(url_for('main.sync'))
@@ -141,7 +143,7 @@ def sync():
         _ownered_project[i] = (_ownered_project[i][0].replace('.', '[dot]'), _ownered_project[i][1])
     User.objects(username=current_user.username).update_one(set__owned_repo=dict(_ownered_project))
 
-    flash('Refresh your Github repo list successfully!', 'success')
+    flash('Refresh your own GitHub repositories list successfully!', 'success')
     return redirect(url_for('main.load_from_github'))
 
 @main.route('/guide', methods=['GET', 'POST'])
@@ -152,19 +154,20 @@ def guide():
 @main.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    """
     _search_form = SearchProjectForm()
     if _search_form.validate_on_submit():
         _find_result = db_approximate_find_project_project_name(_input)
         if _find_result:
             # TODO(make sure user to follow)
             db_followed_project(_find_result.project_name)
-            flash('The Project (%s) is followed successfully!' % _find_result.project_name, 'success')
+            flash('(%s) is followed successfully!' % _find_result.project_name, 'success')
             return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
         else:
             # TODO(not in our database, to add)
-            flash('The Project (%s) is not be in our database. Do you want to add it?' % _input, 'warning')
+            flash('Sorry, we not find (%s) in your followed list.' % _input, 'warning')
             return redirect(url_for('main.index'))
-
+    """
 
     project_list = Project.objects(
         project_name__in=current_user.followed_projects)
@@ -172,11 +175,10 @@ def index():
     if len(project_list) == 0:
         return redirect(url_for('main.guide'))
     
-    
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', projects=projects, pagination=pagination)
+    return render_template('index.html', projects=projects, pagination=pagination, time_now=datetime.utcnow())
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])
@@ -190,21 +192,17 @@ def project_overview(project_name):
 
     _project = Project.objects(project_name=project_name).first()
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
-    _changed_files = ChangedFile.objects(project_name=project_name)
+    
 
-
-    # TODO all_changed_files & _all_tags could be opted by AJAX
+    # TODO _all_tags could be opted by AJAX
     _all_tags = {}
     if current_user.is_authenticated:
         _project_tags = ForkTag.objects(project_name=project_name, username=current_user.username)
         for tag in _project_tags:
             _all_tags[tag.fork_full_name] = tag.tags
     
-    _all_changed_files = {}
-    for file in _changed_files:
-        _all_changed_files[(file.fork_name, file.file_name)] = file
-    
-    return render_template('project_overview.html', project=_project, forks=_forks, all_changed_files=_all_changed_files, all_tags=_all_tags)
+    return render_template('project_overview.html', project=_project, forks=_forks, all_tags=_all_tags)
+
 
 @main.route('/followed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -214,13 +212,11 @@ def followed_project(project_name):
     flash('Followed Project %s successfully!' % project_name, 'success') 
     return redirect(url_for('main.find_repos'))
 
-
 @main.route('/unfollowed_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollowed_project(project_name):
-    User.objects(username=current_user.username).update_one(
-        pull__followed_projects=project_name)
+    db_unfollowed_project(project_name)
     return redirect(url_for('main.index'))
 
 @main.route('/find_repos', methods=['GET', 'POST'])
@@ -232,14 +228,12 @@ def find_repos():
         _input = form.project_name.data
         if db_find_project(_input) is not None:
             db_followed_project(_input)
-            flash('The Project (%s) is already in INFOX. Followed successfully!' % _input, 'success')
+            flash('The repo (%s) is already in INFOX. Followed successfully!' % _input, 'success')
         else:
-            db_update_email(current_user.username)
-            email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
-            exists = analyser.start(_input, current_user.github_access_token, email_sender)
+            exists = analyser.start(_input, current_user.github_access_token)
             if exists:
                 db_followed_project(_input)
-                flash('The Project (%s) just starts loading into INFOX. We will send you email when it is finished. Please wait.' % _input, 'info')
+                flash('The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait.' % _input, 'info')
             else:
                 flash('Not found!', 'danger')
 
@@ -252,7 +246,7 @@ def find_repos():
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.order_by('-fork_number').paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('find_repos.html', form=form, projects=projects, pagination=pagination)
+    return render_template('find_repos.html', form=form, projects=projects, pagination=pagination, time_now=datetime.utcnow())
 
 
 @main.route('/about')
@@ -274,7 +268,7 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
-    return render_template('admin_manage.html', projects=_projects, users=_users)
+    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow(), current_set=analyser.get_current_analysing())
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -294,10 +288,9 @@ def project_refresh_all():
     """ Refresh all the project.
     """
     project_list = Project.objects()
-    analyser.current_analysing = set()
     for project in project_list:
         analyser.start(project.project_name, current_user.github_access_token)
-    flash('refresh all successfully!', 'success')
+    flash('Refresh all successfully!', 'success')
     return redirect(url_for('main.admin_manage'))
 
 
@@ -306,7 +299,7 @@ def project_refresh_all():
 @admin_required
 def delete_project(project_name):
     db_delete_project(project_name)
-    flash('The project (%s) is deleted!' % project_name, 'success') 
+    flash('The repo (%s) is deleted!' % project_name, 'success') 
     return redirect(url_for('main.admin_manage'))
 
 
@@ -326,17 +319,20 @@ def _fork_edit_tag():
     _full_name = request.args.get('full_name')
     _tag = request.args.get('tag')
     _oper = request.args.get('oper')
-    print(current_user.username, _full_name, _tag, _oper)
+    # print(current_user.username, _full_name, _tag, _oper)
     _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
     if _user_fork_tag is None:
         _fork = ProjectFork.objects(full_name=_full_name).first()
         if _fork is None:
             return None
         ForkTag(fork_full_name=_full_name, project_name=_fork.project_name, username=current_user.username).save()
+        _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+
     if _oper == 'delete':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
     elif _oper == 'add':
-        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
+        if _tag not in _user_fork_tag.tags:
+            ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
     return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
@@ -375,6 +371,31 @@ def _get_predict_tag():
     _sorted_tag = [(x,y) for x, y in sorted(_tag_value.items(), key=lambda x: x[1], reverse=True)]
     _sorted_tag = [x for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
     return jsonify(result=_sorted_tag)
+
+@main.route('/_get_fork_commit_list', methods=['GET', 'POST'])
+def _get_fork_commit_list():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork:
+            return jsonify(_fork.commit_list)
+    return None
+
+@main.route('/_get_fork_changed_file_list', methods=['GET', 'POST'])
+def _get_fork_changed_file_list():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork = ProjectFork.objects(full_name=_full_name).first()
+        if _fork:
+            # TODO(use fullname)
+            _changed_files = ChangedFile.objects(fork_name=_fork.fork_name)
+            result_list = []
+            for file in _changed_files:
+                result_list.append({'link':file.diff_link, 'title':file.file_name})
+            return jsonify(result_list)
+    return None
+
+
 
 """
 # ----------------------------  use for test ------------------------
