@@ -6,8 +6,6 @@ from . import main
 from .forms import *
 from ..models import *
 
-from ..email import EmailSender
-
 from ..analyse import analyser
 from ..analyse import fork_comparer
 from ..decorators import admin_required, permission_required
@@ -113,9 +111,8 @@ def load_from_github():
             if field.type == "BooleanField" and field.data:
                 at_least_one_load = True
                 _project_name = field.id
-                email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
                 if not db_find_project(_project_name):
-                    analyser.start(_project_name, current_user.github_access_token, email_sender)
+                    analyser.start(_project_name, current_user.github_access_token)
                 db_followed_project(_project_name)
         if at_least_one_load:
             flash('All the selected repos start loading into INFOX. We will send you emails to update status. Please wait.', 'info')
@@ -233,8 +230,7 @@ def find_repos():
             db_followed_project(_input)
             flash('The repo (%s) is already in INFOX. Followed successfully!' % _input, 'success')
         else:
-            email_sender = EmailSender(current_user.username, current_user.email, 'Repo Status Update', 'email.html')
-            exists = analyser.start(_input, current_user.github_access_token, email_sender)
+            exists = analyser.start(_input, current_user.github_access_token)
             if exists:
                 db_followed_project(_input)
                 flash('The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait.' % _input, 'info')
@@ -272,7 +268,7 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
-    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow())
+    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow(), current_set=analyser.get_current_analysing())
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -292,7 +288,6 @@ def project_refresh_all():
     """ Refresh all the project.
     """
     project_list = Project.objects()
-    analyser.current_analysing = set()
     for project in project_list:
         analyser.start(project.project_name, current_user.github_access_token)
     flash('Refresh all successfully!', 'success')

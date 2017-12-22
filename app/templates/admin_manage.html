@@ -7,14 +7,18 @@
         <h4> Admin Manage</h4>
         <hr>
     <div class="row">
-
         <div class="col-sm-6">
+            <div>
+                Current crawlering: {{ ",".join(current_set) }}
+            </div>
+            <hr>
             {% include '_projects.html' %}
         </div>
 
         <div class="col-sm-4">
             {% include '_users.html' %}
         </div>
+
     </div>
 
 {% endblock %}}

@@ -78,7 +78,12 @@
                 dropdown.html('');
                 if (result != '') {
                     $.each(result, function(k, v) {
-                        dropdown.append('<a class="dropdown-item" href="' + v.link + '" target="_blank">' + v.title + '</a>');
+                        if (v.link != '#') {
+                            dropdown.append('<a class="dropdown-item" href="' + v.link + '" target="_blank">' + v.title + '</a>');
+                        } else {
+                            dropdown.append('<a class="dropdown-item">'  + v.title + '</a>');
+                        }
+                        
                     });
                 }
             }
