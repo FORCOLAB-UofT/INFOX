@@ -3,29 +3,23 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %} 
-
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="#">Add repository</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="#">Find repositories</a>
-        </li>
-    </ol>
-
     <div class="row">
         <div class="col-md-2">
-          <h3 class="text-center"> Find repositories on GitHub </h3>
+          <h3 class="text-center"> Search on GitHub </h3>
         </div>
-        <div class="col-md-4">
-            
+        <div class="col-md-6">
             {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
         </div>
-        
-        <div class="col-md-4">
-            <h4 class="text-center">Hot Repos in INFOX</h4>
+    </div>
+    <hr>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+          <h4 class="text-center">Frequently Analyzed Repos on INFOX</h4>
+        </div>
+        <div class="col-md-6">
             {% include "_projects.html" %}
-            
             {% from "_render_pagination.html" import render_pagination %}
             {{ render_pagination(pagination) }}
         </div>

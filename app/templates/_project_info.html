@@ -1,0 +1,32 @@
+<div class="language"> Language: <em> {{ project.language }} </em>  &nbsp;&nbsp; </div>
+<div class="github_fork_number"> Forks Number on GitHub: <em> {{ project.fork_number }} </em> &nbsp;&nbsp; </div>
+<div class="active_fork_number">
+  Active Forks:  
+  {% if overview_flag %}
+  <a href="#" data-toggle="tooltip" title="Number of fork(s) that have extra commit(s) after forking">
+    <em>{{ project.activate_fork_number }}</em>
+  </a>
+  {% else %}
+    <em>{{ project.activate_fork_number }}</em>
+  {% endif %}
+  &nbsp;&nbsp; 
+</div>
+
+{% if overview_flag %}
+<div class="analyzed_fork_number">
+  Analyzed Forks:  
+  <a href="#" data-toggle="tooltip" title="Number of fork(s) that have unmerged code"> <em>{{ forks.count() }}</em> </a>
+  &nbsp;&nbsp; 
+</div>
+{% endif %}
+
+<div class="last_analyzed_time">
+  Last Analyzed:
+  <em>
+  {% if project.last_updated_time %}
+      {{ project.last_updated_time.strftime('%Y-%m-%d %H:%M(UTC)') }}
+  {% endif %}
+  </em>
+  &nbsp;&nbsp; 
+</div>
+
