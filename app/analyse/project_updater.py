@@ -44,7 +44,7 @@ class ForkUpdater:
 
         # process on changed code, get the tokens from changed code
         tokens = word_extractor.get_words_from_text(file_name, added_code)
-        lemmatize_tokens = word_extractor.lemmatize_process(tokens)
+        # lemmatize_tokens = word_extractor.lemmatize_process(tokens)
         # stemmed_tokens = word_extractor.stem_process(tokens)
 
         # Load changed files into database.
@@ -56,12 +56,12 @@ class ForkUpdater:
             diff_link=diff_link,
             # changed_code=changed_code,
             changed_line_number=changed_line,
-            key_words=word_extractor.get_top_words(tokens, 10),
-            key_words_dict=word_extractor.get_top_words(tokens, 10, False),
-            key_words_tfidf=self.get_tf_idf(tokens, 10),
-            key_words_tf_idf_dict=self.get_tf_idf(tokens, 10, False),
-            key_words_lemmatize_tfidf=self.get_tf_idf(lemmatize_tokens, 10),
-            key_words_lemmatize_tfidf_dict=self.get_tf_idf(lemmatize_tokens, 10, False),
+            # key_words=word_extractor.get_top_words(tokens, 10),
+            # key_words_dict=word_extractor.get_top_words(tokens, 10, False),
+            # key_words_tfidf=self.get_tf_idf(tokens, 10),
+            # key_words_tf_idf_dict=self.get_tf_idf(tokens, 10, False),
+            # key_words_lemmatize_tfidf=self.get_tf_idf(lemmatize_tokens, 10),
+            # key_words_lemmatize_tfidf_dict=self.get_tf_idf(lemmatize_tokens, 10, False),
             # key_stemmed_words=word_extractor.get_top_words(stemmed_tokens, 10),
             # key_stemmed_words_dict=word_extractor.get_top_words(stemmed_tokens, 10, False),
         ).save()
@@ -69,8 +69,8 @@ class ForkUpdater:
         # Load current file's key words to fork.
         for x in tokens:
             self.all_tokens.append(x)
-        for x in lemmatize_tokens:
-            self.all_lemmatize_tokens.append(x)
+        # for x in lemmatize_tokens:
+        #     self.all_lemmatize_tokens.append(x)
         # for x in stemmed_tokens:
         #     self.all_stemmed_tokens.append(x)
 
@@ -117,6 +117,8 @@ class ForkUpdater:
         
         # all_lemmatize_tokens = list(filter(lambda x: x != self.project_name, all_lemmatize_tokens))
 
+        self.all_lemmatize_tokens = word_extractor.lemmatize_process(self.all_tokens)
+
         # Update forks into database.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,
@@ -130,11 +132,11 @@ class ForkUpdater:
             created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
             file_list=file_distinct,
             key_words=word_extractor.get_top_words(self.all_tokens, 10),
-            key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
-            key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
-            key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
             key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 10),
-            key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
+            # key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
+            # key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
+            # key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
+            # key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
             variable=word_extractor.get_top_words(changed_code_name_list, 10),
             function_name=word_extractor.get_top_words(changed_code_func_list, 10),
             last_updated_time=datetime.utcnow(),

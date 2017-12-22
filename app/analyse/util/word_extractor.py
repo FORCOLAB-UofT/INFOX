@@ -2,12 +2,15 @@ import os
 import re
 import nltk
 import itertools
+import time
 from collections import Counter
 from nltk.stem.porter import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
 from . import language_tool
 
+stemmer = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
 
 def word_split_by_char(s):
     """ split the word by some separators
@@ -70,16 +73,27 @@ def word_filter(word):
         return False
     return True
 
-
+"""
 def stem_process(tokens):
-    """Do stem on the tokens.
-    """
-    stemmer = PorterStemmer()
-    return [stemmer.stem(word) for word in tokens]
+    # Do stem on the tokens.
+    for try_times in range(3):
+        try:
+            result = [stemmer.stem(word) for word in tokens]
+            return result
+        except:
+            print('error on stem_process')
+            time.sleep(5)
+    return tokens
+"""
 
 def lemmatize_process(tokens):
-    lemmatizer = WordNetLemmatizer()
-    return [lemmatizer.lemmatize(word) for word in tokens]
+    for try_times in range(3):
+        try:
+            result = [lemmatizer.lemmatize(word) for word in tokens]
+        except:
+            print('error on lemmatize_process')
+            time.sleep(5)
+    return tokens
 
 def move_other_char(text):
     return re.sub("[^0-9A-Za-z_]", "", text)
