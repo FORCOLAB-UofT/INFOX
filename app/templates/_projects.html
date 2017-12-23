@@ -10,6 +10,8 @@
 
                     {% if project.analyser_progress != "100%" %}
                         <span class="badge badge-warning">Updating</span>
+                    {% else %}
+                        <span class="badge badge-success">Analysis Complete</span>
                     {% endif %}
 
                     {% if current_user.is_authenticated %}
