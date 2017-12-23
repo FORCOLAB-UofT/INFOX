@@ -32,7 +32,8 @@ def db_delete_project(project_name):
 
 
 def db_followed_project(project_name):
-    User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
+    if project_name not in current_user.followed_projects:
+        User.objects(username=current_user.username).update_one(push__followed_projects=project_name)
     # Update project followed time
     tmp_dict = current_user.followed_projects_time
     tmp_dict[project_name] = datetime.utcnow()
