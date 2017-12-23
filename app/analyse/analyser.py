@@ -9,7 +9,7 @@ from .. import email
 current_analysing = set()
 current_analysing_lock = threading.Lock()
 
-// TODO (write it as an class)
+# TODO (write it as an class)
 
 def get_current_analysing():
     global current_analysing, current_analysing_lock
