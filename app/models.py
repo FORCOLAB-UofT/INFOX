@@ -97,6 +97,9 @@ class User(UserMixin, db.Document):
     owned_repo = db.DictField() # {repo_full_name: show_name}
     owned_repo_sync_time = db.DateTimeField()
 
+    is_crawling = db.IntField() # 1 means is crawling
+    repo_waiting_list = db.ListField(db.StringField())
+
     def get_id(self):
         return self.username
     
