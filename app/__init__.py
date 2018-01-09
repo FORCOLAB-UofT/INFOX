@@ -31,8 +31,12 @@ def create_app(config_name):
         #args = dict(args)
         args['page'] = page
         return url_for(request.endpoint, **args)
-     
+    
+    def word_length_limit_filter(s):
+        return [x for x in s if len(x) <= 20]
+
     app.jinja_env.globals['url_for_other_page'] = url_for_other_page
+    app.jinja_env.filters['word_length_limit'] = word_length_limit_filter
 
     # set up config
     app.config.from_object(config[config_name])
