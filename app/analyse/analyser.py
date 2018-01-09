@@ -8,24 +8,20 @@ from .. import email
 
 from ..models import *
 
-def start_analyse(app, project_name, analyse_github):
-    print("-----start analysing for %s-----" % project_name)
+def start_analyse(app, repo, analyse_github):
+    print("-----start analysing for %s-----" % repo)
     with app.app_context():
-        print('try fetch repo info for %s' % project_name)
-        repo_info = analyse_github.get('repos/%s' % project_name)
-        print('finish fetch repo info for %s' % project_name)
+        repo_info = analyse_github.get('repos/%s' % repo)
+        print('finish fetch repo info for %s' % repo)
 
-        project_updater.project_init(project_name, repo_info) # First updata for quick view.
+        repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % repo, True)
+        print('finish fetch fork list for %s' % repo)
 
-        print('try fetch fork list for %s' % project_name)
-        repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % project_name, True)
-        print('finish fetch fork list for %s' % project_name)
-
-        project_updater.start_update(project_name, repo_info, repo_forks_list)
+        project_updater.start_update(repo, repo_info, repo_forks_list)
 
         # Send email to user
-        email.send_mail_for_repo_finish(project_name)
-    print("-----finish analysing for %s-----" % project_name)
+        email.send_mail_for_repo_finish(repo)
+    print("-----finish analysing for %s-----" % repo)
 
 def check_waiting_list(app, username):
     user = User.objects(username=username).first()
@@ -58,14 +54,22 @@ def check_repo(repo, access_token):
     def token_getter():
         return access_token
     try:
-        analyse_github.get('repos/%s' % repo)
+        result = analyse_github.get('repos/%s' % repo)
     except:
-        return False
-    return True
+        return None
+    return result
 
 def add_repos(username, repos):
     User.objects(username=username).update_one(push_all__repo_waiting_list=repos)
     app = current_app._get_current_object()
+
+    # First updata for quick view.
+    access_token = User.objects(username=username).first().github_access_token
+    for repo in repos:
+        repo_info = check_repo(repo, access_token)
+        if repo_info is not None:
+            project_updater.project_init(repo, repo_info)
+
     threading.Thread(target=check_waiting_list, args=[app, username]).start()
     return True
 
