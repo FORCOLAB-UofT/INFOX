@@ -13,6 +13,7 @@ db = MongoEngine()
 mail = Mail()
 github = GitHub()
 login_manager = LoginManager()
+# celery = Celery()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
@@ -42,7 +43,8 @@ def create_app(config_name):
     mail.init_app(app)
     github.init_app(app)
     login_manager.init_app(app)
-
+    # celery.init_app(app)
+    
     if app.config.get('SSL_DISABLE', None):
         from flask_sslify import flask_SSLify
         sslify = SSLify(app)

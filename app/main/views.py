@@ -51,6 +51,7 @@ def db_unfollowed_project(project_name):
 #------------------------------------------------------------------
 
 
+
 @main.route('/', methods=['GET', 'POST'])
 def start():
     if current_user.is_authenticated:
@@ -108,16 +109,17 @@ def load_from_github():
     form = ProjectSelection()
     if form.load_button.data:
         at_least_one_load = False
+        add_list = []
         for field in form:
             if field.type == "BooleanField" and field.data:
                 at_least_one_load = True
                 _project_name = field.id
                 if not db_find_project(_project_name):
-                    analyser.start(_project_name, current_user.github_access_token)
+                    add_list.append(_project_name)
                 db_followed_project(_project_name)
+        analyser.add_repos(current_user.username, add_list)
         if at_least_one_load:
             flash('All the selected repos start loading into INFOX. We will send you emails to update status. Please wait.', 'info')
-
         return redirect(url_for('main.index'))
     elif form.sync_button.data:
         return redirect(url_for('main.sync'))
@@ -231,8 +233,8 @@ def find_repos():
             db_followed_project(_input)
             flash('The repo (%s) is already in INFOX. Followed successfully!' % _input, 'success')
         else:
-            exists = analyser.start(_input, current_user.github_access_token)
-            if exists:
+            if analyser.check_repo(_input, current_user.github_access_token):
+                analyser.add_repos(current_user.username, [_input])
                 db_followed_project(_input)
                 flash('The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait.' % _input, 'info')
             else:
@@ -269,7 +271,7 @@ def about():
 def admin_manage():
     _projects = Project.objects()
     _users = User.objects()
-    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow(), current_set=analyser.get_current_analysing())
+    return render_template('admin_manage.html', projects=_projects, users=_users, time_now=datetime.utcnow())
 
 @main.route('/project_refresh/<path:project_name>', methods=['GET', 'POST'])
 @login_required
@@ -279,8 +281,17 @@ def project_refresh(project_name):
     """
     if not db_find_project(project_name):
         abort(404)
-    analyser.start(project_name, current_user.github_access_token)
+    analyser.add_repos(current_user.username, [project_name])
     return redirect(url_for('main.admin_manage'))
+
+@main.route('/user_refresh', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def user_refresh():
+    User.objects().update(is_crawling = 0)
+    User.objects().update(repo_waiting_list = None)
+    flash('Refresh all users successfully!', 'success')
+    return redirect(url_for('main.admin_manage')) 
 
 @main.route('/refresh_all', methods=['GET', 'POST'])
 @login_required
@@ -289,8 +300,7 @@ def project_refresh_all():
     """ Refresh all the project.
     """
     project_list = Project.objects()
-    for project in project_list:
-        analyser.start(project.project_name, current_user.github_access_token)
+    analyser.add_repos(current_user.username, [repo.project_name for repo in project_list])
     flash('Refresh all successfully!', 'success')
     return redirect(url_for('main.admin_manage'))
 
@@ -356,7 +366,7 @@ def _get_familar_fork():
 @main.route('/_get_predict_tag', methods=['GET', 'POST'])
 def _get_predict_tag():
     _full_name = request.args.get('full_name')
-    _tag_list = ["merge", "update", "fix", "add", "branch", "pull", "request", "update", "version", "readme", "master", "change", "delete", "release", "remote", "track", "test", "remove", "patch", "configuration", "upstream", "support", "missing", "move", "conflict", "config"]
+    _tag_list = ["merge", "update", "fix", "add", "branch", "pull", "request", "version", "readme", "master", "change", "delete", "release", "remote", "track", "test", "remove", "patch", "configuration", "upstream", "support", "missing", "move", "conflict", "config"]
     _tag_value = dict([(x, 0.0) for x in _tag_list])
     if _full_name is None:
         return None
