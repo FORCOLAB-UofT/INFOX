@@ -12,6 +12,12 @@
                     <div class="last-seen">
                         Last Login: {{ user.last_seen }}
                     </div>
+                    <div class="status">
+                        Status: {{ user.is_crawling }}
+                    </div>
+                    <div class="repo_waiting_list">
+                        Waiting List: {{ user.repo_waiting_list }}
+                    </div>
                     <div class="followed_projects">
                         Followed Projects : {{ ", ".join(user.followed_projects) }}
                     </div>    
