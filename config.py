@@ -31,13 +31,17 @@ class Config:
     FLASK_MAIL_SENDER = '<infox_help@126.com>' # Change it to your mail sender
     FLASK_MAIL_SUBJECT_PREFIX = '[INFOX(Forks-Insight)]'
 
+    # CELERY_BROKER_URL = 'redis://localhost'
+    # CELERY_RESULT_BACKEND = 'redis://localhost'
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    FORCED_UPDATING = True # Refresh will re-crawler the forks' info even if it's up-to-date.
+    LOCAL_UPDATE = False
+    FORCED_UPDATING = False # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
+    LOCAL_UPDATE = False
     FORCED_UPDATING = False # Refresh will not re-crawler the up-to-date forks' info.
 
 config = {

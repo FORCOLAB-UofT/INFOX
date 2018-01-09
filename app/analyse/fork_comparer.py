@@ -1,6 +1,3 @@
-from flask import current_app
-
-
 def compare_on_files(fork1, fork2):
     """
         Args:
