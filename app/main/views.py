@@ -287,7 +287,7 @@ def project_refresh(project_name):
 @admin_required
 def user_refresh():
     User.objects().update(is_crawling = 0)
-    User.objects().update(repo_waiting_list = None)
+    User.objects().update(repo_waiting_list = [])
     flash('Refresh all users successfully!', 'success')
     return redirect(url_for('main.admin_manage')) 
 
