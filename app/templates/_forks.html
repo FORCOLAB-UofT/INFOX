@@ -220,7 +220,7 @@ $(document).ready(function() {
             </td>
             
             <td>
-                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6]) }}
+                {{ ", ".join(fork.key_words_lemmatize_tfidf[:6] | word_length_limit) }}
             </td>
 
             <td>{{ fork.last_committed_time.strftime('%Y-%m-%d') }}</td>

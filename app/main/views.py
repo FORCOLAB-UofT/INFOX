@@ -50,8 +50,6 @@ def db_unfollowed_project(project_name):
 
 #------------------------------------------------------------------
 
-
-
 @main.route('/', methods=['GET', 'POST'])
 def start():
     if current_user.is_authenticated:
@@ -293,7 +291,7 @@ def user_refresh():
     flash('Refresh all users successfully!', 'success')
     return redirect(url_for('main.admin_manage')) 
 
-@main.route('/refresh_all', methods=['GET', 'POST'])
+@main.route('/repo_refresh', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def project_refresh_all():
