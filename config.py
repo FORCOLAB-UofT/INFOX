@@ -37,11 +37,13 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    LOCAL_UPDATE = True
-    FORCED_UPDATING = False # Refresh will re-crawler the forks' info even if it's up-to-date.
+    USE_LOCAL_FORKS_LIST = True
+    USE_LOCAL_FORK_INFO = False
+    FORCED_UPDATING = True # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
-    LOCAL_UPDATE = False
+    USE_LOCAL_FORKS_LIST = False
+    USE_LOCAL_FORK_INFO = False
     FORCED_UPDATING = False # Refresh will not re-crawler the up-to-date forks' info.
 
 config = {
