@@ -346,8 +346,8 @@ def _fork_edit_tag():
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
     return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
 
-@main.route('/_get_familar_fork', methods=['GET', 'POST'])
-def _get_familar_fork():
+@main.route('/_get_similar_fork', methods=['GET', 'POST'])
+def _get_similar_fork():
     _full_name = request.args.get('full_name')
     print(_full_name)
     if _full_name is not None:
@@ -355,7 +355,7 @@ def _get_familar_fork():
         if _fork is None:
             return None
         _fork_list = ProjectFork.objects(project_name=_fork.project_name)
-        _result = fork_comparer.get_familiar_fork(_fork_list, _fork)
+        _result = fork_comparer.get_similar_fork(_fork_list, _fork)
         return jsonify(result=_result)
     else:
         return None
@@ -378,8 +378,8 @@ def _get_predict_tag():
             _tag_value[tag] += commit["title"].lower().count(tag) * 3 + commit["description"].lower().count(tag)
 
     _sorted_tag = [(x,y) for x, y in sorted(_tag_value.items(), key=lambda x: x[1], reverse=True)]
-    _sorted_tag = [x for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
-    return jsonify(result=_sorted_tag)
+    _sorted_tag = [(x,y) for x, y in filter(lambda x: x[1] > 0, _sorted_tag)]
+    return jsonify(result=_sorted_tag[:5])
 
 @main.route('/_get_fork_commit_list', methods=['GET', 'POST'])
 def _get_fork_commit_list():
