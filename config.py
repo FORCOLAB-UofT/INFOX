@@ -37,7 +37,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    LOCAL_UPDATE = False
+    LOCAL_UPDATE = True
     FORCED_UPDATING = False # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
