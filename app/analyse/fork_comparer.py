@@ -45,7 +45,7 @@ def compare_on_key_words(fork1, fork2):
     return common_words
 
 
-def get_familiar_fork(fork_list, fork1):
+def get_similar_fork(fork_list, fork1):
     """
         Args:
             fork_list
@@ -57,6 +57,7 @@ def get_familiar_fork(fork_list, fork1):
         return None
     
     sort_list = {}
+    param_list = {}
     for fork2 in fork_list:
         if fork2.full_name == fork1.full_name:
             continue
@@ -67,9 +68,25 @@ def get_familiar_fork(fork_list, fork1):
             n_dep_commpn_files += file.count('/')
         
         # print(n_common_words, n_dep_commpn_files)
-        value = n_common_words + 5 * n_dep_commpn_files
-        sort_list[fork2.fork_name] = value
-     
-    result = [x for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)][:5]
-    return result
+        param_list[fork2.fork_name] = [n_common_words, n_dep_commpn_files]
+
+    norm_list = None
+    param_number = 0
+    for fork in param_list:
+        if norm_list is None:
+            norm_list = [[x,x] for x in param_list[fork]]
+            param_number = len(norm_list)
+        else:
+            for i in range(param_number):
+                norm_list[i][0] = min(norm_list[i][0], param_list[fork][i])
+                norm_list[i][1] = max(norm_list[i][1], param_list[fork][i])
+
+    for fork in param_list:
+        value = 0
+        for i in range(param_number):
+            value += (param_list[fork][i] - norm_list[i][0]) / (norm_list[i][1] - norm_list[i][0] + 1)
+        sort_list[fork] = value
+    result = [(x,y) for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)]
+    result = [(x,y) for x, y in filter(lambda x: x[1] > 0, result)]
+    return result[:5]
 
