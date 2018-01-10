@@ -1,5 +1,6 @@
 import time
 import os
+import json
 
 from flask import current_app
 from flask_github import GitHub
