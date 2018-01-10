@@ -92,7 +92,7 @@ class ForkUpdater:
             last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
             created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ")).save()
 
-        if current_app.config['LOCAL_UPDATE']:
+        if current_app.config['USE_LOCAL_FORK_INFO']:
             # load from local.
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
