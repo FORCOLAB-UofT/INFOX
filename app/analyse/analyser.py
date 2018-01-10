@@ -1,11 +1,12 @@
 import time
+import os
 
 from flask import current_app
 from flask_github import GitHub
 import threading
 from . import project_updater
+from .util import localfile_tool
 from .. import email
-
 from ..models import *
 
 def start_analyse(app, repo, analyse_github):
@@ -14,7 +15,14 @@ def start_analyse(app, repo, analyse_github):
         repo_info = analyse_github.get('repos/%s' % repo)
         print('finish fetch repo info for %s' % repo)
 
-        repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % repo, True)
+        forks_list_path = current_app.config['LOCAL_DATA_PATH'] + "/" + repo + '/forks_list.json'
+        if current_app.config['LOCAL_UPDATE'] and os.path.exists(forks_list_path):
+            with open(forks_list_path) as read_file:
+                repo_forks_list = json.load(read_file)
+        else:
+            repo_forks_list = analyse_github.request('GET', 'repos/%s/forks' % repo, True)
+            localfile_tool.write_to_file(forks_list_path, repo_forks_list)
+        
         print('finish fetch fork list for %s' % repo)
 
         project_updater.start_update(repo, repo_info, repo_forks_list)
