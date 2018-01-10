@@ -61,6 +61,9 @@ def get_similar_fork(fork_list, fork1):
     for fork2 in fork_list:
         if fork2.full_name == fork1.full_name:
             continue
+        if (fork2.total_changed_file_number is None) or (fork2.total_changed_file_number == 0):
+            continue
+
         n_common_words = len(compare_on_key_words(fork1, fork2))
         n_dep_commpn_files = 0
         commpn_files = compare_on_files(fork1, fork2)
@@ -68,7 +71,7 @@ def get_similar_fork(fork_list, fork1):
             n_dep_commpn_files += file.count('/')
         
         # print(n_common_words, n_dep_commpn_files)
-        param_list[fork2.fork_name] = [n_common_words, n_dep_commpn_files]
+        param_list[fork2.fork_name] = [n_common_words, 1.0 * n_dep_commpn_files / fork2.total_changed_file_number]
 
     norm_list = None
     param_number = 0
