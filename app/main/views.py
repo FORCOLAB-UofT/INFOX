@@ -397,6 +397,7 @@ def _get_fork_changed_file_list():
         _fork = ProjectFork.objects(full_name=_full_name).first()
         if _fork:
             # TODO(use fullname)
+            # If use fork.file_list, the dir is not full.
             _changed_files = ChangedFile.objects(fork_name=_fork.fork_name)
             result_list = []
             for file in _changed_files:
