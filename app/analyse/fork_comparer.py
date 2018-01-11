@@ -85,10 +85,10 @@ def get_similar_fork(fork_list, fork1):
                 norm_list[i][1] = max(norm_list[i][1], param_list[fork][i])
 
     for fork in param_list:
-        value = 0
+        value = []
         for i in range(param_number):
-            value += (param_list[fork][i] - norm_list[i][0]) / (norm_list[i][1] - norm_list[i][0] + 1)
-        sort_list[fork] = value
+            value.append((param_list[fork][i] - norm_list[i][0]) / (norm_list[i][1] - norm_list[i][0] + 1))
+        sort_list[fork] = value[0] * 3 + value[1]
     result = [(x,y) for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)]
     result = [(x,y) for x, y in filter(lambda x: x[1] > 0, result)]
     return result[:5]

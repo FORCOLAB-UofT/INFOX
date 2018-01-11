@@ -96,6 +96,9 @@
 
 
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/num-html.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/any-number.js"></script>
+
+
 
 <style type="text/css">
 input[type="text"] {
@@ -123,6 +126,9 @@ $(document).ready(function() {
         "bFilter": true,
         "bSort": true,
         "order": [[ 6, "desc" ]],
+        "columnDefs": [
+            { type: 'any-number', targets : 1 }
+        ]
     });
 
     // Apply the search
@@ -194,7 +200,7 @@ $(document).ready(function() {
             <td>
                  <div class="fork_commit" id="{{ fork.full_name }}">
                   <button class="btn dropdown-toggle" type="button" id="fork_commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ fork.total_commit_number }}
+                    {{ "250+" if (fork.total_commit_number == 0) or (fork.total_commit_number >= 250) else fork.total_commit_number }}
                   </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_commit_list">
                   </div>
