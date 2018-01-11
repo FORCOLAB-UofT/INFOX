@@ -32,7 +32,7 @@ def send_mail_for_repo_finish(project_name):
     _user_list = User.objects(followed_projects=project_name)
     for user in _user_list:
         if user.email is not None:
-            send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name)
+            send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name, username=user.username)
 
 
             
