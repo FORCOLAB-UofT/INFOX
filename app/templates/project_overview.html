@@ -38,7 +38,7 @@
       </a>
       #}
 
-
+      
       {% if (project.analyser_progress) and (project.analyser_progress != "100%") %}
           <div class="progress" style="height: 30px;">
               <div class="progress-bar" role="progressbar" aria-valuenow="{{ project.analyser_progress }}" aria-valuemin="0" aria-valuemax="100" style="{{ "min-width: 2em; width:%s" % project.analyser_progress }}">
@@ -47,7 +47,8 @@
               <h5> ... Updating ... <h5>
           </div>
       {% endif %}
-
+      
+      
       <div class="forks-tabs">
           {% include "_forks.html" %}
       </div>
