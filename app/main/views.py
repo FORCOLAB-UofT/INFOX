@@ -406,6 +406,60 @@ def _get_fork_changed_file_list():
     return None
 
 
+@main.route('/graph/<category>/<path:project_name>', methods=['GET', 'POST'])
+def graph(category, project_name):
+    return render_template('graph.html', category=category, project_name=project_name)
+
+@main.route('/_get_pie_graph_data', methods=['GET', 'POST'])
+def _get_pie_graph_data():
+    category = request.args.get('category')
+    project_name = request.args.get('project_name')
+    graph_classify = {
+        'commit':[0, 1, 5, 9, 99],
+        'LOC': [0, 9, 99, 999, 9999],
+        'file': [0, 1, 3, 9, 99, 999],
+    }
+    print('category',category)
+    print('project_name',project_name)
+    if category not in graph_classify:
+        return None
+    
+    _fork_list = ProjectFork.objects(project_name=project_name, total_changed_line_number__ne=0)
+    bound = graph_classify[category]
+    num = len(bound)
+    tot = [0 for i in range(num + 1)]
+    for fork in _fork_list:
+        if fork.total_changed_line_number is None:
+            continue
+        if category == 'commit':
+            t = fork.total_commit_number
+            if (fork.total_changed_line_number > 0) and (t == 0): # commit Bug
+                t = 250
+        elif category == 'LOC':
+            t = fork.total_changed_line_number
+        elif category == 'file':
+            t = fork.total_changed_file_number
+
+        for i in range(num + 1):
+            if i == num:
+                tot[i] += 1
+            elif t <= bound[i]:
+                tot[i] += 1
+                break
+    result = []
+    for i in range(num + 1):
+        if i == 0:
+            result.append({'type': '0', 'total': tot[i]})
+        elif i == num:
+            result.append({'type': str(bound[i - 1] + 1) + '+', 'total': tot[i]})
+        else:
+            result.append({'type': str(bound[i]) if bound[i - 1] + 1 == bound[i] else str(bound[i - 1] + 1) + '~' + str(bound[i]), 'total': tot[i]})
+    print(result)
+    return jsonify(result)
+
+
+
+
 
 """
 # ----------------------------  use for test ------------------------
@@ -429,8 +483,6 @@ def test():
             s+=commit["title"] + "\n"
             s+=commit["description"] + "\n"
     return jsonify(word_extractor.get_top_words_from_text(s, 50))
-
-
 
 @main.route('/test_send_email', methods=['GET', 'POST'])
 def test_send_email():
