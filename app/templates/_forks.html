@@ -83,7 +83,6 @@
                         } else {
                             dropdown.append('<a class="dropdown-item">'  + v.title + '</a>');
                         }
-                        
                     });
                 }
             }
@@ -95,10 +94,24 @@
 </script>
 
 
-<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/num-html.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/any-number.js"></script>
+<script type="text/javascript">
 
-
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "custom-number-pre": function ( a ) {
+        var r = /\d+\+?(\s)+<\/button>/;
+        var x = a.match(r);
+        return parseFloat( x );
+    },
+ 
+    "custom-number-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "custom-number-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+} );
+</script>
 
 <style type="text/css">
 input[type="text"] {
@@ -127,7 +140,7 @@ $(document).ready(function() {
         "bSort": true,
         "order": [[ 6, "desc" ]],
         "columnDefs": [
-            { type: 'any-number', targets : 1 }
+            { "type": "custom-number", targets : 1 }
         ]
     });
 
@@ -201,7 +214,7 @@ $(document).ready(function() {
             <td>
                  <div class="fork_commit" id="{{ fork.full_name }}">
                   <button class="btn dropdown-toggle" type="button" id="fork_commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ "250+" if (fork.total_commit_number == 0) or (fork.total_commit_number >= 250) else fork.total_commit_number }}
+                    {{ "250+" if ((fork.total_commit_number == 0) or (fork.total_commit_number >= 250)) else fork.total_commit_number }}
                   </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_commit_list">
                   </div>
