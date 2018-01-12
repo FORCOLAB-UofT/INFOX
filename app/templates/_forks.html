@@ -161,14 +161,25 @@ $(document).ready(function() {
     <thead>
         <tr>
             <th>Fork</th>
-            <th>Commits</th>
+            <th>
+                Commits
+                <a href="{{ url_for('.graph', category='commit', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
+                    <span class="fa fa-search"></span>
+                </a>
+            </th>
             <th>
                 <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">
                     <font size="1px">Changed files</font>
                 </div>
+                <a href="{{ url_for('.graph', category='file', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
+                    <span class="fa fa-search"></span>
+                </a>
             </th>
             <th>
                 <font size="1px">Lines of code changed</font>
+                <a href="{{ url_for('.graph', category='LOC', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
+                    <span class="fa fa-search"></span>
+                </a>
             </th>
             <th>
                 <div data-toggle="tooltip" data-placement="top" title="NLP Analysis Result">
