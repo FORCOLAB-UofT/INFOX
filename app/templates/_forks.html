@@ -141,7 +141,12 @@ $(document).ready(function() {
         "order": [[ 6, "desc" ]],
         "columnDefs": [
             { "type": "custom-number", targets : 1 }
-        ]
+        ],
+        dom: 'Blfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
     });
 
     // Apply the search
