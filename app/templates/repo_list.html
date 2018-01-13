@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+{% block page_content %}
+        <h1> INFOX </h1>
+        <h4> Repo List</h4>
+        <hr>
+    
+    <table id="repo-list" class="table table-responsive table-bordered table-hover" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>
+                Fork Name
+            </th>
+            <th>
+                Active Forks
+            </th>
+            <th>
+                Total Forks
+            </th>
+            <th>
+                Unmerged Forks
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in result %}
+        <tr class="repo">
+            <td>
+               {{ t[0] }}
+            </td>
+            <td>
+               {{ t[1] }}
+            </td>
+            <td>
+               {{ t[2] }}
+            </td>
+            <td>
+               {{ t[3] }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}}
