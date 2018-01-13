@@ -459,7 +459,14 @@ def _get_pie_graph_data():
 
 
 
-
+@main.route('/repo_list', methods=['GET', 'POST'])
+def repo_list():
+    _project = Project.objects(analyser_progress="100%").order_by('-fork_number')
+    result = []
+    for project in _project:
+        _forks = ProjectFork.objects(project_name=project.project_name, file_list__ne=[], total_changed_line_number__ne=0)
+        result.append([project.project_name, project.fork_number, project.activate_fork_number, _forks.count()])
+    return render_template('repo_list.html', result=result)
 
 """
 # ----------------------------  use for test ------------------------
