@@ -1,6 +1,5 @@
 import os
 import re
-from selenium import webdriver
 import requests
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
