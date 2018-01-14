@@ -2,9 +2,10 @@ import os
 import re
 from selenium import webdriver
 import requests
+from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 
-from .util import language_tool
+from util import language_tool
 
 def fetch_commit_list(project_full_name):
     """
@@ -18,46 +19,47 @@ def fetch_commit_list(project_full_name):
                 link,
             }
     """
-    url = 'https://github.com/%s/compare' % project_full_name
-
-    driver = webdriver.PhantomJS(
-        service_args=['--ignore-ssl-errors=true', '--ssl-protocol=tlsv1'])
-    # driver = webdriver.PhantomJS()
-    try:
-        # It will jump to https://github.com/author/repo/compare/version...author:repo
-        driver.get(url)
-    except:
-        raise Exception('error on fetch compare page on %s' % project_full_name)
-
     commit_list = []
-    try:
-        commit_list_on_page = driver.find_elements_by_class_name('commit-message ')
-        print("start fetch %s's commit" % project_full_name)
-        for commit in commit_list_on_page:
-            href = commit.find_element_by_class_name('message').get_attribute('href')
-            soup = BeautifulSoup(requests.get(href).content, 'html.parser')
-            try:
-                author = soup.find('a', {'class': 'user-mention'}).text
-            except:
-                author = ""
-            try:
-                title = soup.find('p', {'class': 'commit-title'}).text
-            except:
-                title = ""
-            try:
-                desc = soup.find('div', {'class': 'commit-desc'}).text
-            except:
-                desc = ""
-            if author or title or desc or href:
-                commit_list.append({
-                    "author":author,
-                    "title":title,
-                    "description":desc,
-                    "link":href
-                    })
-    except:
-        print("Can not get commit list on %s!" % project_full_name)
 
+    url = 'https://github.com/%s/compare' % project_full_name
+    s = requests.Session()
+    s.mount('https://github.com', HTTPAdapter(max_retries=3))
+
+    try:
+        diff_page = s.get(url, timeout=120)
+        if diff_page.status_code != requests.codes.ok:
+            raise Exception('error on fetch compare page on %s!' % project_full_name)
+    except:
+        raise Exception('error on fetch compare page on %s!' % project_full_name)
+
+    diff_page_soup = BeautifulSoup(diff_page.content, 'html.parser')
+    for commit in diff_page_soup.find_all('a', {'class': 'message'}):
+        try:
+            href = commit.get('href')
+            if 'https://' not in href:
+                href = 'https://github.com' + href
+            soup = BeautifulSoup(s.get(href, timeout=120).content, 'html.parser')
+        except:
+            continue
+        try:
+            author = soup.find('a', {'class': 'user-mention'}).text
+        except:
+            author = ""
+        try:
+            title = soup.find('p', {'class': 'commit-title'}).text
+        except:
+            title = ""
+        try:
+            desc = soup.find('div', {'class': 'commit-desc'}).text
+        except:
+            desc = ""
+        if author or title or desc or href:
+            commit_list.append({
+                "author":author,
+                "title":title,
+                "description":desc,
+                "link":href
+                })
     return commit_list
 
 
@@ -74,18 +76,19 @@ def fetch_diff_code(project_full_name):
                 added_code,
         }
     """
+    file_list = []
     url = 'https://github.com/%s/compare' % project_full_name
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
-    url = requests.get(url).url + '.diff'
-    r = requests.get(url)
-    if r.status_code == requests.codes.ok:
-        content = r.text
-    else:
+    try:
+        url = requests.get(url, timeout=120).url + '.diff'
+        r = requests.get(url, timeout=120)
+        if r.status_code != requests.codes.ok:
+            raise Exception('error on fetch compare page on %s!' % project_full_name)
+    except:
         raise Exception('error on fetch compare page on %s!' % project_full_name)
-    
-    diff_list = content.split('diff --git')
-    file_list = []
+
+    diff_list = r.text.split('diff --git')
     for diff in diff_list[1:]:
         try:
             file_full_name = re.findall('a\/.*? b\/(.*?)\n', diff)[0]
@@ -144,9 +147,9 @@ if __name__ == '__main__':
     # fetch_compare_page('Nutz95/Smoothieware')
     #fetch_compare_page('mkosieradzki/protobuf')
     t = fetch_compare_page('SkyNet3D/Marlin')
-    sum = 0
     for i in t["file_list"]:
-        sum += i["added_line"]
-    print(sum)
+        print(i["file_full_name"])
+    for i in t["commit_list"]:
+        print(i["title"])
     #fetch_compare_page('aJanker/TypeChef')
 """

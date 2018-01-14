@@ -5,6 +5,7 @@ language_list = []
 language_file_suffix = {}
 language_stop_words = {}
 text_suffix = []
+general_stopwords = []
 
 language_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
@@ -36,6 +37,13 @@ def init():
                         if line:
                             word = line.strip()
                             language_stop_words[language].append(word)
+
+    with open(language_data_path + '/general_stopwords.txt') as read_file:
+        for line in read_file.readlines():
+            if line:
+                word = line.strip()
+                general_stopwords.append(word)
+
     FLAGS_load_language_data = True
 
 
@@ -46,6 +54,9 @@ def get_language_stop_words(language):
     else:
         return []
 
+def get_general_stopwords(language):
+    init()
+    return general_stopwords
 
 def get_language_on_suffix(file_suffix):
     """ Get the language depend on the suffix.

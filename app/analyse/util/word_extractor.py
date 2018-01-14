@@ -87,7 +87,7 @@ def stem_process(tokens):
 """
 
 def lemmatize_process(tokens):
-    for try_times in range(3):
+    for try_times in range(3): # NLTK is not thread-safe, use simple retry to fix it.
         try:
             result = [lemmatizer.lemmatize(word) for word in tokens]
         except:
@@ -114,13 +114,14 @@ def get_words_from_text(file, text):
     origin_tokens = [word_process(x) for x in raw_tokens]
     tokens = origin_tokens
     tokens = list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))
-    #tokens.extend(list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))) # Keep original tokens
+    tokens.extend(list(itertools.chain(*[word_split_by_char(token) for token in origin_tokens]))) # Keep original tokens
 
     #tokens = sum([word_split_by_char(token) for token in origin_tokens], origin_tokens)
     tokens = [x.lower() for x in tokens]
     tokens = filter(word_filter, tokens)
     tokens = filter(lambda x: x not in language_tool.get_language_stop_words(
         language_tool.get_language(file)), tokens)
+    tokens = filter(lambda x: x not in language_tool.get_general_stopwords(), tokens)
     tokens = list(tokens)
 
     # stemmed_tokens = [PorterStemmer().stem(word) for word in tokens] # do stem on the tokens
