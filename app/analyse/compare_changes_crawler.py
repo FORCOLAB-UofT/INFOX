@@ -5,7 +5,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 
-from util import language_tool
+from .util import language_tool
 
 def fetch_commit_list(project_full_name):
     """
