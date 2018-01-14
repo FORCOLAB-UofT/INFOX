@@ -54,7 +54,7 @@ def get_language_stop_words(language):
     else:
         return []
 
-def get_general_stopwords(language):
+def get_general_stopwords():
     init()
     return general_stopwords
 

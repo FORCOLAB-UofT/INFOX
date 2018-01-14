@@ -1,4 +1,4 @@
-from flask import g, jsonify, render_template, redirect, url_for, current_app, abort, flash, request, make_response
+from flask import g, jsonify, Markup, render_template, redirect, url_for, current_app, abort, flash, request, make_response
 from flask_login import login_required, current_user
 from datetime import datetime
 
@@ -210,7 +210,7 @@ def project_overview(project_name):
 @permission_required(Permission.FOLLOW)
 def followed_project(project_name):
     db_followed_project(project_name)
-    flash('Followed Project %s successfully!' % project_name, 'success') 
+    flash(Markup('Followed Project %s successfully! Please click <a href="/project/%s" class="alert-link">here</a> to view.' % (project_name, project_name)), 'success')
     return redirect(url_for('main.find_repos'))
 
 @main.route('/unfollowed_project/<path:project_name>', methods=['GET', 'POST'])
@@ -229,7 +229,7 @@ def find_repos():
         _input = form.project_name.data
         if db_find_project(_input) is not None:
             db_followed_project(_input)
-            flash('The repo (%s) is already in INFOX. Followed successfully!' % _input, 'success')
+            flash(Markup('The repo (%s) is already in INFOX. Followed successfully! Please click <a href="/project/%s" class="alert-link">here</a> to view.' % (_input, _input)), 'success')
         else:
             if analyser.check_repo(_input, current_user.github_access_token) is not None:
                 analyser.add_repos(current_user.username, [_input])
