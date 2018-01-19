@@ -11,6 +11,12 @@ from .. import email
 from ..models import *
 
 def start_analyse(app, repo, analyse_github):
+    """ Start analyse on repo using analyse_github(contain personal access token)
+        Args:
+            app context, repo, analyse_github
+        Returns:
+            None
+    """
     print("-----start analysing for %s-----" % repo)
     with app.app_context():
         repo_info = analyse_github.get('repos/%s' % repo)
@@ -33,6 +39,12 @@ def start_analyse(app, repo, analyse_github):
     print("-----finish analysing for %s-----" % repo)
 
 def check_waiting_list(app, username):
+    """ Check username's waiting list to crawl more
+        Args:
+            app context, username
+        Returns:
+            None
+    """
     user = User.objects(username=username).first()
     if user.is_crawling == 1:
         return
@@ -57,6 +69,13 @@ def check_waiting_list(app, username):
     User.objects(username=username).update_one(set__is_crawling=0)
 
 def check_repo(repo, access_token):
+    """ Check repo existence.
+        Args:
+            repo(full name), access_token
+        Returns:
+            None for not found,
+            json result for found.
+    """
     app = current_app._get_current_object()
     analyse_github = GitHub(app)
     @analyse_github.access_token_getter
@@ -69,6 +88,8 @@ def check_repo(repo, access_token):
     return result
 
 def add_repos(username, repos):
+    """ User (username) add some repos.
+    """
     User.objects(username=username).update_one(push_all__repo_waiting_list=repos)
     app = current_app._get_current_object()
 
