@@ -8,7 +8,6 @@ from . import compare_changes_crawler
 from . import source_code_analyser
 from .util import word_extractor
 from .util import localfile_tool
-from .util import language_tool
 from .clone_crawler import CloneCrawler
 from ..models import *
 
