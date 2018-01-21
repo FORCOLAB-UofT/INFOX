@@ -81,6 +81,8 @@ Http server: uwsgi & nginx
 
    ​
 
+   ​
+
 
 Code Overview:
 
@@ -90,11 +92,21 @@ Code Overview:
 
 ./config.ini - Config for using uWSGI
 
+./wsgi.py - Start script for uwsgi
+
+./celery_worker.py - Start script for crawler worker
+
+./manage.py - Start script for testing
+
+./requirements.txt - lib install for pip install
+
+./environment.yaml - env for anaconda
+
 ./app/main - Program Entrance
 
 ./app/analyse - Crawler & Do analysis
 
-./models - Database Model
+./models.py - Database Model
 
 ./app/auth - Logic about account
 
@@ -102,9 +114,5 @@ Code Overview:
 
 ./app/static - CSS/Javascript/Img Resource
 
-./manage.py - Start script used for testing
 
-./wsgi - Start script for uwsgi
-
-./celery_worker.py - Start script for crawler worker
 
