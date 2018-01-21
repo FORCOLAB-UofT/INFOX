@@ -5,6 +5,8 @@ from flask_mongoengine import MongoEngine
 from flask_login import LoginManager
 from flask_github import GitHub
 from flask_mail import Mail
+from flask_celery import Celery
+# from celery import Celery
 
 from config import config
 
@@ -13,7 +15,9 @@ db = MongoEngine()
 mail = Mail()
 github = GitHub()
 login_manager = LoginManager()
-# celery = Celery()
+# celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
+celery = Celery()
+
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
@@ -47,8 +51,9 @@ def create_app(config_name):
     mail.init_app(app)
     github.init_app(app)
     login_manager.init_app(app)
-    # celery.init_app(app)
-    
+    # celery.conf.update(app.config)
+    celery.init_app(app)
+
     if app.config.get('SSL_DISABLE', None):
         from flask_sslify import flask_SSLify
         sslify = SSLify(app)
