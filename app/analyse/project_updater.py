@@ -110,8 +110,10 @@ class ForkUpdater:
                 return
 
         for file in compare_result["file_list"]:
-            self.file_analyse(file)
-
+            try:
+                self.file_analyse(file)
+            except:
+                pass
         try:
             tmp = source_code_analyser.get_info_from_fork_changed_code(self.fork_name)
             changed_code_name_list = tmp['name_list']

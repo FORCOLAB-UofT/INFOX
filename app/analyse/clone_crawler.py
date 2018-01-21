@@ -3,8 +3,8 @@
 import os
 import codecs
 import math
-from flask import current_app
 
+from flask import current_app
 from .util import word_extractor
 from .util import language_tool
 
