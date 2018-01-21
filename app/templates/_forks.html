@@ -217,15 +217,6 @@ $(document).ready(function() {
                 <a href="{{ 'https://github.com/' + fork.fork_name + '/compare' }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Compare all changes on GitHub">
                     {{ fork.fork_name }}
                 </a>
-                {% if current_user.is_administrator %}
-                <a href="{{ url_for('main._get_similar_fork',full_name=fork.full_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Similar Forks">
-                    <span class="fa fa-search"></span>
-                </a>
-                
-                <a href="{{ url_for('main._get_predict_tag', full_name=fork.full_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Motivation Predict">
-                    <span class="fa fa-book"></span>
-                </a>
-                {% endif %}
             </td>
             <td>
                  <div class="fork_commit" id="{{ fork.full_name }}">

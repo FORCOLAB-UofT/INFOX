@@ -8,7 +8,6 @@ from . import compare_changes_crawler
 from . import source_code_analyser
 from .util import word_extractor
 from .util import localfile_tool
-from .util import language_tool
 from .clone_crawler import CloneCrawler
 from ..models import *
 
@@ -111,8 +110,10 @@ class ForkUpdater:
                 return
 
         for file in compare_result["file_list"]:
-            self.file_analyse(file)
-
+            try:
+                self.file_analyse(file)
+            except:
+                pass
         try:
             tmp = source_code_analyser.get_info_from_fork_changed_code(self.fork_name)
             changed_code_name_list = tmp['name_list']
