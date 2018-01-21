@@ -102,6 +102,9 @@ Code Overview:
 
 ./app/static - CSS/Javascript/Img Resource
 
-./app/email.py - Send email
+./manage.py - Start script used for testing
 
+./wsgi - Start script for uwsgi
+
+./celery_worker.py - Start script for crawler worker
 
