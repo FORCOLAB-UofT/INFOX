@@ -22,24 +22,24 @@ class Config:
     # secret key is a random string.
     SECRET_KEY = os.environ.get('INFOX_SECRET_KEY')
 
-    # E-mail Config
+    # E-mail config.
     MAIL_SERVER = 'smtp.126.com' # Change it to your mail server
     MAIL_PORT = 465
     MAIL_USERNAME = os.environ.get('INFOX_MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('INFOX_MAIL_PASSWORD')
     MAIL_USE_SSL = True
     FLASK_MAIL_SENDER = '<infox_help@126.com>' # Change it to your mail sender
-    FLASK_MAIL_SUBJECT_PREFIX = '[INFOX(Forks-Insight)]'
+    FLASK_MAIL_SUBJECT_PREFIX = '[Forks-Insight]'
 
-    # CELERY_BROKER_URL = 'redis://localhost'
-    # CELERY_RESULT_BACKEND = 'redis://localhost'
-
+    # The cralwer worker config.
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    USE_LOCAL_FORKS_LIST = True
-    USE_LOCAL_FORK_INFO = False
-    FORCED_UPDATING = True # Refresh will re-crawler the forks' info even if it's up-to-date.
+    USE_LOCAL_FORKS_LIST=True
+    USE_LOCAL_FORK_INFO=True
+    FORCED_UPDATING=False # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
     USE_LOCAL_FORKS_LIST = True
