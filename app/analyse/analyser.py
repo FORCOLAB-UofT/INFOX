@@ -32,34 +32,40 @@ def send_mail_for_repo_finish(project_name):
         if user.email is not None:
             send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name, username=user.username)
 
-def start_analyse(app, repo, github_api_caller):
+@celery.task
+def start_analyse(repo, access_token):
     """ Start analyse on repo using github_api_caller(contains personal access token)
         Args:
             app context, repo, github_api_caller
         Returns:
             None
     """
-    with app.app_context():
-        print("-----start analysing for %s-----" % repo)
+    app = current_app._get_current_object()
+    github_api_caller = GitHub(app)
+    @github_api_caller.access_token_getter
+    def token_getter():
+        return access_token
 
-        repo_info = github_api_caller.get('repos/%s' % repo)
-        print('finish fetch repo info for %s' % repo)
+    print("-----start analysing for %s-----" % repo)
 
-        forks_list_path = current_app.config['LOCAL_DATA_PATH'] + "/" + repo + '/forks_list.json'
-        if current_app.config['USE_LOCAL_FORKS_LIST'] and os.path.exists(forks_list_path):
-            with open(forks_list_path) as read_file:
-                repo_forks_list = json.load(read_file)
-        else:
-            repo_forks_list = github_api_caller.request('GET', 'repos/%s/forks' % repo, True)
-            localfile_tool.write_to_file(forks_list_path, repo_forks_list)
-        
-        print('finish fetch fork list for %s' % repo)
+    repo_info = github_api_caller.get('repos/%s' % repo)
+    print('finish fetch repo info for %s' % repo)
 
-        project_updater.start_update(repo, repo_info, repo_forks_list)
-        
-        send_mail_for_repo_finish(repo)
+    forks_list_path = current_app.config['LOCAL_DATA_PATH'] + "/" + repo + '/forks_list.json'
+    if current_app.config['USE_LOCAL_FORKS_LIST'] and os.path.exists(forks_list_path):
+        with open(forks_list_path) as read_file:
+            repo_forks_list = json.load(read_file)
+    else:
+        repo_forks_list = github_api_caller.request('GET', 'repos/%s/forks' % repo, True)
+        localfile_tool.write_to_file(forks_list_path, repo_forks_list)
+    
+    print('finish fetch fork list for %s' % repo)
 
-        print("-----finish analysing for %s-----" % repo)
+    project_updater.start_update(repo, repo_info, repo_forks_list)
+    
+    send_mail_for_repo_finish(repo)
+
+    print("-----finish analysing for %s-----" % repo)
 
 @celery.task
 def check_waiting_list(username):
@@ -76,10 +82,6 @@ def check_waiting_list(username):
 
     access_token = user.github_access_token
     app = current_app._get_current_object()
-    github_api_caller = GitHub(app)
-    @github_api_caller.access_token_getter
-    def token_getter():
-        return access_token
 
     while True:
         waiting_list = User.objects(username=username).first().repo_waiting_list
@@ -87,10 +89,19 @@ def check_waiting_list(username):
             break
         for repo in waiting_list:
             User.objects(username=username).update_one(pull__repo_waiting_list=repo)
-            thread = threading.Thread(target=start_analyse, args=[app, repo, github_api_caller])
-            thread.setDaemon(True)
-            thread.start()
-            thread.join(10 * 60) # wait for 10 mins
+
+            with app.app_context():
+                start_analyse.delay(repo, access_token)
+
+            wait_time = check_repo(repo, access_token)["forks"] * 1.5
+            # print(wait_time)
+            # wait_time = 1.0
+            time.sleep(wait_time)
+
+            # thread = threading.Thread(target=start_analyse, args=[app, repo, github_api_caller])
+            # thread.setDaemon(True)
+            # thread.start()
+            # thread.join(10 * 60) # wait for 10 mins
 
     User.objects(username=username).update_one(set__is_crawling=0)
 
