@@ -28,6 +28,8 @@ def word_split_by_char(s):
         words = s.split('_')
     elif '/' in s:  # Case: ab/cd/ef
         words = s.split('/')
+    elif '\\' in s: # Case: ab\cd\ef
+        words = s.split('\\')
     else:
         if re.search('[A-Z]+', s):  # Case AbcDefGh or abcDefGh
             words = re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(1).lower() + "_" + match.group(2).lower(), s).split('_')
