@@ -4,9 +4,17 @@ def compare_on_files(fork1, fork2):
             fork1: ProjectFork
             fork2: ProjectFork
         Return:
+            The common degree: intersection / union
             A list contains the common path of the two forks.
     """
+
+    return 1.0 * len(set(fork1.file_list).intersection(set(fork2.file_list))) / len(set(fork1.file_list).union(set(fork2.file_list)))
+
+    """
     common_path = set()
+    
+    for fork1_file_name in :
+        if fork1_file_name in :
 
     f2_path_list = []
     for fork2_file_name in fork2.file_list:
@@ -28,6 +36,7 @@ def compare_on_files(fork1, fork2):
             common_path.add(deepest_common_path)
 
     return list(common_path)
+    """
 
 
 def compare_on_key_words(fork1, fork2):
@@ -36,13 +45,9 @@ def compare_on_key_words(fork1, fork2):
             fork1: ProjectFork
             fork2: ProjectFork
         Return:
-            A list contains the common key words of the two forks.       
+            Number of common key words of the two forks.       
     """
-    common_words = []
-    for word in fork1.key_words:
-        if word in fork2.key_words:
-            common_words.append(word)
-    return common_words
+    return len(set(fork1.key_words).intersection(set(fork2.key_words)))
 
 
 def get_similar_fork(fork_list, fork1):
@@ -64,14 +69,11 @@ def get_similar_fork(fork_list, fork1):
         if (fork2.total_changed_file_number is None) or (fork2.total_changed_file_number == 0):
             continue
 
-        n_common_words = len(compare_on_key_words(fork1, fork2))
-        n_dep_commpn_files = 0
-        commpn_files = compare_on_files(fork1, fork2)
-        for file in commpn_files:
-            n_dep_commpn_files += file.count('/')
-        
+        value_common_words = compare_on_key_words(fork1, fork2)
+        value_common_files = compare_on_files(fork1, fork2)
+
         # print(n_common_words, n_dep_commpn_files)
-        param_list[fork2.fork_name] = [n_common_words, 1.0 * n_dep_commpn_files / fork2.total_changed_file_number]
+        param_list[fork2.fork_name] = [value_common_words, value_common_files]
 
     norm_list = None
     param_number = 0
@@ -87,8 +89,8 @@ def get_similar_fork(fork_list, fork1):
     for fork in param_list:
         value = []
         for i in range(param_number):
-            value.append((param_list[fork][i] - norm_list[i][0]) / (norm_list[i][1] - norm_list[i][0] + 1))
-        sort_list[fork] = value[0] * 3 + value[1]
+            value.append(1.0 * (param_list[fork][i] - norm_list[i][0]) / (norm_list[i][1] - norm_list[i][0] + 1))
+        sort_list[fork] = value[0] + value[1] * 3
     result = [(x,y) for x, y in sorted(sort_list.items(), key=lambda x: x[1], reverse=True)]
     result = [(x,y) for x, y in filter(lambda x: x[1] > 0, result)]
     return result[:5]
