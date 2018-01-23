@@ -473,13 +473,14 @@ def find_redudent(project_name):
     _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
     result = {}
     for fork1 in _forks:
-        for keyword in fork1.key_words_lemmatize_tfidf[:6]:
-            _all_forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0, key_words_lemmatize_tfidf__contains=keyword)
-            for fork2 in _all_forks:
-                if fork1.full_name != fork2.full_name:
-                    if (len(fork1.file_list) <= 10) and (len(fork2.file_list) <= 10):
-                        if set(fork1.file_list).issubset(set(fork2.file_list)):
-                            result[fork1.fork_name + ' - ' + fork2.fork_name] = list(set(fork1.key_words_lemmatize_tfidf).intersection(set(fork2.key_words_lemmatize_tfidf)))
+        if len(fork1.file_list) <= 10:
+            for keyword in fork1.key_words_lemmatize_tfidf[:6]:
+                _all_forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0, key_words_lemmatize_tfidf__contains=keyword)
+                for fork2 in _all_forks:
+                    if fork1.full_name != fork2.full_name:
+                        if len(fork2.file_list) <= 10:
+                            if set(fork1.file_list).issubset(set(fork2.file_list)):
+                                result[fork1.fork_name + ' - ' + fork2.fork_name] = list(set(fork1.key_words_lemmatize_tfidf).intersection(set(fork2.key_words_lemmatize_tfidf)))
     return jsonify(result)
 
 
