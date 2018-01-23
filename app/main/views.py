@@ -480,6 +480,7 @@ def find_redudent(project_name):
                     if fork1.full_name != fork2.full_name:
                         if len(fork2.file_list) <= 10:
                             if set(fork1.file_list).issubset(set(fork2.file_list)):
+                                print(fork1.fork_name, fork2.fork_name, list(set(fork1.key_words_lemmatize_tfidf).intersection(set(fork2.key_words_lemmatize_tfidf))))
                                 result[fork1.fork_name + ' - ' + fork2.fork_name] = list(set(fork1.key_words_lemmatize_tfidf).intersection(set(fork2.key_words_lemmatize_tfidf)))
     return jsonify(result)
 
