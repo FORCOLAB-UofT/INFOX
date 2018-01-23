@@ -133,30 +133,33 @@ class ForkUpdater:
 
         self.all_lemmatize_tokens = word_extractor.lemmatize_process(self.all_tokens)
 
-        # Update forks into database.
-        ProjectFork(
-            full_name=self.project_name + '/' + self.fork_name,
-            fork_name=self.fork_name,
-            project_name=self.project_name,
-            total_changed_file_number=len(file_distinct),
-            total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
-            total_commit_number=len(compare_result["commit_list"]),
-            commit_list=compare_result["commit_list"],
-            last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
-            created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
-            file_list=file_distinct,
-            key_words=word_extractor.get_top_words(self.all_tokens, 10),
-            key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 10),
-            # key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
-            # key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
-            # key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
-            # key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
-            variable=word_extractor.get_top_words(changed_code_name_list, 10),
-            function_name=word_extractor.get_top_words(changed_code_func_list, 10),
-            last_updated_time=datetime.utcnow(),
-            # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 10),
-            # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 10, False),
-        ).save()
+        try:
+            # Update forks into database.
+            ProjectFork(
+                full_name=self.project_name + '/' + self.fork_name,
+                fork_name=self.fork_name,
+                project_name=self.project_name,
+                total_changed_file_number=len(file_distinct),
+                total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
+                total_commit_number=len(compare_result["commit_list"]),
+                commit_list=compare_result["commit_list"],
+                last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
+                created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
+                file_list=file_distinct,
+                key_words=word_extractor.get_top_words(self.all_tokens, 10),
+                key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 10),
+                # key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
+                # key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
+                # key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
+                # key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
+                variable=word_extractor.get_top_words(changed_code_name_list, 10),
+                function_name=word_extractor.get_top_words(changed_code_func_list, 10),
+                last_updated_time=datetime.utcnow(),
+                # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 10),
+                # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 10, False),
+            ).save()
+        except:
+            pass
 
 def get_activate_fork_number(forks_info):
     number = 0
