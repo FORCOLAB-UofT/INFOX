@@ -63,7 +63,7 @@ def start_analyse(repo, access_token):
 
     project_updater.start_update(repo, repo_info, repo_forks_list)
     
-    send_mail_for_repo_finish(repo)
+    # send_mail_for_repo_finish(repo)
 
     print("-----finish analysing for %s-----" % repo)
 
@@ -93,10 +93,9 @@ def check_waiting_list(username):
             with app.app_context():
                 start_analyse.delay(repo, access_token)
 
-            wait_time = check_repo(repo, access_token)["forks"] * 1.5 / 50
-            # print(wait_time)
-            # wait_time = 1.0
-            time.sleep(wait_time)
+            if not current_app.config['USE_LOCAL_FORKS_LIST']:
+                wait_time = check_repo(repo, access_token)["forks"] * 1.5 / 50
+                time.sleep(wait_time)
 
             # thread = threading.Thread(target=start_analyse, args=[app, repo, github_api_caller])
             # thread.setDaemon(True)
