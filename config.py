@@ -44,7 +44,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     USE_LOCAL_FORKS_LIST = True
     USE_LOCAL_FORK_INFO = False
-    FORCED_UPDATING = False # Refresh will not re-crawler the up-to-date forks' info.
+    FORCED_UPDATING = True # Refresh will not re-crawler the up-to-date forks' info.
 
 config = {
     'production': ProductionConfig,
