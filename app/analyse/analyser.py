@@ -1,7 +1,7 @@
 import time
 import os
 import json
-import threading
+from datetime import datetime
 
 from flask import current_app, render_template
 from flask_github import GitHub
@@ -30,7 +30,13 @@ def send_mail_for_repo_finish(project_name):
     _user_list = User.objects(followed_projects=project_name)
     for user in _user_list:
         if user.email is not None:
-            send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name, username=user.username)
+            last_email = user.repo_email_time.get(project_name, None)
+            new_dict = user.repo_email_time
+            new_dict[project_name] = datetime.utcnow()
+            User.objects(username=user.username).update_one(repo_email_time=new_dict)
+            if last_email is None:
+                # Only send email when first add.
+                send_mail(user.email, 'Repo Status Update', 'email.html', project_name=project_name, username=user.username)
 
 @celery.task
 def start_analyse(repo, access_token):

@@ -100,6 +100,8 @@ class User(UserMixin, db.Document):
     is_crawling = db.IntField() # 1 means is crawling
     repo_waiting_list = db.ListField(db.StringField())
 
+    repo_email_time = db.DictField()
+
     def get_id(self):
         return self.username
     
