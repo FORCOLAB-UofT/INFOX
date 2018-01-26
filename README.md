@@ -1,6 +1,4 @@
-# INFOX
-
-[![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX)
+# INFOX [![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX)
 
 Website: http://forks-insight.com
 
