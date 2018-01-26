@@ -46,8 +46,12 @@ class ProductionConfig(Config):
     USE_LOCAL_FORK_INFO = False
     FORCED_UPDATING = True # Refresh will not re-crawler the up-to-date forks' info.
 
+class TestingConfig(Config):
+    TESTING = True
+
 config = {
     'production': ProductionConfig,
     'development': DevelopmentConfig,
-    'default': DevelopmentConfig
+    'default': DevelopmentConfig,
+    'testing': TestingConfig,
 }

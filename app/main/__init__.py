@@ -3,4 +3,4 @@ from flask import Blueprint
 
 main = Blueprint('main', __name__)
 
-from . import views, forms     # 避免循环导入模块
+from . import views, forms # avoid cyclic import
