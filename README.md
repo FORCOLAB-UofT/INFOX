@@ -1,5 +1,7 @@
 # INFOX
 
+[![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX)
+
 Website: http://forks-insight.com
 
 Another related repo: https://github.com/shuiblue/INFOX
