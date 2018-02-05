@@ -1,4 +1,4 @@
-# INFOX
+# INFOX [![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX)
 
 Website: http://forks-insight.com
 
@@ -20,9 +20,9 @@ Http server: uwsgi & nginx
 
 
 
-# How to run:
+# Quick Start:
 
-1. Ramp up the environment according to environment.yaml
+1. Ramp up the environment according to environment.yaml(or requirements.txt)
 
    Here is an example of using Anaconda:
 
@@ -32,16 +32,10 @@ Http server: uwsgi & nginx
 
    ``` bash
    conda env create -f environment.yaml
+   source activate p3  (p3 is the env's name, see in environment.yaml)
    ```
 
-
-2. Install mongodb
-
-   for mac user:
-
-   ``` bash
-   brew install mongodb
-   ```
+2. Install mongodb & redis
 
 3. Edit the config (see in [config.py](https://github.com/FancyCoder0/INFOX/blob/master/config.py)) & Set the environment variables
 
@@ -61,30 +55,27 @@ Http server: uwsgi & nginx
          export INFOX_MAIL_PASSWORD=[smtp_password]
          ```
 
-4. Run on localhost: 
-
-   If you using conda, start the virtual environment:
-
-   ```bash
-   source activate p3  (p3 is the env's name, see in environment.yaml)
-   ```
-
-   Then run it:
+4. Run http server on localhost: 
 
    ```bash
    python manage.py runserver
    ```
 
-5. Run on Server:
+5. Run worker for async crawling on localhost:
+   ```bash
+   celery worker -A celery_worker.celery --loglevel=info
+   ```
+   Use [flower](http://flower.readthedocs.io/en/latest/) to monitor the worker:
+   ```bash
+   celery flower --port=5555 --broker=redis://localhost:6379/0 --broker_api=redis://localhost:6379/0  
+   ```
+6. Deploy on server:
 
    An example: [Serve Flask Applications with uWSGI and Nginx on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04)
 
-   ​
-
-   ​
 
 
-Code Overview:
+# Architecture Overview:
 
 ![code_architecture](./app/static/img/code_architecture.png)
 
