@@ -42,9 +42,9 @@ class DevelopmentConfig(Config):
     FORCED_UPDATING=False # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
-    USE_LOCAL_FORKS_LIST = True
+    USE_LOCAL_FORKS_LIST = False
     USE_LOCAL_FORK_INFO = False
-    FORCED_UPDATING = True # Refresh will not re-crawler the up-to-date forks' info.
+    FORCED_UPDATING = False # Refresh will not re-crawler the up-to-date forks' info.
 
 class TestingConfig(Config):
     TESTING = True
