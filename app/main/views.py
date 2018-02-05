@@ -486,6 +486,10 @@ def find_redudent(project_name):
                                     result[fork1.fork_name + ' - ' + fork2.fork_name] = common_key_words
     return jsonify(result)
 
+@main.route('/privacy_policy', methods=['GET', 'POST'])
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
 
 """
 # ----------------------------  use for test ------------------------
