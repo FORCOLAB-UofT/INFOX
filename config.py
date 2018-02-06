@@ -39,7 +39,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     USE_LOCAL_FORKS_LIST=True
     USE_LOCAL_FORK_INFO=True
-    FORCED_UPDATING=False # Refresh will re-crawler the forks' info even if it's up-to-date.
+    FORCED_UPDATING=True # Refresh will re-crawler the forks' info even if it's up-to-date.
 
 class ProductionConfig(Config):
     USE_LOCAL_FORKS_LIST = False

@@ -129,9 +129,10 @@ class ForkUpdater:
 
         file_distinct = list(OrderedDict.fromkeys([x["file_full_name"] for x in compare_result["file_list"]]))
         
-        # all_lemmatize_tokens = list(filter(lambda x: x != self.project_name, all_lemmatize_tokens))
-
         self.all_lemmatize_tokens = word_extractor.lemmatize_process(self.all_tokens)
+
+        project_name_stop_words = (self.project_name + '/' + self.fork_name).split('/')
+        self.all_lemmatize_tokens = list(filter(lambda x: x not in project_name_stop_words, self.all_lemmatize_tokens))
 
         try:
             # Update forks into database.
