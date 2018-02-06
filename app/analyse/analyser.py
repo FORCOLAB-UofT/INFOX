@@ -58,6 +58,8 @@ def start_analyse(repo, access_token):
     print('finish fetch repo info for %s' % repo)
 
     forks_list_path = current_app.config['LOCAL_DATA_PATH'] + "/" + repo + '/forks_list.json'
+    print(forks_list_path)
+    print(current_app.config['USE_LOCAL_FORKS_LIST'])
     if current_app.config['USE_LOCAL_FORKS_LIST'] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
