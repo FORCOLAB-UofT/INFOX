@@ -19,23 +19,28 @@ def word_split_by_char(s):
         Returns:
             List of the split words
     """
-    words = []
-    if '-' in s:  # Case: ab-cd-ef
-        words = s.split('-')
-    elif '.' in s:  # Case: ab.cd.ef
-        words = s.split('.')
-    elif '_' in s:  # Case: ab_cd_ef
-        words = s.split('_')
-    elif '/' in s:  # Case: ab/cd/ef
-        words = s.split('/')
-    elif '\\' in s: # Case: ab\cd\ef
-        words = s.split('\\')
-    else:
-        if re.search('[A-Z]+', s):  # Case AbcDefGh or abcDefGh
-            words = re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(1).lower() + "_" + match.group(2).lower(), s).split('_')
-        words.append(s)
-    return words
-
+    old_words = []
+    old_words.append(s)
+    result = []
+    while len(old_words) > 0:
+        new_words = []
+        for s in old_words:
+            if '-' in s:  # Case: ab-cd-ef
+                new_words+=s.split('-')
+            elif '.' in s:  # Case: ab.cd.ef
+                new_words+=s.split('.')
+            elif '_' in s:  # Case: ab_cd_ef
+                new_words+=s.split('_')
+            elif '/' in s:  # Case: ab/cd/ef
+                new_words+=s.split('/')
+            elif '\\' in s: # Case: ab\cd\ef
+                new_words+=s.split('\\')
+            else:
+                if re.search('[A-Z]+', s):  # Case AbcDefGh or abcDefGh
+                    result+=re.sub('([a-zA-Z])([A-Z])', lambda match: match.group(1).lower() + "_" + match.group(2).lower(), s).split('_')
+                result.append(s)
+        old_words = new_words
+    return result
 
 def word_process(word):
     search_result = re.search("[0-9A-Za-z_]", word)
