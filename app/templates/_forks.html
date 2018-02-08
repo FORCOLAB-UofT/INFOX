@@ -9,12 +9,22 @@
             var tag_list = tag_obj.find('span[id="tag_list"]')
             var input_tag = $(this).attr('id')
             var status = $(this).hasClass('btn-success')
+            var now = $(this)
             $.getJSON($SCRIPT_ROOT + '/_fork_edit_tag', {
                 full_name: tag_obj.attr('id'),
                 oper: status ? 'delete' : 'add',
                 tag: input_tag,
             }, function(data) {
-                tag_list.text(data.tags);
+                if (status) {
+                    now.parent().children('span').text('-');
+                    now.removeClass('btn-success');
+                    now.addClass('btn-outline-success');
+                } else {
+                    now.parent().children('span').text('+');
+                    now.removeClass('btn-outline-success');
+                    now.addClass('btn-success');
+                }
+                tag_list.text(data);
             });
             return false;
         };
@@ -28,7 +38,7 @@
                 oper: 'add',
                 tag: input_tag.val(),
             }, function(data) {
-                tag_list.text(data.tags);
+                tag_list.text(data);
                 input_tag.val('');
             });
             return false;
@@ -41,7 +51,7 @@
                 full_name: tag_obj.attr('id') ,
                 oper: 'clear',
             }, function(data) {
-                tag_list.text(data.tags);
+                tag_list.text(data);
             });
             return false;
         };
@@ -61,9 +71,9 @@
                 if (result != '') {
                     $.each(result, function(k, v) {
                         if (v.status) {
-                            dropdown.append('<div class="dropdown-item">-<div class="btn btn-success btn-sm" id="' + v.name + '">' + v.name + '</div></div>');
+                            dropdown.append('<div class="dropdown-item"><span>-</span><div class="btn btn-success btn-sm" id="' + v.name + '">' + v.name + '</div></div>');
                         } else {
-                            dropdown.append('<div class="dropdown-item">+<div class="btn btn-outline-success btn-sm" id="' + v.name + '">' + v.name + '</div></div>');
+                            dropdown.append('<div class="dropdown-item"><span>+</span><div class="btn btn-outline-success btn-sm" id="' + v.name + '">' + v.name + '</div></div>');
                         }
                     });
                 }
@@ -75,7 +85,7 @@
                 dropdown.find('a#clear').bind('click', clear_form);
             }
         }
-        $('.tag span[id="tag_list"]').on('change', update_tag_editor);
+        // $('.tag span[id="tag_list"]').on('change', update_tag_editor);
         $('.tag button#edit_tag_list').on('click', update_tag_editor);
     });
 </script>
@@ -299,11 +309,10 @@ $(document).ready(function() {
             <td>{{ fork.created_time.strftime('%Y-%m-%d') }}</td>
 
             <td>
+                {% if current_user.is_authenticated %}
                 <div class="tag" id="{{ fork.full_name }}">
                     <span id="tag_list" style="float:left;">
-                        {% if current_user.is_authenticated %}
-                            {{ ",".join(all_tags.get(fork.full_name,[])) }}
-                        {% endif %}
+                        {{ ",\n".join(all_tags.get(fork.full_name,[])) }}
                     </span>
                     
                     <button class="btn btn-default btn-xs" type="button" id="edit_tag_list" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -312,6 +321,7 @@ $(document).ready(function() {
                     <ul class="dropdown-menu" aria-labelledby="edit_tag_list">
                     </ul>
                 </div>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
