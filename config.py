@@ -7,6 +7,8 @@ class Config:
         'host': '127.0.0.1',
         'port': 27017,
         'connect': False,
+        # 'username': os.environ.get('INFOX_DATABASE_USERNAME'),
+        # 'password': os.environ.get('INFOX_DATABASE_PASSWORD'),
     }
 
     # LOCAL_DATA_PATH used for storing the raw data from crawling the github.
