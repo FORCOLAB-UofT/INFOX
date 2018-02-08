@@ -344,7 +344,7 @@ def _fork_edit_tag():
             ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
-    return jsonify(tags=ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags)
+    return jsonify(",\n".join(ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags))
 
 @main.route('/_get_similar_fork', methods=['GET', 'POST'])
 def _get_similar_fork():
