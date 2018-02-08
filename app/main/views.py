@@ -405,6 +405,28 @@ def _get_fork_changed_file_list():
             return jsonify(result_list)
     return None
 
+@main.route('/_get_fork_tag', methods=['GET', 'POST'])
+@login_required
+def _get_fork_tag():
+    _full_name = request.args.get('full_name')
+    if _full_name:
+        _fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+        if _fork_tag is None:
+            user_tags = []
+        else:
+            user_tags = _fork_tag.tags
+        result = []
+        default_tags = ['Configuration', 'New Feature', 'Bug fix', 'Refactoring']
+        for tag in default_tags:
+            if tag in user_tags:
+                result.append({'name':tag,'status':True})
+            else:
+                result.append({'name':tag,'status':False})
+        for tag in user_tags:
+            if tag not in default_tags:
+                result.append({'name':tag,'status':True})
+        return jsonify(result)
+    return None
 
 @main.route('/graph/<category>/<path:project_name>', methods=['GET', 'POST'])
 def graph(category, project_name):
