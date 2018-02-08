@@ -338,13 +338,15 @@ def _fork_edit_tag():
         _user_fork_tag = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
 
     if _oper == 'delete':
-        ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
+        if _tag:
+            ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(pull__tags=_tag)
     elif _oper == 'add':
-        if _tag not in _user_fork_tag.tags:
+        if _tag and (_tag not in _user_fork_tag.tags):
             ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(push__tags=_tag)
     elif _oper == 'clear':
         ForkTag.objects(fork_full_name=_full_name, username=current_user.username).update_one(set__tags=[])
-    return jsonify(",\n".join(ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first().tags))
+    upd_tags = ForkTag.objects(fork_full_name=_full_name, username=current_user.username).first()
+    return jsonify(",\n".join(upd_tags.tags))
 
 @main.route('/_get_similar_fork', methods=['GET', 'POST'])
 def _get_similar_fork():

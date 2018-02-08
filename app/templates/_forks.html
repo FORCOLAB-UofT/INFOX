@@ -15,16 +15,16 @@
                 oper: status ? 'delete' : 'add',
                 tag: input_tag,
             }, function(data) {
+                tag_list.text(data);
                 if (status) {
-                    now.parent().children('span').text('-');
+                    now.parent().children('span').text('+');
                     now.removeClass('btn-success');
                     now.addClass('btn-outline-success');
                 } else {
-                    now.parent().children('span').text('+');
+                    now.parent().children('span').text('-');
                     now.removeClass('btn-outline-success');
                     now.addClass('btn-success');
                 }
-                tag_list.text(data);
             });
             return false;
         };
@@ -39,6 +39,9 @@
                 tag: input_tag.val(),
             }, function(data) {
                 tag_list.text(data);
+                tag_obj.children('.dropdown-menu').find('.btn').off("click");
+                tag_obj.children('.dropdown-menu').children('.tag-selector').append('<div class="dropdown-item"><span>-</span><div class="btn btn-success btn-sm" id="' + input_tag.val() + '">' + input_tag.val() + '</div></div>');
+                tag_obj.children('.dropdown-menu').find('.btn').on("click", add_tag);
                 input_tag.val('');
             });
             return false;
@@ -53,6 +56,7 @@
             }, function(data) {
                 tag_list.text(data);
             });
+            tag_list.update_tag_editor();
             return false;
         };
         var update_tag_editor = function(e) {
@@ -68,7 +72,8 @@
         var tag_editor_helpers = {
             buildDropdown: function(result, dropdown) {
                 dropdown.empty();
-                if (result != '') {
+                dropdown.append('<div class="tag-selector">');
+                if (result) {
                     $.each(result, function(k, v) {
                         if (v.status) {
                             dropdown.append('<div class="dropdown-item"><span>-</span><div class="btn btn-success btn-sm" id="' + v.name + '">' + v.name + '</div></div>');
@@ -77,16 +82,17 @@
                         }
                     });
                 }
+                dropdown.append('</div>');
                 dropdown.append('<div class="dropdown-item"><input type="text" size="7" name="add"><a href=# id="add">Add</a></div>')
                 dropdown.append('<div class="dropdown-item"><a href=# id="clear">Clear-all</a></div>');
 
-                dropdown.find('.btn').bind('click', add_tag);
-                dropdown.find('a#add').bind('click', add_form);
-                dropdown.find('a#clear').bind('click', clear_form);
+                dropdown.find('.btn').on("click",add_tag);
+                dropdown.find('a#add').click(add_form);
+                dropdown.find('a#clear').click(clear_form);
             }
         }
-        // $('.tag span[id="tag_list"]').on('change', update_tag_editor);
-        $('.tag button#edit_tag_list').on('click', update_tag_editor);
+        //$('.tag span[id="tag_list"]').change(update_tag_editor);
+        $('.tag button#edit_tag_list').click(update_tag_editor);
     });
 </script>
 
