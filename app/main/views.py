@@ -305,8 +305,8 @@ def project_refresh_all():
 @main.route('/repo_refresh_for_unfinished', methods=['GET', 'POST'])
 @login_required
 @admin_required
-def project_refresh_all():
-    """ Refresh all the project.
+def repo_refresh_for_unfinished():
+    """ Refresh all the project which is unfinished.
     """
     project_list = Project.objects()
     crawl_list = []
