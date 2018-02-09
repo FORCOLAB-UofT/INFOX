@@ -4,11 +4,7 @@ Website: http://forks-insight.com
 
 Another related repo: https://github.com/shuiblue/INFOX
 
-
-
-INFOX 
-
-
+ 
 
 Language: Python3
 
@@ -97,6 +93,10 @@ Http server: uwsgi & nginx
 
 ./app/analyse - Crawler & Do analysis
 
+./app/analyse/analyser.py is to do analysis from local data and load them into database.
+
+./app/analyse/compare_changes_crawler.py is used for comparing the diff bewteen two repos.
+
 ./models.py - Database Model
 
 ./app/auth - Logic about account
@@ -104,6 +104,8 @@ Http server: uwsgi & nginx
 ./app/templates - HTML files
 
 ./app/static - CSS/Javascript/Img Resource
+
+
 
 
 

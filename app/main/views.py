@@ -302,6 +302,21 @@ def project_refresh_all():
     flash('Refresh all successfully!', 'success')
     return redirect(url_for('main.admin_manage'))
 
+@main.route('/repo_refresh_for_unfinished', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def project_refresh_all():
+    """ Refresh all the project.
+    """
+    project_list = Project.objects()
+    crawl_list = []
+    for repo in project_list:
+        if repo.analyser_progress != "100%":
+            crawl_list.append(repo.project_name)
+    analyser.add_repos(current_user.username, crawl_list)
+    flash('Refresh for unfinished successfully!', 'success')
+    return redirect(url_for('main.admin_manage'))
+
 
 @main.route('/delete_project/<path:project_name>', methods=['GET', 'POST'])
 @login_required

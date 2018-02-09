@@ -102,7 +102,7 @@ def check_waiting_list(username):
                 start_analyse.delay(repo, access_token)
 
             if not current_app.config['USE_LOCAL_FORKS_LIST']:
-                wait_time = check_repo(repo, access_token)["forks"] * 1.5 / 50
+                wait_time = check_repo(repo, access_token)["forks"] * 1.5 / 30
                 time.sleep(wait_time)
 
             # thread = threading.Thread(target=start_analyse, args=[app, repo, github_api_caller])
