@@ -80,7 +80,8 @@ class ForkUpdater:
         
         last_update = ProjectFork.objects(full_name=self.project_name + '/' + self.fork_name).first()
 
-        if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time):
+        if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time) \
+        and (last_update.total_changed_line_number != -1):
             return
 
         # Update time first.
