@@ -531,7 +531,7 @@ def privacy_policy():
 @main.route('/_search_log', methods=['GET', 'POST'])
 def _search_log():
     if current_user.is_authenticated:
-        print('Search: ', current_user.username, request.args.get('col'), request.args.get('input'))
+        print('Search: ', current_user.username, request.args.get('repo'), request.args.get('col'), request.args.get('input'))
     return jsonify(None)
 
 """
