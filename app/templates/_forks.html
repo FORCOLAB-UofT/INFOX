@@ -205,7 +205,8 @@ $(document).ready(function() {
 
             $.getJSON($SCRIPT_ROOT + '/_search_log', {
                 col: colIdx,
-                input: this.value
+                input: this.value,
+                repo: window.location.pathname
             });
         });
     } );
