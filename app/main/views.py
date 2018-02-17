@@ -202,6 +202,9 @@ def project_overview(project_name):
         for tag in _project_tags:
             _all_tags[tag.fork_full_name] = tag.tags
     
+    if current_user.is_authenticated:
+        print('View: ', current_user.username, project_name)
+
     return render_template('project_overview.html', project=_project, forks=_forks, all_tags=_all_tags)
 
 
@@ -366,7 +369,6 @@ def _fork_edit_tag():
 @main.route('/_get_similar_fork', methods=['GET', 'POST'])
 def _get_similar_fork():
     _full_name = request.args.get('full_name')
-    print(_full_name)
     if _full_name is not None:
         _fork = ProjectFork.objects(full_name=_full_name).first()
         if _fork is None:
@@ -458,8 +460,6 @@ def _get_pie_graph_data():
         'LOC': [0, 9, 99, 999, 9999],
         'file': [0, 1, 3, 9, 99, 999],
     }
-    print('category',category)
-    print('project_name',project_name)
     if category not in graph_classify:
         return None
     
@@ -493,7 +493,6 @@ def _get_pie_graph_data():
             result.append({'type': str(bound[i - 1] + 1) + '+', 'total': tot[i]})
         else:
             result.append({'type': str(bound[i]) if bound[i - 1] + 1 == bound[i] else str(bound[i - 1] + 1) + '~' + str(bound[i]), 'total': tot[i]})
-    print(result)
     return jsonify(result)
 
 
@@ -529,6 +528,11 @@ def find_redudent(project_name):
 def privacy_policy():
     return render_template('privacy_policy.html')
 
+@main.route('/_search_log', methods=['GET', 'POST'])
+def _search_log():
+    if current_user.is_authenticated:
+        print('Search: ', current_user.username, request.args.get('col'), request.args.get('input'))
+    return jsonify(None)
 
 """
 # ----------------------------  use for test ------------------------
