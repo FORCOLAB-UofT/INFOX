@@ -54,7 +54,7 @@ Http server: uwsgi & nginx
 4. Run http server on localhost: 
 
    ```bash
-   python manage.py runserver
+   python manage.py runserver --threaded
    ```
 
 5. Run worker for async crawling on localhost:
@@ -65,6 +65,7 @@ Http server: uwsgi & nginx
    ```bash
    celery flower --port=5555 --broker=redis://localhost:6379/0 --broker_api=redis://localhost:6379/0  
    ```
+
 6. Deploy on server:
 
    An example: [Serve Flask Applications with uWSGI and Nginx on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04)

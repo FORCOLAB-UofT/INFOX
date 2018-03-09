@@ -14,6 +14,7 @@ from ..auth.views import get_user_repo_list, get_upperstream_repo
 
 
 #------------------------------------------------------------------
+# Following are all the function wrap the database operation.
 def db_find_project(project_name):
     return Project.objects(project_name=project_name).first()
 
@@ -49,7 +50,6 @@ def db_unfollowed_project(project_name):
 
 
 #------------------------------------------------------------------
-
 @main.route('/', methods=['GET', 'POST'])
 def start():
     if current_user.is_authenticated:
@@ -128,6 +128,8 @@ def load_from_github():
 @main.route('/sync', methods=['GET', 'POST'])
 @login_required
 def sync():
+    """ Sync owned repos with GitHub
+    """
     _ownered_project = []
     _tmp_project_list = get_user_repo_list(current_user.username)
     for project in _tmp_project_list:
@@ -156,6 +158,7 @@ def guide():
 @login_required
 def index():
     """
+    TODO:implement smart search.
     _search_form = SearchProjectForm()
     if _search_form.validate_on_submit():
         _find_result = db_approximate_find_project_project_name(_input)
