@@ -1,6 +1,7 @@
 from flask import g, jsonify, Markup, render_template, redirect, url_for, current_app, abort, flash, request, make_response
 from flask_login import login_required, current_user
 from datetime import datetime
+from mongoengine.queryset.visitor import Q
 
 from . import main
 from .forms import *
@@ -18,19 +19,10 @@ from ..auth.views import get_user_repo_list, get_upperstream_repo
 def db_find_project(project_name):
     return Project.objects(project_name=project_name).first()
 
-
-def db_approximate_find_project_project_name(project_name):
-    _exact_project = db_find_project(project_name)
-    if _exact_project:
-        return _exact_project
-    else:
-        return Project.objects(project_name__endswith=project_name).first()
-
 def db_delete_project(project_name):
     Project.objects(project_name=project_name).delete()
     ProjectFork.objects(project_name=project_name).delete()
     ChangedFile.objects(project_name=project_name).delete()
-
 
 def db_followed_project(project_name):
     if project_name not in current_user.followed_projects:
@@ -132,12 +124,13 @@ def sync():
     """
     _ownered_project = []
     _tmp_project_list = get_user_repo_list(current_user.username)
-    for project in _tmp_project_list:
-        _ownered_project.append((project, project))
-        # Add upperstream_repo
-        upperstream_repo = get_upperstream_repo(project)
-        if upperstream_repo is not None:
-            _ownered_project.append((upperstream_repo, upperstream_repo + "(Upperstream of %s)" % project))
+    if _tmp_project_list:
+        for project in _tmp_project_list:
+            _ownered_project.append((project, project))
+            # Add upperstream_repo
+            upperstream_repo = get_upperstream_repo(project)
+            if upperstream_repo is not None:
+                _ownered_project.append((upperstream_repo, upperstream_repo + "(Upperstream of %s)" % project))
 
     User.objects(username=current_user.username).update_one(set__owned_repo_sync_time=datetime.utcnow())
 
@@ -157,32 +150,27 @@ def guide():
 @main.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    """
-    TODO:implement smart search.
+    # TODO:implement smart search.
     _search_form = SearchProjectForm()
     if _search_form.validate_on_submit():
-        _find_result = db_approximate_find_project_project_name(_input)
-        if _find_result:
-            # TODO(make sure user to follow)
-            db_followed_project(_find_result.project_name)
-            flash('(%s) is followed successfully!' % _find_result.project_name, 'success')
-            return redirect(url_for('main.project_overview', project_name=_find_result.project_name))
-        else:
-            # TODO(not in our database, to add)
-            flash('Sorry, we not find (%s) in your followed list.' % _input, 'warning')
-            return redirect(url_for('main.index'))
-    """
-
-    project_list = Project.objects(
-        project_name__in=current_user.followed_projects)
+        print(_search_form.project_name.data)
+        return redirect(url_for('main.index', search=_search_form.project_name.data))
     
-    if len(project_list) == 0:
-        return redirect(url_for('main.guide'))
+    _keyword_search = request.args.get('search')
+    if _keyword_search:
+        project_list = Project.objects(Q(project_name__in=current_user.followed_projects) & Q(project_name__contains=_keyword_search))
+        if len(project_list) == 0:
+            flash(Markup('Sorry, we don\'t find (%s) in your followed repositories. Try <a href="/find_repos" class="alert-link">Search on GitHub</a>.' % _keyword_search), 'warning')
+            return redirect(url_for('main.index'))
+    else:
+        project_list = Project.objects(project_name__in=current_user.followed_projects)
+        if len(project_list) == 0:
+            return redirect(url_for('main.guide'))
     
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.paginate(page=page, per_page=current_app.config['SHOW_NUMBER_FOR_PAGE'])
     projects = pagination.items
-    return render_template('index.html', projects=projects, pagination=pagination, time_now=datetime.utcnow())
+    return render_template('index.html', projects=projects, pagination=pagination, time_now=datetime.utcnow(), form=_search_form)
 
 
 @main.route('/project/<path:project_name>', methods=['GET', 'POST'])

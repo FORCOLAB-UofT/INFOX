@@ -17,7 +17,7 @@ class DeleteProjectForm(FlaskForm):
 
 
 class SearchProjectForm(FlaskForm):
-    project_name = StringField('Project Name')
+    project_name = StringField('')
     submit = SubmitField('Search')
 
 
