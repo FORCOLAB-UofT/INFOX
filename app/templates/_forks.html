@@ -1,7 +1,7 @@
 <script type="text/javascript"> var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
 
-<!-- Tag -->
 
+<!-- Tag Editor-->
 <script type="text/javascript">   
     $(function() {
         var add_tag = function(e) {
@@ -140,8 +140,9 @@
 </script>
 
 
-<script type="text/javascript">
+<!-- Sort Logic  -->
 
+<script type="text/javascript">
 jQuery.extend( jQuery.fn.dataTableExt.oSort, {
     "custom-number-pre": function ( a ) {
         var r = /\d+\+?(\s)+<\/button>/;
@@ -168,8 +169,8 @@ input[type="text"] {
 }
 </style>
 
+<!-- DataTable  -->
 <script>
-
 $(document).ready(function() {
     
     // Setup - add a text input to each footer cell
@@ -177,7 +178,6 @@ $(document).ready(function() {
         var title = $('#forks-list tfoot th').eq( $(this).index() ).text();
         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
     } );
-    
     
     // DataTable
     var table = $('#forks-list').DataTable({
@@ -203,6 +203,7 @@ $(document).ready(function() {
                 .search( this.value )
                 .draw();
 
+            // Send users' input to server log
             $.getJSON($SCRIPT_ROOT + '/_search_log', {
                 col: colIdx,
                 input: this.value,
@@ -220,6 +221,7 @@ $(document).ready(function() {
             <th>Fork</th>
             <th>
                 Commits
+                {# show the data distribution of commit number #}
                 {#
                 <a href="{{ url_for('.graph', category='commit', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
                     <span class="fa fa-search"></span>
@@ -230,6 +232,7 @@ $(document).ready(function() {
                 <div data-toggle="tooltip" data-placement="top" title="number of changed files, click for list of files">
                     <font size="1px">Changed files</font>
                 </div>
+                {# show the data distribution of file number #}
                 {#
                 <a href="{{ url_for('.graph', category='file', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
                     <span class="fa fa-search"></span>
@@ -238,6 +241,7 @@ $(document).ready(function() {
             </th>
             <th>
                 <font size="1px">Lines of code changed</font>
+                {# show the data distribution of LOC #}
                 {#
                 <a href="{{ url_for('.graph', category='LOC', project_name=project.project_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Data distribution">
                     <span class="fa fa-search"></span>
@@ -276,6 +280,7 @@ $(document).ready(function() {
                     {{ fork.fork_name }}
                 </a>
                 {% if current_user.username == 'infox-test' %}
+                {# prediction for similar fork & tag #}
                     <a href="{{ url_for('main._get_similar_fork',full_name=fork.full_name) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Similar Forks">
                         <span class="fa fa-search"></span>
                     </a>

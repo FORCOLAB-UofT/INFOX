@@ -30,9 +30,7 @@ def create_app(config_name):
 
     def url_for_other_page(page):
         args = request.view_args.copy()
-        #args = request.view_args.items()
-        #args.append(request.args.to_dict().items())
-        #args = dict(args)
+        args.update(request.args.to_dict())
         args['page'] = page
         return url_for(request.endpoint, **args)
     

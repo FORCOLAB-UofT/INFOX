@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% block page_content %} 
     
     <div class="row">
-    	<div class="col-md-2"><h3 class="text-center">Followed Repositories</h3></div>
-    	<div class="col-md-8">
-        	{% include "_projects.html" %}
+        <div class="col-md-2">
+            <h3 class="text-center">Followed Repositories</h3>
+            <h3 class="text-center">
+                {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+            </h3>
+        </div>
+        <div class="col-md-8">
+            {% include "_projects.html" %}
             {% from "_render_pagination.html" import render_pagination %}
             {{ render_pagination(pagination) }}
-      	</div>
+        </div>
     </div>
 
 

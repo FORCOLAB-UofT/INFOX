@@ -15,7 +15,7 @@ class Config:
     LOCAL_DATA_PATH = os.environ.get('INFOX_LOCAL_DATA_PATH')
 
     # Overview page config.
-    SHOW_NUMBER_FOR_PAGE = 10 # Project number per page in index page.
+    SHOW_NUMBER_FOR_PAGE = 3 # Project number per page in index page.
 
     # Github Oauth Apps config.
     GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
