@@ -57,9 +57,8 @@ def start_analyse(repo, access_token):
     repo_info = github_api_caller.get('repos/%s' % repo)
     print('finish fetch repo info for %s' % repo)
 
+    # Save forks' list into local
     forks_list_path = current_app.config['LOCAL_DATA_PATH'] + "/" + repo + '/forks_list.json'
-    # print(forks_list_path)
-    # print(current_app.config['USE_LOCAL_FORKS_LIST'])
     if current_app.config['USE_LOCAL_FORKS_LIST'] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
@@ -71,6 +70,7 @@ def start_analyse(repo, access_token):
 
     project_updater.start_update(repo, repo_info, repo_forks_list)
     
+    # removed comment to enable email sending.
     # send_mail_for_repo_finish(repo)
 
     print("-----finish analysing for %s-----" % repo)
