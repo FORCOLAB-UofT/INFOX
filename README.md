@@ -76,6 +76,32 @@ Http server: uwsgi & nginx
 
 ![code_architecture](./app/static/img/code_architecture.png)
 
+
+
+## Main Part
+
+./app/main - Program Entrance
+
+./app/analyse - Crawler 
+
+./app/analyse/analyser.py - Start Crawler and do analysis, load result into database.
+
+./app/analyse/compare_changes_crawler.py - comparing the diff bewteen two repos.
+
+./app/analyse/clone_crawler.py - Download the source code for repo, prepare for calculation for keywords.
+
+./models.py - Database Model
+
+./app/auth - Logic about account
+
+./app/templates - HTML files(related to ./app/main/views.py)
+
+./app/static - CSS/Javascript/Img Resource
+
+./app/tests - Basic Test
+
+## Configuration Files
+
 ./config.py - Config for Flask
 
 ./config.ini - Config for using uWSGI
@@ -89,26 +115,6 @@ Http server: uwsgi & nginx
 ./requirements.txt - lib install for pip install
 
 ./environment.yaml - env for anaconda
-
------------------------------------------------
-
-./app/main - Program Entrance
-
-./app/analyse - Crawler & Do analysis
-
-./app/analyse/analyser.py is to do analysis from local data and load them into database.
-
-./app/analyse/compare_changes_crawler.py is used for comparing the diff bewteen two repos.
-
-./models.py - Database Model
-
-./app/auth - Logic about account
-
-./app/templates - HTML files(related to ./app/main/views.py)
-
-./app/static - CSS/Javascript/Img Resource
-
-./app/tests - Basic Test
 
 ## Crawler Part
 
