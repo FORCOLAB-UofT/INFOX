@@ -90,6 +90,8 @@ Http server: uwsgi & nginx
 
 ./environment.yaml - env for anaconda
 
+-----------------------------------------------
+
 ./app/main - Program Entrance
 
 ./app/analyse - Crawler & Do analysis
@@ -102,11 +104,23 @@ Http server: uwsgi & nginx
 
 ./app/auth - Logic about account
 
-./app/templates - HTML files
+./app/templates - HTML files(related to ./app/main/views.py)
 
 ./app/static - CSS/Javascript/Img Resource
 
+./app/tests - Basic Test
+
+## Crawler Part
+
+Under ./app/analyse
+
+./app/analyse/analyser.py is the entrance of crawler.
+
+Following is the workflow.
+
+![workflow1](./app/static/img/workflow1.png)
 
 
 
+![workflow2](./app/static/img/workflow2.png)
 
