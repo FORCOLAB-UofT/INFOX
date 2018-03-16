@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f8d1aebf18245f48a1e023ec36bc19b)](https://app.codacy.com/app/FancyCoder0/INFOX?utm_source=github.com&utm_medium=referral&utm_content=FancyCoder0/INFOX&utm_campaign=badger)
-# INFOX [![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX)
+
+# INFOX [![Build Status](https://travis-ci.org/FancyCoder0/INFOX.svg?branch=master)](https://travis-ci.org/FancyCoder0/INFOX) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f8d1aebf18245f48a1e023ec36bc19b)](https://app.codacy.com/app/FancyCoder0/INFOX?utm_source=github.com&utm_medium=referral&utm_content=FancyCoder0/INFOX&utm_campaign=badger)
 
 Website: http://forks-insight.com
 
