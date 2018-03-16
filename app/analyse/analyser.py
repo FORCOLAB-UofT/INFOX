@@ -11,7 +11,6 @@ from ..models import *
 from .. import celery
 from flask_mail import Message
 from .. import mail
-from ..models import *
 
 def send_mail(to, subject, template, **kwargs):
     """ use async to send email

@@ -1,7 +1,7 @@
 import os
 import requests
 import re
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 import platform
 
 from flask import current_app
