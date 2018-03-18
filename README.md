@@ -15,6 +15,7 @@ Database: mongo
 
 Http server: uwsgi & nginx
 
+More on [Wiki Page](https://github.com/FancyCoder0/INFOX/wiki)
 
 
 # Quick Start:
