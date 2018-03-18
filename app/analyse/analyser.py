@@ -69,8 +69,7 @@ def start_analyse(repo, access_token):
 
     project_updater.start_update(repo, repo_info, repo_forks_list)
     
-    # removed comment to enable email sending.
-    # send_mail_for_repo_finish(repo)
+    send_mail_for_repo_finish(repo)
 
     print("-----finish analysing for %s-----" % repo)
 
