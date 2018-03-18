@@ -497,24 +497,6 @@ def repo_list():
         result.append([project.project_name, project.fork_number, project.activate_fork_number, _forks.count()])
     return render_template('repo_list.html', result=result)
 
-@main.route('/find_redudent/<path:project_name>', methods=['GET', 'POST'])
-def find_redudent(project_name):
-    _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
-    result = {}
-    for fork1 in _forks:
-        if len(fork1.file_list) <= 10:
-            for keyword in fork1.key_words_lemmatize_tfidf[:6]:
-                _all_forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0, key_words_lemmatize_tfidf__contains=keyword)
-                for fork2 in _all_forks:
-                    if fork1.full_name != fork2.full_name:
-                        if (len(fork2.file_list) <= 10) and (fork1.key_words_lemmatize_tfidf != fork2.key_words_lemmatize_tfidf):
-                            if set(fork1.file_list).issubset(set(fork2.file_list)):
-                                common_key_words = list(set(fork1.key_words_lemmatize_tfidf[:6]).intersection(set(fork2.key_words_lemmatize_tfidf[:6])))
-                                if len(common_key_words) > 0:
-                                    print(fork1.fork_name, fork2.fork_name, common_key_words)
-                                    result[fork1.fork_name + ' - ' + fork2.fork_name] = common_key_words
-    return jsonify(result)
-
 @main.route('/privacy_policy', methods=['GET', 'POST'])
 def privacy_policy():
     return render_template('privacy_policy.html')
