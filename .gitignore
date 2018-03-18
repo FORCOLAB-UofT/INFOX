@@ -3,4 +3,5 @@
 .vscode
 ghostdriver.log
 *.pyc
+.coverage
 
