@@ -1,11 +1,13 @@
+"""
 import os
 import requests
 import re
-# import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET
 import platform
 
 from flask import current_app
 from .util import language_tool
+"""
 
 def get_info_from_fork_changed_code(project_full_name):
     all_name_list = []
