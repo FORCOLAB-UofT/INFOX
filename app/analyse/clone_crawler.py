@@ -45,7 +45,7 @@ class CloneCrawler:
                         try:
                             content = f.read()
                             # print(content)
-                            tokens = set(word_extractor.get_words_from_text(
+                            tokens = set(word_extractor.get_words_from_file(
                                 file_name, content))
                             self.doc_sets.append(tokens)
                             suceessful_file_number += 1

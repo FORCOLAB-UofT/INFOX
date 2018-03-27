@@ -42,7 +42,7 @@ class ForkUpdater:
         changed_line = file["added_line"]
 
         # process on changed code, get the tokens from changed code
-        tokens = word_extractor.get_words_from_text(file_name, added_code)
+        tokens = word_extractor.get_words_from_file(file_name, added_code)
         # lemmatize_tokens = word_extractor.lemmatize_process(tokens)
         # stemmed_tokens = word_extractor.stem_process(tokens)
 

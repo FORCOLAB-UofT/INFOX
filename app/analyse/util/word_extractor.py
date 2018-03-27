@@ -105,7 +105,7 @@ def lemmatize_process(tokens):
 def move_other_char(text):
     return re.sub("[^0-9A-Za-z_]", "", text)
 
-def get_words_from_text(file, text):
+def get_words_from_file(file, text):
     """
         Args:
             file: file full name
@@ -113,7 +113,7 @@ def get_words_from_text(file, text):
         Returns:
             A list of the tokens of the result of the participle. 
     """
-    if not language_tool.is_text(file):
+    if file and (not language_tool.is_text(file)):
         return []
     if text is None:
         return []
@@ -134,6 +134,8 @@ def get_words_from_text(file, text):
     # stemmed_tokens = [PorterStemmer().stem(word) for word in tokens] # do stem on the tokens
     return tokens
 
+def get_words(text):
+    return get_words_from_file('1.txt', text)
 
 def get_counter(tokens):
     tokens = filter(lambda x: x is not None, tokens)

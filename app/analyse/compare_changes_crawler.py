@@ -106,14 +106,20 @@ def fetch_diff_code(project_full_name):
 
         parts = re.split('@@.*?-.*?\+.*?@@', diff[st.start():])
         start_with_plus_regex = re.compile('^\++')
+        start_with_minus_regex = re.compile('^\-+')
+        
         diff_code = ""
         diff_code_line = 0
         for part in parts:
             # only filter added code
-            lines_of_code = filter(lambda x: (x) and (x[0] == '+'), part.splitlines())
-            lines_of_code = [start_with_plus_regex.sub('', x) for x in lines_of_code]
-            diff_code += '\n'.join(lines_of_code) + '\n'
-            diff_code_line += len(lines_of_code)
+            added_lines_of_code = filter(lambda x: (x) and (x[0] == '+'), part.splitlines())
+            added_lines_of_code = [start_with_plus_regex.sub('', x) for x in added_lines_of_code]
+
+            deleted_lines_of_code = filter(lambda x: (x) and (x[0] == '-'), part.splitlines())
+            deleted_lines_of_code = [start_with_minus_regex.sub('', x) for x in deleted_lines_of_code]
+
+            diff_code += '\n'.join(added_lines_of_code) + '\n'
+            diff_code_line += len(added_lines_of_code)
         
         # TODO change diff_link to code position
         file_list.append({"file_full_name": file_full_name, "file_suffix": file_suffix,
@@ -139,7 +145,7 @@ def fetch_compare_page(project_full_name):
     return {"file_list": file_list,
             "commit_list": commit_list}
 
-"""
+
 if __name__ == '__main__':
     # Used for testing
     # print(fetch_diff_code('shuiblue/INFOX-1'))
@@ -151,4 +157,3 @@ if __name__ == '__main__':
     for i in t["commit_list"]:
         print(i["title"])
     #fetch_compare_page('aJanker/TypeChef')
-"""
