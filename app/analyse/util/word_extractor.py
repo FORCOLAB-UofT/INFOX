@@ -152,4 +152,4 @@ def get_top_words(tokens, top_number, list_option = True):
 
 # just for test
 def get_top_words_from_text(text, top_number=10):
-    return get_top_words(get_words_from_text('1.txt', text), top_number)
+    return get_top_words(get_words(text), top_number)
