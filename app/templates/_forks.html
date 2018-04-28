@@ -167,6 +167,10 @@ input[type="text"] {
      -webkit-box-sizing:border-box;
      -moz-box-sizing: border-box;
 }
+mark {
+  padding: 0;
+  background: green !important;
+}
 </style>
 
 <!-- DataTable  -->
@@ -192,7 +196,8 @@ $(document).ready(function() {
         buttons: [
             'copy', 'csv', 'excel', 'print'
         ],
-        "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+        "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        "mark": true,
     });
 
     // Apply the search
