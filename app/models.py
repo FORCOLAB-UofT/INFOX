@@ -31,7 +31,7 @@ class ChangedFile(db.Document):
 
 class ProjectFork(db.Document):
     full_name = db.StringField(required=True, primary_key=True)
-    fork_name = db.StringField(unique=True)
+    fork_name = db.StringField()
     project_name = db.StringField()
     last_committed_time = db.DateTimeField()
     created_time = db.DateTimeField()

@@ -189,10 +189,11 @@ def start_update(project_name, repo_info, forks_info):
     code_clone_crawler = CloneCrawler(project_name)
     for fork in forks_info:
         forks_count += 1
-        ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
+        try:
+            ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
+        finally:
+            Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
+            Project.objects(project_name=project_name).update(last_updated_time=datetime.utcnow())
 
-        Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
-        Project.objects(project_name=project_name).update(last_updated_time=datetime.utcnow())
-    
     Project.objects(project_name=project_name).update(analyser_progress="%d%%" % 100)
 
