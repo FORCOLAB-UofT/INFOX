@@ -102,13 +102,9 @@ class ForkUpdater:
                 return
         else:
             # If the compare result is not crawled, start to crawl.
-            try:
-                compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
-                if compare_result is not None:
-                    localfile_tool.write_to_file(self.diff_result_path, compare_result)
-            except:
-                # Something error(maybe it's empty)!
-                return
+            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
+            if compare_result is not None:
+                localfile_tool.write_to_file(self.diff_result_path, compare_result)
 
         for file in compare_result["file_list"]:
             try:
@@ -135,33 +131,31 @@ class ForkUpdater:
         project_name_stop_words = (self.project_name + '/' + self.fork_name).split('/')
         self.all_lemmatize_tokens = list(filter(lambda x: x not in project_name_stop_words, self.all_lemmatize_tokens))
 
-        try:
-            # Update forks into database.
-            ProjectFork(
-                full_name=self.project_name + '/' + self.fork_name,
-                fork_name=self.fork_name,
-                project_name=self.project_name,
-                total_changed_file_number=len(file_distinct),
-                total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
-                total_commit_number=len(compare_result["commit_list"]),
-                commit_list=compare_result["commit_list"],
-                last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
-                created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
-                file_list=file_distinct,
-                key_words=word_extractor.get_top_words(self.all_tokens, 10),
-                key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 10),
-                # key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
-                # key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
-                # key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
-                # key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
-                variable=word_extractor.get_top_words(changed_code_name_list, 10),
-                function_name=word_extractor.get_top_words(changed_code_func_list, 10),
-                last_updated_time=datetime.utcnow(),
-                # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 10),
-                # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 10, False),
-            ).save()
-        except:
-            pass
+        # Update forks into database.
+        ProjectFork(
+            full_name=self.project_name + '/' + self.fork_name,
+            fork_name=self.fork_name,
+            project_name=self.project_name,
+            total_changed_file_number=len(file_distinct),
+            total_changed_line_number=sum([x["added_line"] for x in compare_result["file_list"]]),
+            total_commit_number=len(compare_result["commit_list"]),
+            commit_list=compare_result["commit_list"],
+            last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
+            created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ"),
+            file_list=file_distinct,
+            key_words=word_extractor.get_top_words(self.all_tokens, 10),
+            key_words_lemmatize_tfidf=self.get_tf_idf(self.all_lemmatize_tokens, 10),
+            # key_words_dict=word_extractor.get_top_words(self.all_tokens, 10, False),
+            # key_words_tfidf=self.get_tf_idf(self.all_tokens, 10),
+            # key_words_tf_idf_dict=self.get_tf_idf(self.all_tokens, 10, False),
+            # key_words_lemmatize_tfidf_dict=self.get_tf_idf(self.all_lemmatize_tokens, 10, False),
+            variable=word_extractor.get_top_words(changed_code_name_list, 10),
+            function_name=word_extractor.get_top_words(changed_code_func_list, 10),
+            last_updated_time=datetime.utcnow(),
+            # key_stemmed_words=word_extractor.get_top_words(self.all_stemmed_tokens, 10),
+            # key_stemmed_words_dict=word_extractor.get_top_words(self.all_stemmed_tokens, 10, False),
+        ).save()
+
 
 def get_activate_fork_number(forks_info):
     number = 0
@@ -191,9 +185,10 @@ def start_update(project_name, repo_info, forks_info):
         forks_count += 1
         try:
             ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
+        except Exception as inst:
+            print(inst)
         finally:
             Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
             Project.objects(project_name=project_name).update(last_updated_time=datetime.utcnow())
-
     Project.objects(project_name=project_name).update(analyser_progress="%d%%" % 100)
 
