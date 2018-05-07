@@ -38,24 +38,24 @@ class CloneCrawler:
             no_text_file_numer = 0
             for file_name in fs:
                 file_full_name = os.path.join(fpath, file_name)
-                if language_tool.is_text(file_name) and os.path.getsize(file_full_name) <= 1024 * 100:
-                    # print(file_full_name)
-                    # file_lists.append(file_full_name)
-                    with codecs.open(file_full_name, 'rU', 'utf-8') as f:
-                        try:
-                            content = f.read()
-                            # print(content)
-                            tokens = set(word_extractor.get_words_from_file(
-                                file_name, content))
-                            self.doc_sets.append(tokens)
-                            suceessful_file_number += 1
-                        except:
-                            pass
-                    # print("finish")
-                else:
-                    no_text_file_numer+=1
-                    if no_text_file_numer > 50:
-                        break
+
+                try:
+                    if language_tool.is_text(file_name):
+                        if os.path.getsize(file_full_name) <= 1024 * 100:
+                            # print(file_full_name)
+                            with codecs.open(file_full_name, 'rU', 'utf-8') as f:
+                                content = f.read()
+                                tokens = set(word_extractor.get_words_from_file(file_name, content))
+                                self.doc_sets.append(tokens)
+                                suceessful_file_number += 1
+                    else:
+                        no_text_file_numer+=1
+                except:
+                    pass
+    
+                if no_text_file_numer > 50:
+                    break
+
         print('%s suceessful_file_number: %d' %
               (self.project_name, suceessful_file_number))
 
