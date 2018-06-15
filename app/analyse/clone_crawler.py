@@ -26,7 +26,7 @@ class CloneCrawler:
         """ Get all the text content.
         """
         folder = '%s/%s/source_code' % (
-            current_app.config['INFOX_LOCAL_DATA_PATH'], self.project_name)
+            current_app.config['LOCAL_DATA_PATH'], self.project_name)
         # TODO(luyao) Some problem. file may be update.
         if not os.path.exists(folder):
             os.system('git clone --depth=1 https://github.com/%s.git %s' %
