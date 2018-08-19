@@ -27,23 +27,23 @@
                 </div>
                  {% if current_user.is_authenticated %}
                         {% if project.project_name in current_user.followed_projects %}
-                            <a type="button" class="btn btn-outline-info btn-sm pull-right" href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}">
-                                Remove
-                            </a>
+                            <button type="button" class="btn btn-outline-info btn-sm pull-right">
+                                <a href="{{ url_for('.unfollowed_project', project_name = project.project_name)}}" style="color:inherit">Remove</a>
+                            </button>
                         {% else %}
-                            <a type="button" class="btn btn-outline-primary btn-sm pull-right" href="{{ url_for('.followed_project', project_name = project.project_name)}}">
-                                Follow
-                            </a>
+                            <button type="button" class="btn btn-outline-primary btn-sm pull-right">
+                                <a href="{{ url_for('.followed_project', project_name = project.project_name)}}" style="color:inherit">Follow</a>
+                            </button>
                         {% endif %}
                 {% endif %}
 
                 {% if current_user.is_administrator %}
-                    <a type="button" class="btn btn-outline-success btn-sm" href="{{ url_for('.project_refresh', project_name = project.project_name)}}">
-                        Refresh
-                    </a>
-                    <a type="button" class="btn btn-outline-danger btn-sm" href="{{ url_for('.delete_project', project_name = project.project_name)}}">
-                        Delete
-                    </a>
+                    <button type="button" class="btn btn-outline-success btn-sm">
+                        <a href="{{ url_for('.project_refresh', project_name = project.project_name)}}" style="color:inherit">Refresh</a>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm">
+                        <a href="{{ url_for('.delete_project', project_name = project.project_name)}}" style="color:inherit">Delete</a>
+                    </button>
                     <div> {{ "Progress = %s" % project.analyser_progress }} </div>
                 {% endif %}
 
