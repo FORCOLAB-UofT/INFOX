@@ -69,6 +69,8 @@ More on [Wiki Page](https://github.com/FancyCoder0/INFOX/wiki)
    ```
 
 6. Deploy on server:
+   An quick tutorial: [A Simple Tutorial for deploying your Flask application with uWSGI + nginx on server without root permission
+]https://gist.github.com/FancyCoder0/f63e18123bd7f47bfe2a1f586cae02ba
 
    An example: [Serve Flask Applications with uWSGI and Nginx on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04)
 
