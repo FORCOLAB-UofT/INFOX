@@ -11,7 +11,8 @@ from ..analyse.util import localfile_tool
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return github.authorize(scope="user:email")
+    next_url = request.args.get('next') or url_for('main.index')
+    return github.authorize(scope="user:email", redirect_uri="http://forks-insight.com/auth/callback?next=%s" % next_url)
 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -73,6 +74,6 @@ def github_login(access_token):
     login_user(_user, True)
     
     # print("login acc=%s" % g.github_access_token)
-    
-    return redirect(request.args.get('next') or url_for('main.index'))
+    next_url = request.args.get('next') or url_for('main.index')
+    return redirect(next_url)
 
