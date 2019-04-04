@@ -130,7 +130,5 @@ Following is the workflow.
 
 ![workflow1](./app/static/img/workflow1.png)
 
-
-
 ![workflow2](./app/static/img/workflow2.png)
 
