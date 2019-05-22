@@ -3,9 +3,12 @@
 
 Website: http://forks-insight.com
 
-Another related repo: https://github.com/shuiblue/INFOX
+[Poster: Forks Insight: Providing an Overview of GitHub Forks](https://www.cs.cmu.edu/~ckaestne/pdf/icse18poster.pdf)
 
- 
+[Another related repo](https://github.com/shuiblue/INFOX)
+
+
+# Framework
 
 Language: Python3
 
