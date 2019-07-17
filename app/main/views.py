@@ -53,6 +53,9 @@ def start():
 def welcome():
     return render_template('welcome.html')
 
+@main.route('/INTRUDE-welcome', methods=['GET', 'POST'])
+def INTRUDE_welcome():
+    return render_template('INTRUDE-welcome.html')
 
 @main.route('/compare_forks', methods=['GET', 'POST'])
 def compare_forks():
