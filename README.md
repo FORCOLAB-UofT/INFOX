@@ -5,6 +5,8 @@ Website: http://forks-insight.com
 
 [Poster: Forks Insight: Providing an Overview of GitHub Forks](https://www.cs.cmu.edu/~ckaestne/pdf/icse18poster.pdf)
 
+[Full paper: INFOX: Identifying Features in Forks](https://www.cs.cmu.edu/~shuruiz/paper/INFOX_ICSE2018.pdf)
+
 [Another related repo](https://github.com/shuiblue/INFOX)
 
 
