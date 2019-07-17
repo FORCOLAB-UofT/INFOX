@@ -1,0 +1,120 @@
+
+<head>
+    <link rel="icon" href="{{ url_for('static', filename='img/fav.ico')}}" type="image/x-coin">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/docs.js') }}"></script>
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/one-page-wonder.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/doc.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+        <!-- Navigation Begin -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <div class="container">
+            <a class="navbar-brand" href="#">INTRUDE<sub>alpha</sub> - Identifying Redundant Development in Forks </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="btn btn-block btn-social btn-github" onclick="" href="{{ url_for('auth.login') }}">
+                      <span class="fa fa-github"></span> Sign in 
+                    </a>
+                </li>
+                
+              </ul>
+            </div>
+    
+          </div>
+        </nav>
+        <!-- Navigation End -->
+
+        <header class="masthead">
+          <div class="overlay">
+            <div class="container">
+              <h1 class="display-1 text-white">INTRUDE<sub>beta</sub></h1>
+              <h2 class="display-4 text-white">Identifying Redundant Development in Forks</h2>
+              <br><br>
+              <p class="text-white">Redundant development wastes effort for both maintainers
+and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests.
+            </p>
+            </div>
+          </div>
+        </header>
+    
+     
+    
+        <section>
+          <div class="container">
+ <!--            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="p-5">
+                  <img class="img-fluid rounded" src="{{ url_for('static', filename='img/overview.png') }}" alt="">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="p-5">
+                  <h3 class="display-5">Identifying Redundant Development in Forks</h3>
+                  <p>Redundant development wastes effort for both maintainers
+and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests.</p>
+                </div>
+              </div>
+            </div> -->
+       <!--      <div class="row align-items-center">
+              <div class="col-md-6 order-2">
+                <div class="p-5">
+                  <img class="img-fluid rounded" src="{{ url_for('static', filename='img/Dup-amongOctocats.png') }}" alt="">
+                </div>
+              </div>
+              <div class="col-md-6 order-1">
+                <div class="p-5">
+                  <h3 class="display-5">Label and Monitor Forks</h3>
+                  <p>Identify and label forks with interesting activities, for example to scout for ideas and pull requests.
+                  Monitor interesting forks to keep up with changes. Track the activity of an entire community on GitHub. Get started by <a href="{{ url_for('auth.login') }}">signing in</a> with your GitHub account.</p>
+                </div>
+              </div>
+            </div> -->     
+            <div class="row align-items-center">
+              <div class="col-md-12 order-1">
+                <div class="p-5">
+                  <h3 class="display-5">Identifying Redundant Development in Forks</h3>
+                  <p>Redundant development wastes effort for both maintainers
+and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row align-items-center">
+              <div class="col-md-12 order-1">
+                <div class="p-5">
+                  <h3 class="display-5">Research and Contribution</h3>
+                  <p>INTRUDE comes out of an NSF-funded research project at Carnegie Mellon University, identfying potentially redundant development in open-source software development.
+                  	INTRUDE is open source and hosted for the community. We would love to hear your ideas and feedback. Explore the <a href="https://github.com/shuiblue/INTRUDE">source</a> or <a href="https://github.com/shuiblue/INTRUDE/issues">open an issue</a>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+    
+  <footer class="sticky-footer">
+    <div class="container">
+      <div class="text-center">
+        <a href="{{ url_for('main.about') }}">Contact</a> &middot;
+        <a href="https://github.com/shuiblue/INTRUDE">INTRUDE on GitHub</a> &middot;
+        <a href="https://github.com/shuiblue/INTRUDE/issues">Open an Issue</a> 
+        <hr>
+        <small>Copyright © 2019</small>
+      </div>
+    </div>
+  </footer>
+<body>
