@@ -57,6 +57,10 @@ def welcome():
 def INTRUDE_welcome():
     return render_template('INTRUDE-welcome.html')
 
+@main.route('/INTRUDE-subscribe', methods=['GET', 'POST'])
+def INTRUDE_subscribe():
+    return render_template('INTRUDE-subscribe.html')
+
 @main.route('/compare_forks', methods=['GET', 'POST'])
 def compare_forks():
     """ Compare two forks by Key words
