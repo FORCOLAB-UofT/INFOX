@@ -57,6 +57,7 @@ and developers. INTRUDE is a GitHub bot to detect potentially redundant pull req
     
         <section>
           <div class="container">
+           
  <!--            <div class="row align-items-center">
               <div class="col-md-6">
                 <div class="p-5">
@@ -86,38 +87,40 @@ and developers. INTRUDE is a GitHub bot to detect potentially redundant pull req
               </div>
             </div> -->     
             <div class="row align-items-center">
+
               <div class="col-md-12 order-1">
                 <div class="p-5">
                   <h3 class="display-5">Identifying Redundant Development in Forks</h3>
-                  <p>Redundant development wastes effort for both maintainers and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests. </p>
-                </div>
-                  <div class="p-5">
-                  <h4 class="display-5">Subscribe Here</h4>
-                  <p>This bot is currently in its alpha stage, and we are only sending at most one comment per repository. If you are interested, please <a href="/INTRUDE-subscribe" >subscribe</a>! 
+                  <p>Redundant development wastes effort for both maintainers and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests. It monitors all pull requests in a repository, and if it finds two pull requests that are very similar, it automatically comments on the issue, pointing out the similarity.
+                  </p>
+                  <p>Our goal is to identify redundant code changes in forks as early as possible by extracting clues indicating similarities between code changes, and building a machine learning model to predict redundancies.</p>
+
+                  <p>An academic paper describing more technical details and an evaluation has been published:</p>
+                  L. Ren, S. Zhou, C. Kästner, and A. Wąsowski. Identifying Redundancies in Fork-based Development. In Proceedings of the 27th IEEE International Conference on Software Analysis, Evolution and Reengineering (SANER), pages 230--241, 2019. <a href="https://www.cs.cmu.edu/~shuruiz/paper/saner19-RedundantDev.pdf"  target="_blank">[pdf]</a> 
+
+                  <br><br>
+                  <h3 class="display-5">Subscribe Here</h3>
+                  <p>This bot is currently in its alpha stage. We are monitoring a limited number of repositories and are sending a single comment on the first suspected duplicate pull request we find. We hope to offer the bot as a service soon. If you are interested, please <a href="/INTRUDE-subscribe" >subscribe</a>! 
                 </p>
-                </div>
 
-              </div>
-            </div>
-            <div class="row align-items-center">
-              <div class="col-md-12 order-1">
-                <div class="p-5">
-                  <h3 class="display-5">INTRUDE Bot Team</h3>
+                <br> 
+                 <h3 class="display-5">INTRUDE Bot Team</h3>
                   <p>We are researchers at <a href-"https://www.cmu.edu/"  target="_blank" >Carnegie Mellon University</a> developing a bot to monitor GitHub projects and alert project maintainers to potentially duplicate pull requests. <a href="https://www.cs.cmu.edu/~shuruiz/"  target="_blank" >Shurui Zhou</a> is a Ph.D. student studying under Professor <a href = "https://www.cs.cmu.edu/~ckaestne/"  target="_blank" >Christian Kästner.</a> Annika Esau is an undergraduate <a href="https://www.cmu.edu/scs/isr/reuse/"  target="_blank" >REU</a> student. </p>
-                </div>
-              </div>
-            </div>
 
 
-            <div class="row align-items-center">
-              <div class="col-md-12 order-1">
-                <div class="p-5">
-                  <h3 class="display-5">Research and Contribution</h3>
                   <p>INTRUDE comes out of an NSF-funded research project at Carnegie Mellon University, identfying potentially redundant development in open-source software development.
-                  	INTRUDE is open source and hosted for the community. We would love to hear your ideas and feedback. Explore the <a href="https://github.com/shuiblue/INTRUDE"  target="_blank" >source</a> or <a href="https://github.com/shuiblue/INTRUDE/issues"  target="_blank" >open an issue</a>.</p>
+                    INTRUDE is open source and hosted for the community. We would love to hear your ideas and feedback. Explore the <a href="https://github.com/shuiblue/INTRUDE"  target="_blank" >source</a> or <a href="https://github.com/shuiblue/INTRUDE/issues"  target="_blank" >open an issue</a>.</p>
+
+
+
                 </div>
+              
+
               </div>
             </div>
+     
+
+ 
           </div>
         </section>
     
