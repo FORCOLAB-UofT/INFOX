@@ -25,24 +25,30 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
+    
           </div>
         </nav>
-
+      
+    
      
     
         <section>
           <div class="container">
+ <br><br><br>
+ <h3>Consent Agreement</h3>
+ <p> We're conducting this survey as part of a research project to find out problems and practices in fork-based development and how tool support can help to solve those problems. It should take no more than 5 minutes. Any participant should be at least 18. Your participation in this study is voluntary. We wll just save your feedback to supplement our notes, but we will not release any information without anonymization. The records may be reviewed by the study sponsor, in this case NSF.</p> 
 
-            <div class="row align-items-center">
+<h2>Thank you for your input! Here are two short questions:</h2>    
+        <!--     <div class="row align-items-center">
               <div class="col-md-12 order-1">
                 <div class="p-5">
                   <h3 class="display-5">Identifying Redundant Development in Forks</h3>
                   <p>Redundant development wastes effort for both maintainers
                     and developers. INTRUDE is a GitHub bot to detect potentially redundant pull requests. This bot is currently in its alpha stage, so our subscription is not up and running just yet. Nevertheless, if you wish to subscribe to our service and support us, please provide your information here so we can contact you at a later date. 
                   </p>
-             <form action="/INTRUDE-subscribe" method="POST" onSubmit="alert('Thank you for your support!');">
+             <form action="/INTRUDE-welcome" onSubmit="alert('Thank you for your support!');">
                Github Login ID: <input type="text" name="loginID" ><br>
-               <input class="input-group-field" type="email" name ="email" placeholder="Email" required>
+               <input class="input-group-field" type="email" placeholder="Email" required>
                <br><br>
                 <input type="submit" value="Subscribe">
               </form>
@@ -50,8 +56,50 @@
 
                 </div>
               </div>
-            </div>
+            </div> -->
+            <div class="row align-items-center">
+              <div class="col-md-12 order-1">
+                <div class="p-5">
+                  <h3 class="display-5">Research and Contribution</h3>
+             <p> Your response of #PR_1[link] might be duplicate with #PR_2[link] </p>
 
+<input type="checkbox" name="vehicle1" value="Bike"  onclick="return false;" disabled="disabled" checked> This pull request is a duplicate, so this comment was useful<br>
+<input type="checkbox" name="vehicle2" value="Car"> This pull request is not a duplicate, but this comment was useful nevertheless.
+<br>
+<input type="checkbox" name="vehicle3" value="Boat"> This pull request is not a duplicate, so this comment was not useful.
+<br>
+<input type="checkbox" name="vehicle3" value="Boat"> I do not need this service, so this comment was not useful.
+<br>
+
+  <hr>
+<p>If you'd like to help us out <b>even more</b>, please let us know below why this comment
+    was useful to you... <p>
+</p><form>
+    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<!-- <input type="submit" value="Submit"> -->
+  </form>
+<p></p><p>...and how we could improve: </p><p>
+</p><form>
+    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Submit">
+  </form>
+  <br>
+  <hr>
+<p></p><p></p><p><b>Who are we?</b>
+</p><p> We are researchers at <a href="https://www.cmu.edu/">Carnegie Mellon University</a> developing a bot to monitor GitHub projects
+    and alert project maintainers to potentially duplicate pull requests.
+    <a href="https://www.cs.cmu.edu/~shuruiz/">Shurui Zhou</a> is a fifth-year PhD student studying under
+    Dr. <a href="https://www.cs.cmu.edu/~ckaestne/">Christian Kaestner</a>.
+    <a href="https://www.scs.cmu.edu/directory/aesau">Annika Esau</a> is an undergraduate
+    <a href="https://www.cmu.edu/scs/isr/reuse/">REU</a> student.
+              
+
+    <h3 class="display-5">Identifying Redundant Development in Forks</h3>
+                  <p> <a href = "/INTRUDE-welcome" target="_blank">INTRUDE</a> is a GitHub bot to detect potentially redundant pull requests. It monitors all pull requests in a repository, and if it finds two pull requests that are very similar, it automatically comments on the issue, pointing out the similarity.Our goal is to identify redundant code changes in forks as early as possible by extracting clues indicating similarities between code changes, and building a machine learning model to predict redundancies.</p>
+
+                </div>
+              </div>
+            </div>
           </div>
         </section>
     
