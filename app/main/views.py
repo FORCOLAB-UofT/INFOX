@@ -75,20 +75,24 @@ def INTRUDE_survey():
     f = open("/DATA/luyao/dupPR/surveyResponse.txt", "a+")
     f.write("%s:%s,%s,%s,%s\n" % (str(datetime.datetime.now()), repo, pr1, pr2, response))
     f.close()
-    return render_template('INTRUDE-survey.html',repo_url=repo,pr1_id=pr1,pr2_id=pr2,PRcomment_response=response)
+    return render_template('INTRUDE-survey.html', repo_url=repo, pr1_id=pr1, pr2_id=pr2, PRcomment_response=response)
+
 
 @main.route('/INTRUDE-Thankyou', methods=['GET', 'POST'])
 def INTRUDE_extraQuestion():
     reason_useful = request.form['reason_useful']
     how_to_improve = request.form['how_to_improve']
 
+    repo = request.form['repo']
+    pr1 = request.form['pr1']
+    pr2 = request.form['pr2']
+
 
     f = open("/DATA/luyao/dupPR/surveyResponse_extra.txt", "a+")
-    f.write("%s:%s,%s\n" % (str(datetime.datetime.now()), reason_useful, how_to_improve))
+    f.write("%s:%s,%s,%s,%s,%s\n" % (str(datetime.datetime.now()), repo, pr1, pr2, reason_useful, how_to_improve))
     f.close()
-    flash("flash test!!!!")
-    return render_template('INTRUDE-Thankyou.html')
 
+    return render_template('INTRUDE-Thankyou.html')
 
 
 @main.route('/INTRUDE-subscribe', methods=['GET', 'POST'])

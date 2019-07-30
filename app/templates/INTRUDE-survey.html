@@ -140,16 +140,18 @@
                     was useful to you...
                 <p>
                 </p>
-                {#                                <form action="#" onSubmit="WriteToFile(this);return false">#}
-                {#                                    <form action="/INTRUDE-welcome" id="my-form">#}
                 <form action="/INTRUDE-Thankyou" method="POST">
-
-                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="reason_useful" rows="4" cols="100"></textarea><br>
+                    <input type="hidden" name="repo" value={{ repo_url }}>
+                    <input type="hidden" name="pr1" value={{ pr1_id }}>
+                    <input type="hidden" name="pr2" value={{ pr2_id }}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="reason_useful" rows="4" cols="100"></textarea>
+                    <br>
 
                     <p>...and how we could improve: </p>
 
-                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="how_to_improve" rows="4" cols="100"></textarea><br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Submit">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="how_to_improve" rows="4" cols="100"></textarea>
+                    <br>
+                    <input type="submit" value="Submit">
 
                 </form>
 
