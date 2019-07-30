@@ -1,12 +1,18 @@
-
 <head>
-    <link rel="icon" href="{{ url_for('static', filename='img/fav.ico')}}" type="image/x-coin">
+    <link rel="icon" href="{{ url_for('static', filename='img/fav.ico') }}" type="image/x-coin">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/docs.js') }}"></script>
     <!-- Custom styles for this template -->
@@ -14,31 +20,33 @@
     <link href="{{ url_for('static', filename='css/bootstrap-social.css') }}" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/doc.css') }}" rel="stylesheet">
-
 </head>
 
 <body>
-        <!-- Navigation Begin -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-          <div class="container">
-            <a class="navbar-brand" href="#">INTRUDE<sub>alpha</sub> - Identifying Redundant Development in Forks </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-    
-          </div>
-        </nav>
-      
-    
-     
-    
-        <section>
-          <div class="container">
- <br><br><br>
- <h3>Consent Agreement</h3>
- <p> We're conducting this survey as part of a research project to find out problems and practices in fork-based development and how tool support can help to solve those problems. It should take no more than 5 minutes. Any participant should be at least 18. Your participation in this study is voluntary. We wll just save your feedback to supplement our notes, but we will not release any information without anonymization. The records may be reviewed by the study sponsor, in this case NSF.</p> 
+<!-- Navigation Begin -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">INTRUDE<sub>alpha</sub> - Identifying Redundant Development in Forks </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<h2>Thank you for your input! Here are two short questions:</h2>    
+    </div>
+</nav>
+
+
+<section>
+    <div class="container">
+        <br><br><br>
+        <h3>Consent Agreement</h3>
+        <p> We're conducting this survey as part of a research project to find out problems and practices in fork-based
+            development and how tool support can help to solve those problems. It should take no more than 5 minutes.
+            Any participant should be at least 18. Your participation in this study is voluntary. We wll just save your
+            feedback to supplement our notes, but we will not release any information without anonymization. The records
+            may be reviewed by the study sponsor, in this case NSF.</p>
+
+        <h2>Thank you for your input! Here are two short questions:</h2>
         <!--     <div class="row align-items-center">
               <div class="col-md-12 order-1">
                 <div class="p-5">
@@ -57,61 +65,133 @@
                 </div>
               </div>
             </div> -->
-            <div class="row align-items-center">
-              <div class="col-md-12 order-1">
-                <div class="p-5">
-                  <h3 class="display-5">Research and Contribution</h3>
-             <p> Your response of #PR_1[link] might be duplicate with #PR_2[link] </p>
 
-<input type="checkbox" name="vehicle1" value="Bike"  onclick="return false;" disabled="disabled" checked> This pull request is a duplicate, so this comment was useful<br>
-<input type="checkbox" name="vehicle2" value="Car"> This pull request is not a duplicate, but this comment was useful nevertheless.
-<br>
-<input type="checkbox" name="vehicle3" value="Boat"> This pull request is not a duplicate, so this comment was not useful.
-<br>
-<input type="checkbox" name="vehicle3" value="Boat"> I do not need this service, so this comment was not useful.
-<br>
 
-  <hr>
-<p>If you'd like to help us out <b>even more</b>, please let us know below why this comment
-    was useful to you... <p>
-</p><form>
-    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<!-- <input type="submit" value="Submit"> -->
-  </form>
-<p></p><p>...and how we could improve: </p><p>
-</p><form>
-    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Submit">
-  </form>
-  <br>
-  <hr>
-<p></p><p></p><p><b>Who are we?</b>
-</p><p> We are researchers at <a href="https://www.cmu.edu/">Carnegie Mellon University</a> developing a bot to monitor GitHub projects
-    and alert project maintainers to potentially duplicate pull requests.
-    <a href="https://www.cs.cmu.edu/~shuruiz/">Shurui Zhou</a> is a fifth-year PhD student studying under
-    Dr. <a href="https://www.cs.cmu.edu/~ckaestne/">Christian Kaestner</a>.
-    <a href="https://www.scs.cmu.edu/directory/aesau">Annika Esau</a> is an undergraduate
-    <a href="https://www.cmu.edu/scs/isr/reuse/">REU</a> student.
-              
+    </div>
 
-    <h3 class="display-5">Identifying Redundant Development in Forks</h3>
-                  <p> <a href = "/INTRUDE-welcome" target="_blank">INTRUDE</a> is a GitHub bot to detect potentially redundant pull requests. It monitors all pull requests in a repository, and if it finds two pull requests that are very similar, it automatically comments on the issue, pointing out the similarity.Our goal is to identify redundant code changes in forks as early as possible by extracting clues indicating similarities between code changes, and building a machine learning model to predict redundancies.</p>
+    <div class="row align-items-center">
+        <div class="col-md-12 order-1">
+            <div class="p-5">
+                <h3 class="display-5">Research and Contribution</h3>
+                <p> Your response of repository <a href="https://github.com/">{{ repo_url }}</a>: #PR_{{ pr1_id }}
+                    might be duplicate with #PR_{{ pr2_id }}  </p>
+
+                {#                    <input type="checkbox" name="dup_useful" value="dup_useful" onclick="return false;"#}
+                {#                           disabled="disabled" checked> This pull request is a duplicate, so this comment was useful<br>#}
+
+                <div class="TxtTile">
 
                 </div>
-              </div>
+
+                <script type="text/javascript">
+                    function getUrlVars() {
+                        var vars = {};
+                        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                            vars[key] = value;
+                        });
+                        return vars;
+                    }
+
+                    var PRcomment_response = getUrlVars()["response"];
+
+                    var template = [];
+
+                    if (PRcomment_response == "dup_useful") {
+                        template.push(
+                            '<input type="checkbox" id="dup_useful" disabled checked> This pull request is a duplicate, so this comment was useful<br>',
+                            '<input type="checkbox" id="notDup_useful" disabled> This pull request is not a duplicate, but this comment was useful nevertheless.<br>',
+                            '<input type="checkbox" id="notDup_notUseful" disabled> This pull request is not a duplicate, so this comment was not useful.<br>',
+                            '<input type="checkbox" id="stopBother" disabled> I do not need this service, so this comment was not useful.<br>'
+                        );
+                    }else if(PRcomment_response == "notDup_useful"){
+                         template.push(
+                            '<input type="checkbox" id="dup_useful" disabled > This pull request is a duplicate, so this comment was useful<br>',
+                            '<input type="checkbox" id="notDup_useful" disabled checked> This pull request is not a duplicate, but this comment was useful nevertheless.<br>',
+                            '<input type="checkbox" id="notDup_notUseful" disabled> This pull request is not a duplicate, so this comment was not useful.<br>',
+                            '<input type="checkbox" id="stopBother" disabled> I do not need this service, so this comment was not useful.<br>'
+                        );
+                    }else if(PRcomment_response == "notDup_notUseful"){
+                         template.push(
+                            '<input type="checkbox" id="dup_useful" disabled > This pull request is a duplicate, so this comment was useful<br>',
+                            '<input type="checkbox" id="notDup_useful" disabled > This pull request is not a duplicate, but this comment was useful nevertheless.<br>',
+                            '<input type="checkbox" id="notDup_notUseful" disabled checked> This pull request is not a duplicate, so this comment was not useful.<br>',
+                            '<input type="checkbox" id="stopBother" disabled> I do not need this service, so this comment was not useful.<br>'
+                        );
+                    }else if(PRcomment_response == "stopBother"){
+                         template.push(
+                            '<input type="checkbox" id="dup_useful" disabled > This pull request is a duplicate, so this comment was useful<br>',
+                            '<input type="checkbox" id="notDup_useful" disabled > This pull request is not a duplicate, but this comment was useful nevertheless.<br>',
+                            '<input type="checkbox" id="notDup_notUseful" disabled > This pull request is not a duplicate, so this comment was not useful.<br>',
+                            '<input type="checkbox" id="stopBother" disabled checked> I do not need this service, so this comment was not useful.<br>'
+                        );
+                    }
+
+
+                    var htmlString = template.join('');
+                    var element = document.querySelector('.TxtTile');
+                    element.innerHTML = htmlString;
+
+
+                </script>
+                
+
+                <hr>
+                <p>If you'd like to help us out <b>even more</b>, please let us know below why this comment
+                    was useful to you...
+                <p>
+                </p>
+                <form>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<!-- <input type="submit" value="Submit"> -->
+                </form>
+                <p></p>
+                <p>...and how we could improve: </p>
+                <p>
+                </p>
+                <form>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<textarea name="comment" rows="4" cols="100"></textarea><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Submit">
+                </form>
+                <br>
+                <hr>
+                <p></p>
+                <p></p>
+                <p><b>Who are we?</b>
+                </p>
+                <p> We are researchers at <a href="https://www.cmu.edu/">Carnegie Mellon University</a> developing a
+                    bot to monitor GitHub projects
+                    and alert project maintainers to potentially duplicate pull requests.
+                    <a href="https://www.cs.cmu.edu/~shuruiz/">Shurui Zhou</a> is a fifth-year PhD student studying
+                    under
+                    Dr. <a href="https://www.cs.cmu.edu/~ckaestne/">Christian Kaestner</a>.
+                    <a href="https://www.scs.cmu.edu/directory/aesau">Annika Esau</a> is an undergraduate
+                    <a href="https://www.cmu.edu/scs/isr/reuse/">REU</a> student.
+
+
+                <h3 class="display-5">Identifying Redundant Development in Forks</h3>
+                <p><a href="/INTRUDE-welcome" target="_blank">INTRUDE</a> is a GitHub bot to detect potentially
+                    redundant pull requests. It monitors all pull requests in a repository, and if it finds two pull
+                    requests that are very similar, it automatically comments on the issue, pointing out the
+                    similarity.Our goal is to identify redundant code changes in forks as early as possible by
+                    extracting clues indicating similarities between code changes, and building a machine learning
+                    model to predict redundancies.</p>
+
             </div>
-          </div>
-        </section>
-    
-  <footer class="sticky-footer">
-    <div class="container">
-      <div class="text-center">
-        <a href="{{ url_for('main.about') }}">Contact</a> &middot;
-        <a href="https://github.com/shuiblue/INTRUDE">INTRUDE on GitHub</a> &middot;
-        <a href="https://github.com/shuiblue/INTRUDE/issues">Open an Issue</a> 
-        <hr>
-        <small>Copyright © 2019</small>
-      </div>
+        </div>
     </div>
-  </footer>
-<body>
+    </div>
+</section>
+
+<footer class="sticky-footer">
+    <div class="container">
+        <div class="text-center">
+            <a href="{{ url_for('main.about') }}">Contact</a> &middot;
+            <a href="https://github.com/shuiblue/INTRUDE">INTRUDE on GitHub</a> &middot;
+            <a href="https://github.com/shuiblue/INTRUDE/issues">Open an Issue</a>
+            <hr>
+            <small>Copyright © 2019</small>
+        </div>
+    </div>
+</footer>
+
+</body>

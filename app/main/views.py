@@ -67,7 +67,15 @@ def INTRUDE_welcome():
 
 @main.route('/INTRUDE-survey', methods=['GET', 'POST'])
 def INTRUDE_survey():
-    return render_template('INTRUDE-survey.html')
+    repo = request.args.get('repo')
+    pr1 = request.args.get('pr1')
+    pr2 = request.args.get('pr2')
+    response = request.args.get('response')
+
+    f = open("/DATA/luyao/dupPR/surveyResponse.txt", "a+")
+    f.write("%s:%s,%s,%s,%s\n" % (str(datetime.datetime.now()), repo, pr1, pr2, response))
+    f.close()
+    return render_template('INTRUDE-survey.html',repo_url=repo,pr1_id=pr1,pr2_id=pr2,PRcomment_response=response)
 
 
 @main.route('/INTRUDE-subscribe', methods=['GET', 'POST'])
@@ -75,7 +83,7 @@ def INTRUDE_subscribe():
     text = request.form.get('loginID')
     email = request.form.get('email')
     f = open("/DATA/luyao/dupPR/subscribe_account_list.txt", "a+")
-    f.write("%s:%s,%s\n" % (str(datetime.datetime.now()),text,email))
+    f.write("%s:%s,%s\n" % (str(datetime.datetime.now()), text, email))
     f.close()
     return render_template('INTRUDE-subscribe.html')
 
