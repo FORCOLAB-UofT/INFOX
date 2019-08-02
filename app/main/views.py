@@ -14,7 +14,6 @@ from ..decorators import admin_required, permission_required
 
 from ..auth.views import get_user_repo_list, get_upperstream_repo
 
-import datetime
 
 
 # ------------------------------------------------------------------
