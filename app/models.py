@@ -108,6 +108,8 @@ class User(UserMixin, db.Document):
     def can(self, permission):
         if self.username == 'FancyCoder0':
             return True
+        if self.username == 'shuiblue':
+            return True
         return (self.permission & permission) == permission
 
     @property
