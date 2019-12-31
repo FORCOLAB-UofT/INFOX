@@ -7,11 +7,13 @@
                     <a href="{{ url_for('.project_overview', project_name = project.project_name) }}">
                         {{ project.project_name }}
                     </a>
-
-                    {% if project.analyser_progress != "100%" %}
-                        <span class="badge badge-warning">Updating</span>
-                    {% else %}
-                        <span class="badge badge-success">Analysis Complete</span>
+                    
+                    {% if current_user.is_administrator %}
+                        {% if project.analyser_progress != "100%" %}
+                            <span class="badge badge-warning">Updating</span>
+                        {% else %}
+                            <span class="badge badge-success">Analysis Complete</span>
+                        {% endif %}
                     {% endif %}
 
                     {% if current_user.is_authenticated %}
