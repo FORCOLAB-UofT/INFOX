@@ -245,7 +245,7 @@ def project_overview(project_name):
 
     _project = Project.objects(project_name=project_name).first()
     # _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
-    _forks = ProjectFork.objects(project_name=project_name)
+    _forks = ProjectFork.objects(project_name=project_name, total_changed_line_number__ne=0)
 
     # TODO _all_tags could be opted by AJAX
     _all_tags = {}
