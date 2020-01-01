@@ -298,7 +298,11 @@ $(document).ready(function() {
             <td>
                  <div class="fork_commit" id="{{ fork.full_name }}">
                   <button class="btn dropdown-toggle" type="button" id="fork_commit_list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ "250+" if ((fork.total_commit_number == 0) or (fork.total_commit_number >= 250)) else fork.total_commit_number }}
+                      {% if fork.total_commit_number is None %}
+                        -1
+                      {% else %}
+                        {{ "250+" if ((fork.total_commit_number == 0) or (fork.total_commit_number >= 250)) else fork.total_commit_number }}
+                      {% endif %}
                   </button>
                   <div class="dropdown-menu scrollable-menu" aria-labelledby="fork_commit_list">
                   </div>
