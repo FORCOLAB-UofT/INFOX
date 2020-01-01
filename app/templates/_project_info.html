@@ -1,16 +1,14 @@
 <div class="language"> Language: <em> {{ project.language }} </em>  &nbsp;&nbsp; </div>
 <div class="github_fork_number"> Forked on GitHub: <em> {{ project.fork_number }} </em> &nbsp;&nbsp; </div>
+{% if overview_flag %}
 <div class="active_fork_number">
   Active Forks:  
-  {% if overview_flag %}
   <a href="#" data-toggle="tooltip" title="Forks having extra commits after forking">
     <em>{{ project.activate_fork_number }}</em>
   </a>
-  {% else %}
-    <em>{{ project.activate_fork_number }}</em>
-  {% endif %}
   &nbsp;&nbsp; 
 </div>
+{% endif %}
 
 {% if overview_flag %}
 <div class="analyzed_fork_number">
