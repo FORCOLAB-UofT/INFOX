@@ -244,7 +244,8 @@ def project_overview(project_name):
         abort(404)
 
     _project = Project.objects(project_name=project_name).first()
-    _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
+    # _forks = ProjectFork.objects(project_name=project_name, file_list__ne=[], total_changed_line_number__ne=0)
+    _forks = ProjectFork.objects(project_name=project_name)
 
     # TODO _all_tags could be opted by AJAX
     _all_tags = {}
