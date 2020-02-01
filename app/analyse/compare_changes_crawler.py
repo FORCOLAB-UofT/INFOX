@@ -1,8 +1,10 @@
 import os
 import re
 import requests
+import time
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
+from flask import current_app
 
 from .util import language_tool
 
@@ -30,6 +32,8 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
         upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
 
         r = requests.get(url, timeout=120)
+        time.sleep(current_app.config['API_CALL_DELAY_TIME'])
+
         if r.status_code != requests.codes.ok:
             raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
     except:

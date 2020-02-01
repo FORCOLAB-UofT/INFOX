@@ -37,6 +37,8 @@ class Config:
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
+    API_CALL_DELAY_TIME = 2
+
 class DevelopmentConfig(Config):
     DEBUG = True
     USE_LOCAL_FORKS_LIST=True
