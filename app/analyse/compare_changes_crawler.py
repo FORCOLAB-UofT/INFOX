@@ -31,7 +31,7 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
     upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
 
     r = requests.get(url, timeout=120)
-    time.sleep(current_app.config['API_CALL_DELAY_TIME'])
+    time.sleep(2)
 
     if r.status_code != requests.codes.ok:
         raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
@@ -210,8 +210,8 @@ if __name__ == '__main__':
     #     print(i["title"])
     # t = fetch_commit_list_by_api('fdintino/nginx-upload-module', 'ilya-maltsev/nginx-upload-module')
 
-    t = fetch_commit_list_by_api('shuiblue/INFOX-1', 'luyaor/INFOX')
+    # t = fetch_commit_list_by_api('kidaak/sundown', 'vmg/sundown')
     # t = fetch_compare_page('yoft/Smoothieware', 'Smoothieware/Smoothieware')
-    for x in t:
-        print(x['title'])
+    # for x in t:
+    #     print(x['title'])
 
