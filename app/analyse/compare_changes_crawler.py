@@ -22,22 +22,19 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
             }
     """
 
-    try:
-        url = 'https://github.com/%s/compare' % fork_project_full_name
-        url = requests.get(url, timeout=120).url
+    url = 'https://github.com/%s/compare' % fork_project_full_name
+    url = requests.get(url, timeout=120).url
 
-        upstream_branch = url.split('...')[0].split('/')[-1]
-        fork_branch = url.split(':')[-1]
-        url = 'https://api.github.com/repos/%s/compare/%s...%s:%s' % (
-        upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
+    upstream_branch = url.split('...')[0].split('/')[-1]
+    fork_branch = url.split(':')[-1]
+    url = 'https://api.github.com/repos/%s/compare/%s...%s:%s' % (
+    upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
 
-        r = requests.get(url, timeout=120)
-        time.sleep(current_app.config['API_CALL_DELAY_TIME'])
+    r = requests.get(url, timeout=120)
+    time.sleep(current_app.config['API_CALL_DELAY_TIME'])
 
-        if r.status_code != requests.codes.ok:
-            raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
-    except:
-        raise Exception('error on fetch commit compare page on %s!' % fork_project_full_name)
+    if r.status_code != requests.codes.ok:
+        raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
 
     r = r.json()
 
@@ -132,12 +129,9 @@ def fetch_diff_code(project_full_name):
     url = 'https://github.com/%s/compare' % project_full_name
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
-    try:
-        url = requests.get(url, timeout=120).url + '.diff'
-        r = requests.get(url, timeout=120)
-        if r.status_code != requests.codes.ok:
-            raise Exception('error on fetch compare page on %s!' % project_full_name)
-    except:
+    url = requests.get(url, timeout=120).url + '.diff'
+    r = requests.get(url, timeout=120)
+    if r.status_code != requests.codes.ok:
         raise Exception('error on fetch compare page on %s!' % project_full_name)
 
     diff_list = r.text.split('diff --git')
@@ -191,9 +185,13 @@ def fetch_compare_page(project_full_name, upstream_full_name):
             total_changed_line_number,
             
     """
-    print('start fetch fork: ', project_full_name)
-    commit_list = fetch_commit_list_by_api(project_full_name, upstream_full_name)
-    file_list = fetch_diff_code(project_full_name)
+    print('START fetch fork: %s, %s' % (project_full_name, upstream_full_name))
+    try:
+        commit_list = fetch_commit_list_by_api(project_full_name, upstream_full_name)
+        file_list = fetch_diff_code(project_full_name)
+    except:
+        print('FAILED on fetch_compare_page for %s, %s' % (project_full_name, upstream_full_name))
+        return None
 
     return {"file_list": file_list,
             "commit_list": commit_list}
