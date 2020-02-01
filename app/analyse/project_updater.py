@@ -102,7 +102,7 @@ class ForkUpdater:
                 return
         else:
             # If the compare result is not crawled, start to crawl.
-            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
+            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name, self.project_name)
             if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
 

@@ -6,7 +6,49 @@ from bs4 import BeautifulSoup
 
 from .util import language_tool
 
-def fetch_commit_list(project_full_name):
+def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name):
+    """
+    Args:
+        fork_project_full_name: for example: 'shuiblue/INFOX-1',
+        upstream_project_full_name: for example: 'luyaor/INFOX'
+    Return:
+        commit_list {
+                author,
+                title,
+                description,
+                link,
+            }
+    """
+
+    url = 'https://api.github.com/repos/%s/compare/master...%s:master' % (upstream_project_full_name, fork_project_full_name.split('/')[0])
+    try:
+        r = requests.get(url, timeout=120)
+        if r.status_code != requests.codes.ok:
+            raise Exception('error on fetch compare page on %s!' % fork_project_full_name)
+    except:
+        raise Exception('error on fetch compare page on %s!' % fork_project_full_name)
+
+    r = r.json()
+
+    commit_list = []
+
+    # print(len(r['commits']))
+
+    for commit in r['commits']:
+        author = commit['commit']['author']['name']
+        title = commit['commit']['message']
+        desc = commit['commit']['message']
+        link = commit['html_url']
+        commit_list.append({
+            "author":author,
+            "title":title,
+            "description":desc,
+            "link":link
+            })
+    return commit_list
+
+
+def fetch_commit_list(project_full_name): # Deprecated
     """
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -32,7 +74,7 @@ def fetch_commit_list(project_full_name):
         raise Exception('error on fetch compare page on %s!' % project_full_name)
 
     diff_page_soup = BeautifulSoup(diff_page.content, 'html.parser')
-    for commit in diff_page_soup.find_all('a', {'class': 'message'}):
+    for commit in diff_page_soup.find_all('a', {'class': 'commit-message'}):
         try:
             href = commit.get('href')
             if 'https://' not in href:
@@ -127,7 +169,7 @@ def fetch_diff_code(project_full_name):
     return file_list
     
 
-def fetch_compare_page(project_full_name):
+def fetch_compare_page(project_full_name, upstream_full_name):
     """Compare the fork with the main branch.
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -139,7 +181,7 @@ def fetch_compare_page(project_full_name):
             
     """
     print('start fetch fork: ', project_full_name)
-    commit_list = fetch_commit_list(project_full_name)
+    commit_list = fetch_commit_list_by_api(project_full_name, upstream_full_name)
     file_list = fetch_diff_code(project_full_name)
 
     return {"file_list": file_list,
@@ -151,9 +193,13 @@ if __name__ == '__main__':
     # print(fetch_diff_code('shuiblue/INFOX-1'))
     # fetch_compare_page('Nutz95/Smoothieware')
     #fetch_compare_page('mkosieradzki/protobuf')
-    t = fetch_compare_page('SkyNet3D/Marlin')
-    for i in t["file_list"]:
-        print(i["file_full_name"])
-    for i in t["commit_list"]:
-        print(i["title"])
+
+    # t = fetch_compare_page('SkyNet3D/Marlin')
+    # for i in t["file_list"]:
+    #     print(i["file_full_name"])
+    # for i in t["commit_list"]:
+    #     print(i["title"])
+    # t = fetch_commit_list_by_api('fdintino/nginx-upload-module', 'ilya-maltsev/nginx-upload-module')
+    # t = fetch_commit_list_by_api('luyaor/INFOX', 'shuiblue/INFOX-1')
     #fetch_compare_page('aJanker/TypeChef')
+    pass
