@@ -2,11 +2,18 @@ import os
 import re
 import requests
 import time
-from requests.adapters import HTTPAdapter
-from bs4 import BeautifulSoup
+import random
 from flask import current_app
 
 from .util import language_tool
+
+def retry_request(url):
+    for retry in range(3):
+        r = requests.get(url, timeout=120)
+        if r.status_code == requests.codes.ok:
+            return r
+        time.sleep(3600 + random.randint(1, 100))
+    return None
 
 def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name):
     """
@@ -23,17 +30,21 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
     """
 
     url = 'https://github.com/%s/compare' % fork_project_full_name
-    url = requests.get(url, timeout=120).url
+    r0 = retry_request(url)
+    if r0 is None:
+        raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
+
+    url = r0.url
 
     upstream_branch = url.split('...')[0].split('/')[-1]
     fork_branch = url.split(':')[-1]
     url = 'https://api.github.com/repos/%s/compare/%s...%s:%s' % (
     upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
 
-    r = requests.get(url, timeout=120)
-    time.sleep(2)
+    url = url + '?client_id=%s&client_secret=%s' % (current_app.config['GITHUB_CLIENT_ID'], current_app.config['GITHUB_CLIENT_SECRET'])
+    r = retry_request(url)
 
-    if r.status_code != requests.codes.ok:
+    if r is None:
         raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
 
     r = r.json()
@@ -56,62 +67,6 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
     return commit_list
 
 
-def fetch_commit_list(project_full_name): # Deprecated
-    """
-    Args:
-        project_full_name: for example: 'NeilBetham/Smoothieware'
-    Return:
-        commit_list {
-                author,
-                title,
-                description,
-                link,
-            }
-    """
-    commit_list = []
-
-    url = 'https://github.com/%s/compare' % project_full_name
-    s = requests.Session()
-    s.mount('https://github.com', HTTPAdapter(max_retries=3))
-
-    try:
-        diff_page = s.get(url, timeout=120)
-        if diff_page.status_code != requests.codes.ok:
-            raise Exception('error on fetch compare page on %s!' % project_full_name)
-    except:
-        raise Exception('error on fetch compare page on %s!' % project_full_name)
-
-    diff_page_soup = BeautifulSoup(diff_page.content, 'html.parser')
-    for commit in diff_page_soup.find_all('a', {'class': 'commit-message'}):
-        try:
-            href = commit.get('href')
-            if 'https://' not in href:
-                href = 'https://github.com' + href
-            soup = BeautifulSoup(s.get(href, timeout=120).content, 'html.parser')
-        except:
-            continue
-        try:
-            author = soup.find('a', {'class': 'user-mention'}).text
-        except:
-            author = ""
-        try:
-            title = soup.find('p', {'class': 'commit-title'}).text
-        except:
-            title = ""
-        try:
-            desc = soup.find('div', {'class': 'commit-desc'}).text
-        except:
-            desc = ""
-        if author or title or desc or href:
-            commit_list.append({
-                "author":author,
-                "title":title,
-                "description":desc,
-                "link":href
-                })
-    return commit_list
-
-
 def fetch_diff_code(project_full_name):
     """
     Args:
@@ -129,9 +84,13 @@ def fetch_diff_code(project_full_name):
     url = 'https://github.com/%s/compare' % project_full_name
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
-    url = requests.get(url, timeout=120).url + '.diff'
-    r = requests.get(url, timeout=120)
-    if r.status_code != requests.codes.ok:
+    r0 = retry_request(url)
+    if r0 is None:
+        raise Exception('error on fetch compare page on %s!' % project_full_name)
+
+    url = r0.url + '.diff'
+    r = retry_request(url)
+    if r is None:
         raise Exception('error on fetch compare page on %s!' % project_full_name)
 
     diff_list = r.text.split('diff --git')
@@ -211,7 +170,9 @@ if __name__ == '__main__':
     # t = fetch_commit_list_by_api('fdintino/nginx-upload-module', 'ilya-maltsev/nginx-upload-module')
 
     # t = fetch_commit_list_by_api('kidaak/sundown', 'vmg/sundown')
-    # t = fetch_compare_page('yoft/Smoothieware', 'Smoothieware/Smoothieware')
+    t = fetch_compare_page('yoft/Smoothieware', 'Smoothieware/Smoothieware')
     # for x in t:
     #     print(x['title'])
+
+    pass
 

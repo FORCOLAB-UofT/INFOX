@@ -62,7 +62,10 @@ def start_analyse(repo, access_token):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
     else:
-        repo_forks_list = github_api_caller.request('GET', 'repos/%s/forks' % repo, True)
+        try:
+            repo_forks_list = github_api_caller.request('GET', 'repos/%s/forks' % repo, True)
+        except:
+            return
         localfile_tool.write_to_file(forks_list_path, repo_forks_list)
     
     print('finish fetch fork list for %s' % repo)
