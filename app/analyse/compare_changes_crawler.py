@@ -4,7 +4,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 
-from .util import language_tool
+from util import language_tool
 
 def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name):
     """
@@ -20,13 +20,20 @@ def fetch_commit_list_by_api(fork_project_full_name, upstream_project_full_name)
             }
     """
 
-    url = 'https://api.github.com/repos/%s/compare/master...%s:master' % (upstream_project_full_name, fork_project_full_name.split('/')[0])
     try:
+        url = 'https://github.com/%s/compare' % fork_project_full_name
+        url = requests.get(url, timeout=120).url
+
+        upstream_branch = url.split('...')[0].split('/')[-1]
+        fork_branch = url.split(':')[-1]
+        url = 'https://api.github.com/repos/%s/compare/%s...%s:%s' % (
+        upstream_project_full_name, upstream_branch, fork_project_full_name.split('/')[0], fork_branch)
+
         r = requests.get(url, timeout=120)
         if r.status_code != requests.codes.ok:
-            raise Exception('error on fetch compare page on %s!' % fork_project_full_name)
+            raise Exception('error on fetch commit in compare page on %s!' % fork_project_full_name)
     except:
-        raise Exception('error on fetch compare page on %s!' % fork_project_full_name)
+        raise Exception('error on fetch commit compare page on %s!' % fork_project_full_name)
 
     r = r.json()
 
@@ -200,6 +207,9 @@ if __name__ == '__main__':
     # for i in t["commit_list"]:
     #     print(i["title"])
     # t = fetch_commit_list_by_api('fdintino/nginx-upload-module', 'ilya-maltsev/nginx-upload-module')
-    # t = fetch_commit_list_by_api('luyaor/INFOX', 'shuiblue/INFOX-1')
-    #fetch_compare_page('aJanker/TypeChef')
-    pass
+
+    t = fetch_commit_list_by_api('shuiblue/INFOX-1', 'luyaor/INFOX')
+    # t = fetch_compare_page('yoft/Smoothieware', 'Smoothieware/Smoothieware')
+    for x in t:
+        print(x['title'])
+
