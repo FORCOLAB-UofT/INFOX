@@ -12,9 +12,7 @@ def fetch_commit_list(project_full_name):
         project_full_name: for example: 'NeilBetham/Smoothieware'
     Return:
         commit_list {
-                author,
                 title,
-                description,
                 link,
             }
     """
@@ -32,33 +30,18 @@ def fetch_commit_list(project_full_name):
         raise Exception('error on fetch compare page on %s!' % project_full_name)
 
     diff_page_soup = BeautifulSoup(diff_page.content, 'html.parser')
-    for commit in diff_page_soup.find_all('a', {'class': 'message'}):
-        try:
-            href = commit.get('href')
-            if 'https://' not in href:
-                href = 'https://github.com' + href
-            soup = BeautifulSoup(s.get(href, timeout=120).content, 'html.parser')
-        except:
-            continue
-        try:
-            author = soup.find('a', {'class': 'user-mention'}).text
-        except:
-            author = ""
-        try:
-            title = soup.find('p', {'class': 'commit-title'}).text
-        except:
-            title = ""
-        try:
-            desc = soup.find('div', {'class': 'commit-desc'}).text
-        except:
-            desc = ""
-        if author or title or desc or href:
-            commit_list.append({
-                "author":author,
-                "title":title,
-                "description":desc,
-                "link":href
-                })
+    for ch in diff_page_soup.find_all('div', {'class': 'commit-message'}):
+        commit = ch.find('code').find('a')
+
+        href = commit.get('href')
+        if 'https://' not in href:
+            href = 'https://github.com' + href
+        title = commit.text
+
+        commit_list.append({
+            "title":title,
+            "link":href
+            })
     return commit_list
 
 
@@ -138,10 +121,15 @@ def fetch_compare_page(project_full_name):
             total_changed_line_number,
             
     """
-    print('start fetch fork: ', project_full_name)
-    commit_list = fetch_commit_list(project_full_name)
-    file_list = fetch_diff_code(project_full_name)
+    print('START fetch fork: ', project_full_name)
+    try:
+        commit_list = fetch_commit_list(project_full_name)
+        file_list = fetch_diff_code(project_full_name)
+    except:
+        print('FAILED on fetch fork: ', project_full_name)
+        return None
 
+    print('SUCCESS on fetch fork: ', project_full_name)
     return {"file_list": file_list,
             "commit_list": commit_list}
 
@@ -155,5 +143,5 @@ if __name__ == '__main__':
     for i in t["file_list"]:
         print(i["file_full_name"])
     for i in t["commit_list"]:
-        print(i["title"])
+        print(i["title"], i['link'])
     #fetch_compare_page('aJanker/TypeChef')

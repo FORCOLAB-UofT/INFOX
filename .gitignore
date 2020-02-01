@@ -4,4 +4,4 @@
 ghostdriver.log
 *.pyc
 .coverage
-
+venv

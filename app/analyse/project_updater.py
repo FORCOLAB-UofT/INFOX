@@ -84,14 +84,6 @@ class ForkUpdater:
         and (last_update.total_changed_line_number != -1):
             return
 
-        # Update time first.
-        ProjectFork(
-            full_name=self.project_name + '/' + self.fork_name,
-            fork_name=self.fork_name,
-            project_name=self.project_name,
-            last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
-            created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ")).save()
-
         if current_app.config['USE_LOCAL_FORK_INFO']:
             # load from local.
             if os.path.exists(self.diff_result_path):
@@ -105,6 +97,16 @@ class ForkUpdater:
             compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
             if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
+            else:
+                return
+
+        # Update time first.
+        ProjectFork(
+            full_name=self.project_name + '/' + self.fork_name,
+            fork_name=self.fork_name,
+            project_name=self.project_name,
+            last_committed_time=datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ"),
+            created_time=datetime.strptime(self.created_time, "%Y-%m-%dT%H:%M:%SZ")).save()
 
         for file in compare_result["file_list"]:
             try:
