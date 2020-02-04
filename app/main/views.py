@@ -304,9 +304,11 @@ def find_repos():
     if current_user.is_authenticated:
         project_list = Project.objects(
             project_name__nin=current_user.followed_projects,
-            activate_fork_number__ne=-1)
+            activate_fork_number__ne=-1,
+            analyser_progress="100%")
     else:
-        project_list = Project.objects(activate_fork_number__ne=-1)
+        project_list = Project.objects(activate_fork_number__ne=-1,
+                analyser_progress="100%")
 
     page = request.args.get('page', 1, type=int)  # default is 1st page
     pagination = project_list.order_by('-fork_number').paginate(page=page,
