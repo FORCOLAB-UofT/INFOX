@@ -119,3 +119,4 @@ widgetsnbextension==3.2.1
 wmd
 wrapt==1.10.11
 WTForms==2.1
+dnspython
