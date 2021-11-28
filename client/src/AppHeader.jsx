@@ -9,7 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import ButtonLink from "./common/ButtonLink";
 
-export default function ButtonAppBar() {
+const AppHeader = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -37,4 +37,6 @@ export default function ButtonAppBar() {
       </AppBar>
     </Box>
   );
-}
+};
+
+export default AppHeader;

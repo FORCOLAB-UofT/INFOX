@@ -19,6 +19,7 @@ const App = () => {
       <Router>
         <AppHeader />
         <Routes>
+          <Route path="/" element={<div>home</div>} />
           <Route path="/login" element={<div>please login </div>} />
           <Route
             path="/private"
