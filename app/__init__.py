@@ -5,6 +5,9 @@ from flask_mongoengine import MongoEngine
 from flask_login import LoginManager
 from flask_github import GitHub
 from flask_mail import Mail
+from flask_cors import CORS
+from flask_restful import Api
+from .api.FollowedRepositories import FollowedRepositories
 
 # from flask_celery import Celery
 
@@ -31,6 +34,9 @@ def create_app(config_name):
     :return: app object
     """
     app = Flask(__name__, static_folder="static")
+    CORS(app)
+    api = Api(app)
+    api.add_resource(FollowedRepositories, "/flask/followed")
 
     def url_for_other_page(page):
         args = request.view_args.copy()
