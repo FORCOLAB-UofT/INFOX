@@ -10,6 +10,8 @@ import isEmpty from "lodash/isEmpty";
 import { userState } from "./recoil/atoms";
 import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
+import ImportRepositories from "./ImportRepositories";
+import SearchGithub from "./SearchGithub";
 
 const App = () => {
   const currentUser = useRecoilValue(userState);
@@ -36,6 +38,26 @@ const App = () => {
             element={
               !isEmpty(currentUser) ? (
                 <FollowedRespositories />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/import"
+            element={
+              !isEmpty(currentUser) ? (
+                <ImportRepositories />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              !isEmpty(currentUser) ? (
+                <SearchGithub />
               ) : (
                 <Navigate to="/login" />
               )
