@@ -7,6 +7,8 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import SearchIcon from "@mui/icons-material/Search";
 import ButtonLink from "./common/ButtonLink";
 
 const AppHeader = () => {
@@ -31,6 +33,18 @@ const AppHeader = () => {
             linkText="Followed Repositories"
             color="inherit"
             startIcon={<SignalCellularAltIcon />}
+          />
+          <ButtonLink
+            to="/import"
+            linkText="Import Repositories"
+            color="inherit"
+            startIcon={<CloudUploadIcon />}
+          />
+          <ButtonLink
+            to="/search"
+            linkText="Search Github"
+            color="inherit"
+            startIcon={<SearchIcon />}
           />
           <Button color="inherit">Login</Button>
         </Toolbar>

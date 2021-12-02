@@ -8,6 +8,8 @@ from flask_mail import Mail
 from flask_cors import CORS
 from flask_restful import Api
 from .api.FollowedRepositories import FollowedRepositories
+from .api.ImportRepositories import ImportRepositories
+from .api.SearchGithub import SearchGithub
 
 # from flask_celery import Celery
 
@@ -37,6 +39,8 @@ def create_app(config_name):
     CORS(app)
     api = Api(app)
     api.add_resource(FollowedRepositories, "/flask/followed")
+    api.add_resource(ImportRepositories, "/flask/import")
+    api.add_resource(SearchGithub, "/flask/search")
 
     def url_for_other_page(page):
         args = request.view_args.copy()
