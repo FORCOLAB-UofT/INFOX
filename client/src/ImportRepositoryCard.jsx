@@ -12,13 +12,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { PRIMARY, SECONDARY, TERTIARY } from "./common/constants";
 
-const ImportRepositoryCard = ({
-  repo,
-  description,
-  language,
-  timesForked,
-  updated,
-}) => {
+const ImportRepositoryCard = ({ repo, description, language, timesForked }) => {
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -27,16 +21,16 @@ const ImportRepositoryCard = ({
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item >
+            <Grid item>
               <Checkbox
-                style={{ width: "20px", padding:0, color: "white" }}
+                style={{ width: "20px", padding: 0, color: "white" }}
                 value="checkedB"
                 color="primary"
                 onClick={(e) => e.stopPropagation()}
                 labelStyle={{ color: PRIMARY }}
               />
             </Grid>
-            <Grid item sx={{marginLeft:1}}>
+            <Grid item sx={{ marginLeft: 1 }}>
               <Typography color="white">{repo}</Typography>
             </Grid>
           </Grid>
@@ -44,16 +38,16 @@ const ImportRepositoryCard = ({
         <AccordionDetails style={{ background: TERTIARY }}>
           <Grid container>
             <Grid item xs={4}>
-              <Typography>Language: {language}</Typography>
+              {" "}
+              <Typography>Project Description: {description}</Typography>
             </Grid>
             <Grid item xs={4} style={{ textAlign: "center" }}>
-              <Typography>Times Forked: {timesForked}</Typography>
+              <Typography>Language: {language}</Typography>
             </Grid>
             <Grid item xs={4} style={{ textAlign: "right" }}>
-              <Typography>Last Updated: {updated}</Typography>
+              <Typography>Times Forked: {timesForked}</Typography>
             </Grid>
           </Grid>
-          <Typography>Project Description: {description}</Typography>
         </AccordionDetails>
       </Accordion>
     </Box>
@@ -65,7 +59,6 @@ ImportRepositoryCard.propTypes = {
   description: PropTypes.string,
   language: PropTypes.string,
   timesForked: PropTypes.number,
-  lastUpdated: PropTypes.string,
 };
 
 export default ImportRepositoryCard;
