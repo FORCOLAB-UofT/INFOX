@@ -31,7 +31,14 @@ class FollowedRepositories(Resource):
                     "repo": "test/repo4",
                     "description": "test description4",
                     "language": "rust",
-                    "timesForked": 432,
+                    "timesForked": 4,
+                    "updated": "2021-11-26 04:06(UTC)",
+                },
+                {
+                    "repo": "test/repo5",
+                    "description": "test description5",
+                    "language": "python",
+                    "timesForked": 5,
                     "updated": "2021-11-26 04:06(UTC)",
                 },
             ]
