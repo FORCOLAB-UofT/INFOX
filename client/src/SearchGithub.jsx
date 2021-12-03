@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import Box from '@mui/material/Box';
-import { Button, Grid, TextField, Typography, Link, Card, TableHead, TableRow, TableCell, Table, TableBody, TableFooter, TablePagination } from "@mui/material";
-import { textAlign } from "@mui/system";
-import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+import { Button, TextField, Typography, Link, Card, TableHead, TableRow, TableCell, Table, TableBody, TableFooter, TablePagination } from "@mui/material";
+import SearchGithubRow from "./SearchGithubRow";
+
 
 const SearchGithub = () => {
   
+
+  const rows = [["tensorflow/tensorflow","", "Language: C++ Forked on GitHub: 82444 Updated at: 2020-08-21 16:03(UTC)"], 
+  ["twbs/bootstrap", "", "Language: JavaScript Forked on GitHub: 71700 Updated at: 2021-01-17 22:26(UTC)"], 
+  ["nightscout/cgm-remote-monitor", "", "Language: JavaScript Forked on GitHub: 42548 Updated at: 2020-07-25 21:12(UTC)"], 
+  ["opencv/opencv", "", "Language: C++ Forked on GitHub: 41764 Updated at: 2020-12-23 06:49(UTC)"], 
+  ["torvalds/linux", "", "Language: C Forked on GitHub: 33035 Updated at: 2020-08-19 09:24(UTC)"], 
+  ["spring-projects", "", "Language: Java Forked on GitHub: 31207 Updated at: 2020-08-27 05:24(UTC)"]];
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   
@@ -32,78 +40,19 @@ const SearchGithub = () => {
         <TableHead>
         </TableHead>
         <TableBody>
-          <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">tensorflow/tensorflow</Link>
-                  <Typography>Language: C++ Forked on GitHub: 82444 Updated at: 2020-08-21 16:03(UTC)</Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">twbs/bootstrap</Link>
-                  <Typography>Language: JavaScript Forked on GitHub: 71700 Updated at: 2021-01-17 22:26(UTC)</Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">nightscout/cgm-remote-monitor</Link>
-                  <Typography>Language: JavaScript Forked on GitHub: 42548 Updated at: 2020-07-25 21:12(UTC) </Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">opencv/opencv</Link>
-                  <Typography>Language: C++ Forked on GitHub: 41764 Updated at: 2020-12-23 06:49(UTC) </Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">torvalds/linux</Link>
-                  <Typography>Language: C Forked on GitHub: 33035 Updated at: 2020-08-19 09:24(UTC)</Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Card sx={{padding:1}}>
-                  <Link target="_blank" to="">spring-projects/spring-boot</Link>
-                  <Typography>Language: Java Forked on GitHub: 31207 Updated at: 2020-08-27 05:24(UTC)</Typography>
-                </Card>
-              </TableCell>
-              <TableCell>
-                <Button variant="outlined">Follow</Button>
-              </TableCell>
-            </TableRow>
+          {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((row) => {
+              return (
+                <SearchGithubRow name={row[0]} link={row[1]} description={row[2]}></SearchGithubRow>
+              );
+            })
+          }
         </TableBody>
         <TableFooter>
           <TableRow>
             <TablePagination 
               rowsPerPageOptions={[5, 10, 15]}
-              count={6}
+              count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
