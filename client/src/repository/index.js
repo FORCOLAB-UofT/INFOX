@@ -5,3 +5,8 @@ export const getUserFollowedRepositories = async () => {
   const response = await axios.get("http://localhost:5000/flask/followed");
   return response;
 };
+
+export const getUserImportedRepositories = async () => {
+  const response = await axios.get("http://localhost:5000/flask/import");
+  return response;
+};
