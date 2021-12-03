@@ -10,11 +10,12 @@ import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonLink from "./common/ButtonLink";
+import { PRIMARY } from "./common/constants";
 
 const AppHeader = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" style={{ background: PRIMARY }}>
         <Toolbar>
           <IconButton
             size="large"
