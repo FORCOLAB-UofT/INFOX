@@ -6,7 +6,7 @@ export const getUserFollowedRepositories = async () => {
   return response;
 };
 
-export const getUserImportedRepositories = async () => {
+export const getUserImportRepositories = async () => {
   const response = await axios.get("http://localhost:5000/flask/import");
   return response;
 };
