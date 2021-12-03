@@ -9,7 +9,7 @@ const Title = ({ text }) => {
   return (
     <Grid container direction="column" alignItems="center">
       <Grid item>
-        <Box fontStyle="italic">
+        <Box>
           <Typography variant="h3" color={DARK}>
             {text}
           </Typography>
