@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
+  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -9,7 +10,8 @@ import {
   Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { SECONDARY, TERTIARY } from "./common/constants";
+import RemoveButton from "./common/RemoveButton";
+import { REMOVE, PRIMARY, SECONDARY, TERTIARY } from "./common/constants";
 
 const FollowedRepositoryCard = ({
   repo,
@@ -18,6 +20,9 @@ const FollowedRepositoryCard = ({
   timesForked,
   updated,
 }) => {
+  const onRemove = (event) => {
+    event.stopPropagation();
+  };
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -25,7 +30,16 @@ const FollowedRepositoryCard = ({
           style={{ background: SECONDARY }}
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
-          <Typography color="white">{repo}</Typography>
+          <Grid container direction="row" alignItems="center">
+            <Grid item xs={11}>
+              <Typography color="white">{repo}</Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Box style={{ textAlign: "right" }}>
+                <RemoveButton onClickRemove={onRemove} />
+              </Box>
+            </Grid>
+          </Grid>
         </AccordionSummary>
         <AccordionDetails style={{ background: TERTIARY }}>
           <Grid container>
