@@ -29,7 +29,15 @@ const App = () => {
         <Router>
           <AppHeader />
           <Routes>
-            <Route path="/" element={<div>home</div>} />
+            <Route path="/" 
+              element={
+                !isEmpty(currentUser) ? (
+                  <Navigate to="/followed"/>
+                ) : (
+                  <Navigate to="/login" />
+                )
+              } 
+            />
             <Route path="/login" element={<div>please login </div>} />
             <Route
               path="/private"
