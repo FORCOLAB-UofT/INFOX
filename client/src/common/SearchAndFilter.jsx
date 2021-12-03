@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -21,14 +21,12 @@ import isEmpty from "lodash/isEmpty";
 import differenceWith from "lodash/differenceWith";
 import { isEqual } from "lodash";
 
-const SearchAndFilter = ({ filters }) => {
+const SearchAndFilter = ({ filters, setFilters, setSearch }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [checkedFilter, setCheckedFilter] = useState(null);
   const [checkedFilterValues, setCheckedFilterValues] = useState([]);
   const [addedFilters, setAddedFilters] = useState([]);
-
-  console.log("filters", filters);
-  console.log("added filters", addedFilters);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const onClickAddFilter = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,6 +61,7 @@ const SearchAndFilter = ({ filters }) => {
       display: checkedFilter.display,
       value: item,
       type: checkedFilter.type,
+      key: checkedFilter.key,
     }));
 
     const newSelected = differenceWith(filtersSelected, addedFilters, isEqual);
@@ -71,7 +70,6 @@ const SearchAndFilter = ({ filters }) => {
   };
 
   const onClickRemoveFilter = (filter, value) => {
-    console.log("filter, value", filter, value);
     setAddedFilters(
       addedFilters.filter(
         (item) => !(item.display === filter && item.value === value)
@@ -79,12 +77,22 @@ const SearchAndFilter = ({ filters }) => {
     );
   };
 
+  useEffect(() => {
+    setFilters(addedFilters);
+  }, [addedFilters, setFilters]);
+
+  useEffect(() => {
+    setSearch(searchTerm);
+  }, [searchTerm, setSearch]);
+
   const FilterBubble = ({ filter, value }) => {
+    // TODO: Even out padding on both sides of the bubble
     return (
       <Grid item>
         <Box
           sx={{ border: 4, borderRadius: 12 }}
           style={{ borderColor: SECONDARY, background: TERTIARY }}
+          padding={1}
         >
           <Grid container direction="row" alignItems="center">
             <Grid item>
@@ -123,6 +131,9 @@ const SearchAndFilter = ({ filters }) => {
         </Grid>
         <Grid item>
           <TextField
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
             placeholder="Search"
             InputProps={{
               startAdornment: (
@@ -207,30 +218,28 @@ const SearchAndFilter = ({ filters }) => {
                       paddingRight={1}
                       style={{ overflow: "auto", maxHeight: "200px" }}
                     >
-                      {checkedFilter.type === "string"
-                        ? checkedFilter.values.map((value) => (
-                            <Grid
-                              container
-                              direction="row"
-                              alignItems="center"
-                              key={value}
-                            >
-                              <Grid item>
-                                <Checkbox
-                                  onChange={() => {
-                                    onClickFilterValue(value);
-                                  }}
-                                  checked={checkedFilterValues.some(
-                                    (item) => item === value
-                                  )}
-                                />
-                              </Grid>
-                              <Grid item>
-                                <Typography>{value}</Typography>
-                              </Grid>
-                            </Grid>
-                          ))
-                        : "WAIT"}
+                      {checkedFilter.values.map((value) => (
+                        <Grid
+                          container
+                          direction="row"
+                          alignItems="center"
+                          key={value}
+                        >
+                          <Grid item>
+                            <Checkbox
+                              onChange={() => {
+                                onClickFilterValue(value);
+                              }}
+                              checked={checkedFilterValues.some(
+                                (item) => item === value
+                              )}
+                            />
+                          </Grid>
+                          <Grid item>
+                            <Typography>{value}</Typography>
+                          </Grid>
+                        </Grid>
+                      ))}
                     </Box>
                   )}
                 </Grid>
@@ -249,7 +258,11 @@ const SearchAndFilter = ({ filters }) => {
         </Grid>
         <Grid container direction="row" spacing={1}>
           {addedFilters.map((filt) => (
-            <FilterBubble filter={filt.display} value={filt.value} />
+            <FilterBubble
+              filter={filt.display}
+              value={filt.value}
+              key={`${filt.display}+${filt.value}`}
+            />
           ))}
         </Grid>
       </Grid>
@@ -259,6 +272,8 @@ const SearchAndFilter = ({ filters }) => {
 
 SearchAndFilter.propTypes = {
   filters: PropTypes.object,
+  setFilters: PropTypes.func,
+  setSearch: PropTypes.func,
 };
 
 export default SearchAndFilter;

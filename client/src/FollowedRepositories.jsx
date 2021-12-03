@@ -12,9 +12,15 @@ const FollowedRespositories = () => {
   const [followedRepositories, setFollowedRepositories] = useState(null);
   console.log(followedRepositories);
   const [isLoading, setIsLoading] = useState(true);
-  const filters = ["language", "timesForked", "updated", "repo"];
-  const [possibleFilterValues, setPossibleFilterValues] = useState(null);
   const [filtersWithValues, setFiltersWithValues] = useState(null);
+  const [filters, setFilters] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredRepositories, setFilteredRepositories] =
+    useState(followedRepositories);
+
+  console.log("filters", filters);
+  console.log("search", search);
+  console.log("filterswihvalues", filtersWithValues);
 
   const fetchFollowedRepositories = useCallback(async () => {
     const response = await getUserFollowedRepositories();
@@ -30,11 +36,60 @@ const FollowedRespositories = () => {
   }, [fetchFollowedRepositories]);
 
   useEffect(() => {
+    const filteredRepos = [];
+    let hasBeenFiltered = false;
+
+    if (!!followedRepositories && !isEmpty(filtersWithValues)) {
+      followedRepositories.forEach((repo) => {
+        let matches = true;
+        if (!isEmpty(filters)) {
+          hasBeenFiltered = true;
+          filters.forEach((filt) => {
+            if (repo[filt.key] !== filt.value) {
+              matches = false;
+            }
+          });
+        }
+
+        if (search !== "" && matches) {
+          hasBeenFiltered = true;
+          if (!repo.repo.includes(search)) {
+            matches = false;
+          }
+        }
+
+        if (matches) {
+          filteredRepos.push(repo);
+        }
+      });
+
+      setFilteredRepositories(filteredRepos);
+    } else {
+      setFilteredRepositories(followedRepositories);
+    }
+  }, [filters, search]);
+
+  useEffect(() => {
     if (!isEmpty(followedRepositories)) {
       const initialFilters = {
-        language: { display: "Language", type: "string", values: [] },
-        timesForked: { display: "Times Forked", type: "numeric", values: [] },
-        updated: { display: "Last Updated", type: "date", values: [] },
+        language: {
+          key: "language",
+          display: "Language",
+          type: "string",
+          values: [],
+        },
+        timesForked: {
+          key: "timesForked",
+          display: "Times Forked",
+          type: "numeric",
+          values: [],
+        },
+        updated: {
+          key: "updated",
+          display: "Last Updated",
+          type: "date",
+          values: [],
+        },
       };
       followedRepositories.forEach(({ language, timesForked, updated }) => {
         if (!initialFilters.language.values.some((item) => item === language)) {
@@ -67,10 +122,18 @@ const FollowedRespositories = () => {
           <Title text="Followed Repositories" />
           <Box paddingLeft="4px">
             <Box>
-              <SearchAndFilter filters={filtersWithValues} />
+              <SearchAndFilter
+                filters={filtersWithValues}
+                setFilters={(data) => {
+                  setFilters(data);
+                }}
+                setSearch={(data) => {
+                  setSearch(data);
+                }}
+              />
             </Box>
             <Box>
-              {followedRepositories?.map(
+              {filteredRepositories?.map(
                 ({ repo, language, description, updated, timesForked }) => (
                   <FollowedRepositoryCard
                     key={repo}
