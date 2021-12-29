@@ -1,8 +1,13 @@
 import axios from "axios";
+import Button from "@mui/material/Button";
+import { useSetRecoilState } from "recoil";
 import React, { useEffect } from "react";
 import { postUserLogin } from "./repository";
+import { userState } from "./recoil/atoms";
 
 const Login = () => {
+  const setUser = useSetRecoilState(userState);
+
   useEffect(() => {
     const newUrl = window.location.href;
     const hasCode = newUrl.includes("?code=");
@@ -28,7 +33,8 @@ const Login = () => {
 
       if (!!res?.data?.access_token) {
         localStorage.setItem("access_token", res.data.access_token);
-        localStorage.setItem("name", res.data.username);
+        localStorage.setItem("username", res.data.username);
+        setUser({ username: res.data.username });
       }
     } catch (error) {
       console.log("unable to login");
@@ -41,23 +47,9 @@ const Login = () => {
   };
 
   return (
-    <>
-      <button onClick={onClickLogin}>Login</button>
-      <button
-        onClick={async () => {
-          const res = await axios({
-            method: "GET",
-            url: "http://localhost:5000/flask/auth",
-            headers: {
-              Authorization: "Bearer " + localStorage.getItem("access_token"),
-            },
-          });
-          console.log("res", res);
-        }}
-      >
-        test get
-      </button>
-    </>
+    <Button color="inherit" onClick={onClickLogin}>
+      Login
+    </Button>
   );
 };
 

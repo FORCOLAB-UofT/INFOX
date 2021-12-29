@@ -1,6 +1,6 @@
-from . import db
+from .db import db
 from flask_login import UserMixin, AnonymousUserMixin
-from . import login_manager
+from .loginmanager import login_manager
 
 
 class ChangedFile(db.Document):
@@ -22,11 +22,10 @@ class ChangedFile(db.Document):
     key_stemmed_words_dict = db.DictField()
     key_words_lemmatize_tfidf = db.ListField(db.StringField())
     key_words_lemmatize_tfidf_dict = db.DictField()
-    
+
     variable = db.ListField(db.StringField())
     class_name = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
-    
 
 
 class ProjectFork(db.Document):
@@ -60,6 +59,7 @@ class ProjectFork(db.Document):
     variable = db.ListField(db.StringField())
     function_name = db.ListField(db.StringField())
 
+
 class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     language = db.StringField()
@@ -85,30 +85,30 @@ class User(UserMixin, db.Document):
     permission = db.IntField()
     last_seen = db.DateTimeField()
     followed_projects = db.ListField(db.StringField())
-    followed_forks = db.ListField(db.StringField()) # not used
+    followed_forks = db.ListField(db.StringField())  # not used
     followed_projects_time = db.DictField()
 
     github_access_token = db.StringField()
     password_hash = db.StringField()
     github_name = db.StringField()
 
-    tag_list = db.DictField() # not used
+    tag_list = db.DictField()  # not used
 
-    owned_repo = db.DictField() # {repo_full_name: show_name}
+    owned_repo = db.DictField()  # {repo_full_name: show_name}
     owned_repo_sync_time = db.DateTimeField()
 
-    is_crawling = db.IntField() # 1 means is crawling
+    is_crawling = db.IntField()  # 1 means is crawling
     repo_waiting_list = db.ListField(db.StringField())
 
     repo_email_time = db.DictField()
 
     def get_id(self):
         return self.username
-    
+
     def can(self, permission):
-        if self.username == 'FancyCoder0':
+        if self.username == "FancyCoder0":
             return True
-        if self.username == 'shuiblue':
+        if self.username == "shuiblue":
             return True
         return (self.permission & permission) == permission
 
@@ -125,7 +125,9 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+
 login_manager.anonymous_user = AnonymousUser
+
 
 @login_manager.user_loader
 def load_user(username):
@@ -138,9 +140,10 @@ class Permission:
     ADD = 2
     REFRESH = 4
     DELETE = 8
-    BASIC_USER = 1 # can follow
-    GITHUB_USER = 3 # can follow, add
-    ADMINISTER = 15 # all
+    BASIC_USER = 1  # can follow
+    GITHUB_USER = 3  # can follow, add
+    ADMINISTER = 15  # all
+
 
 class TagType:
     FEATURE = 1
@@ -148,5 +151,3 @@ class TagType:
     BUG_FIX = 3
     CONFIGURE = 4
     OTHER = 5
-
-    
