@@ -83,11 +83,7 @@ const App = () => {
             <Route
               path="/aboutus"
               element={
-                !isEmpty(currentUser) ? (
-                  <AboutUs />
-                ) : (
-                  <Navigate to="/login" />
-                )
+                <AboutUs />
               }
             />
           </Routes>
