@@ -15,6 +15,7 @@ import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
 import SearchGithub from "./SearchGithub";
 import Home from "./Home";
+import LoginModal from "./LoginModal";
 import { getUserLogin } from "./repository";
 
 const theme = createTheme({
@@ -64,7 +65,7 @@ const App = () => {
           <AppHeader />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<div>please login </div>} />
+            <Route path="/login" element={<LoginModal />} />
             <Route
               path="/private"
               element={

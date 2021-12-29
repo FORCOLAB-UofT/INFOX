@@ -1,12 +1,14 @@
-import axios from "axios";
 import Button from "@mui/material/Button";
 import { useSetRecoilState } from "recoil";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { postUserLogin } from "./repository";
 import { userState } from "./recoil/atoms";
 
 const Login = () => {
   const setUser = useSetRecoilState(userState);
+  const navigate = useNavigate();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const newUrl = window.location.href;
@@ -27,6 +29,7 @@ const Login = () => {
   }, [postUserLogin]);
 
   const submitGithub = async (values) => {
+    setIsLoggingIn(true);
     try {
       const res = await postUserLogin(values);
       console.log("res", res);
@@ -35,10 +38,13 @@ const Login = () => {
         localStorage.setItem("access_token", res.data.access_token);
         localStorage.setItem("username", res.data.username);
         setUser({ username: res.data.username });
+        navigate("/");
       }
     } catch (error) {
       console.log("unable to login");
+      navigate("/");
     }
+    setIsLoggingIn(false);
   };
 
   const onClickLogin = () => {
@@ -47,9 +53,17 @@ const Login = () => {
   };
 
   return (
-    <Button color="inherit" onClick={onClickLogin}>
-      Login
-    </Button>
+    <>
+      {!isLoggingIn ? (
+        <Button color="inherit" onClick={onClickLogin}>
+          Login
+        </Button>
+      ) : (
+        <Button color="inherit" onClick={() => {}}>
+          Logging In...
+        </Button>
+      )}
+    </>
   );
 };
 
