@@ -2,14 +2,19 @@ from flask import Flask
 from flask import request, url_for
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
-from flask_login import LoginManager
 from flask_github import GitHub
 from flask_mail import Mail
 from flask_cors import CORS
 from flask_restful import Api
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
 from .api.FollowedRepositories import FollowedRepositories
 from .api.ImportRepositories import ImportRepositories
 from .api.SearchGithub import SearchGithub
+from .api.Auth import Auth
+from .db import initialize_db
+from .loginmanager import login_manager
+from datetime import timedelta
 
 # from flask_celery import Celery
 
@@ -18,16 +23,10 @@ from celery import Celery
 from config import config
 
 bootstrap = Bootstrap()
-db = MongoEngine()
 mail = Mail()
 github = GitHub()
-login_manager = LoginManager()
 # celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 celery = Celery()
-
-login_manager.session_protection = "strong"
-login_manager.login_view = "auth.login"
-login_manager.login_message = None
 
 
 def create_app(config_name):
@@ -38,9 +37,8 @@ def create_app(config_name):
     app = Flask(__name__, static_folder="static")
     CORS(app)
     api = Api(app)
-    api.add_resource(FollowedRepositories, "/flask/followed")
-    api.add_resource(ImportRepositories, "/flask/import")
-    api.add_resource(SearchGithub, "/flask/search")
+    bcrypt = Bcrypt(app)
+    jwt = JWTManager(app)
 
     def url_for_other_page(page):
         args = request.view_args.copy()
@@ -58,14 +56,27 @@ def create_app(config_name):
     # set up config
     app.config.from_object(config[config_name])
     app.secret_key = "super secret key"
+    app.config["JWT_SECRET_KEY"] = "not-so-secret"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=43800)
+    app.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
+    app.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
 
     # setup github-flask
+    initialize_db(app)
     bootstrap.init_app(app)
-    db.init_app(app)
     mail.init_app(app)
     github.init_app(app)
     login_manager.init_app(app)
     celery.conf.update(app.config)
+
+    api.add_resource(FollowedRepositories, "/flask/followed")
+    api.add_resource(ImportRepositories, "/flask/import")
+    api.add_resource(SearchGithub, "/flask/search")
+    api.add_resource(
+        Auth,
+        "/flask/auth",
+        resource_class_kwargs={"bcrypt": bcrypt, "jwt": jwt},
+    )
 
     # TODO: get correct host, broker and backend depending on environment
     redis_host = "redis://localhost:6379/0"

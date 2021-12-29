@@ -11,6 +11,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonLink from "./common/ButtonLink";
 import { PRIMARY } from "./common/constants";
+import Login from "./Login";
 
 const AppHeader = () => {
   return (
@@ -48,6 +49,7 @@ const AppHeader = () => {
             startIcon={<SearchIcon />}
           />
           <Button color="inherit">Login</Button>
+          <Login />
         </Toolbar>
       </AppBar>
     </Box>

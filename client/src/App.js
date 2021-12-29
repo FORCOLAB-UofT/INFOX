@@ -13,6 +13,7 @@ import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
 import SearchGithub from "./SearchGithub";
+import Home from "./Home";
 
 const theme = createTheme({
   typography: {
@@ -29,15 +30,7 @@ const App = () => {
         <Router>
           <AppHeader />
           <Routes>
-            <Route path="/" 
-              element={
-                !isEmpty(currentUser) ? (
-                  <Navigate to="/followed"/>
-                ) : (
-                  <Navigate to="/login" />
-                )
-              } 
-            />
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<div>please login </div>} />
             <Route
               path="/private"
