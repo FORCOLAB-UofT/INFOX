@@ -10,6 +10,7 @@ import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonLink from "./common/ButtonLink";
+import LinkIcon from '@mui/icons-material/Link';
 import { PRIMARY } from "./common/constants";
 
 const AppHeader = () => {
@@ -46,6 +47,12 @@ const AppHeader = () => {
             linkText="Search Github"
             color="inherit"
             startIcon={<SearchIcon />}
+          />
+          <ButtonLink
+            to="/aboutus"
+            linkText="About Us"
+            color="inherit"
+            startIcon={<LinkIcon />}
           />
           <Button color="inherit">Login</Button>
         </Toolbar>

@@ -13,6 +13,7 @@ import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
 import SearchGithub from "./SearchGithub";
+import AboutUs from "./AboutUs";
 
 const theme = createTheme({
   typography: {
@@ -74,6 +75,16 @@ const App = () => {
               element={
                 !isEmpty(currentUser) ? (
                   <SearchGithub />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/aboutus"
+              element={
+                !isEmpty(currentUser) ? (
+                  <AboutUs />
                 ) : (
                   <Navigate to="/login" />
                 )
