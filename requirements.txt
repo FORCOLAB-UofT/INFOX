@@ -27,7 +27,7 @@ Flask-Celery-Helper
 Flask-DebugToolbar==0.10.1
 Flask-Login==0.4.0
 Flask-Mail==0.9.1
-flask-mongoengine
+flask-mongoengine==0.9.5
 Flask-PyMongo
 Flask-Script==2.0.6
 Flask-WTF==0.14.2
@@ -55,7 +55,7 @@ kiwisolver==1.0.1
 kombu==4.2.0
 celery==4.1.1
 MarkupSafe
-matplotlib==2.2.2
+matplotlib
 metric-learn==0.3.0
 mistune==0.8.3
 mongoengine
@@ -78,7 +78,7 @@ preshed==1.0.1
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
-pymongo
+pymongo==3.12.3
 pyparsing==2.2.0
 python-dateutil==2.7.2
 pytz==2017.3
@@ -111,7 +111,7 @@ urllib3==1.24.2
 uWSGI==2.0.15
 vine==1.1.4
 visitor==0.1.3
-Wand==0.4.4
+Wand
 wcwidth==0.1.7
 webencodings==0.5
 Werkzeug==0.15.5
