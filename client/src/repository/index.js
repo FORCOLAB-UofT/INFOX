@@ -44,3 +44,16 @@ export const postSearchGithub = async (value) => {
 
   return response;
 };
+
+export const postFollowRepository = async (value) => {
+  const response = await axios({
+    method: "POST",
+    url: "http://localhost:5000/flask/follow",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+    data: { repo: value },
+  });
+
+  return response;
+};

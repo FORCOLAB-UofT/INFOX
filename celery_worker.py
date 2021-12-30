@@ -1,4 +1,5 @@
-from app import celery, create_app
+from app import create_app
+from app.celery import celery
 
 # CONFIGURE_MODE = "production"
 

@@ -8,6 +8,7 @@ import {
   TableCell,
   Grid,
 } from "@mui/material";
+import { postFollowRepository } from "./repository";
 
 const SearchGithubRow = ({ name, language, forks, updated }) => {
   return (
@@ -32,7 +33,15 @@ const SearchGithubRow = ({ name, language, forks, updated }) => {
         </Card>
       </TableCell>
       <TableCell>
-        <Button variant="outlined">Follow</Button>
+        <Button
+          variant="outlined"
+          onClick={async () => {
+            const res = await postFollowRepository(name);
+            console.log("res", res);
+          }}
+        >
+          Follow
+        </Button>
       </TableCell>
     </TableRow>
   );

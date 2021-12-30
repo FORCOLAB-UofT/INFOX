@@ -8,7 +8,7 @@ from flask_github import GitHub
 from . import project_updater
 from .util import localfile_tool
 from ..models import *
-from .. import celery
+from ..celery import celery
 from flask_mail import Message
 from .. import mail
 
