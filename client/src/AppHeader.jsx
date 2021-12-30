@@ -10,6 +10,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import { useRecoilValue } from "recoil";
 import ButtonLink from "./common/ButtonLink";
+import LinkIcon from '@mui/icons-material/Link';
 import { PRIMARY } from "./common/constants";
 import Login from "./Login";
 import Logout from "./Logout";
@@ -51,6 +52,12 @@ const AppHeader = () => {
             linkText="Search Github"
             color="inherit"
             startIcon={<SearchIcon />}
+          />
+          <ButtonLink
+            to="/aboutus"
+            linkText="About Us"
+            color="inherit"
+            startIcon={<LinkIcon />}
           />
           {!currentUser ? <Login /> : <Logout />}
         </Toolbar>
