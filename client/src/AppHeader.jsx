@@ -3,17 +3,22 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
+import { useRecoilValue } from "recoil";
 import ButtonLink from "./common/ButtonLink";
 import LinkIcon from '@mui/icons-material/Link';
 import { PRIMARY } from "./common/constants";
+import Login from "./Login";
+import Logout from "./Logout";
+import { userState } from "./recoil/atoms";
 
 const AppHeader = () => {
+  const currentUser = useRecoilValue(userState);
+  console.log("appheader current", currentUser);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ background: PRIMARY }}>
@@ -54,7 +59,7 @@ const AppHeader = () => {
             color="inherit"
             startIcon={<LinkIcon />}
           />
-          <Button color="inherit">Login</Button>
+          {!currentUser ? <Login /> : <Logout />}
         </Toolbar>
       </AppBar>
     </Box>
