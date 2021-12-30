@@ -12,7 +12,7 @@ const AboutUs = () => {
                 <Typography paragraph variant="body1">INFOX comes out of a research project at
                     Carnegie Mellon University, in collaboration with researchers from the IT University
                     Copenhagen, Peking University, and the University of Passau, exploring how to improve
-                    ollaboration and coordination in open-source and variant-rich software development.
+                    collaboration and coordination in open-source and variant-rich software development.
                 </Typography>
                 <Typography paragraph variant="body1">
                     Given the overwhelming numbers of forks in many popular repositories,
