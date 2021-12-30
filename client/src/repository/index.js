@@ -30,3 +30,17 @@ export const getUserLogin = async () => {
 
   return response;
 };
+
+export const postSearchGithub = async (value) => {
+  console.log("val", value);
+  const response = await axios({
+    method: "POST",
+    url: "http://localhost:5000/flask/search",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+    data: { repo: value },
+  });
+
+  return response;
+};

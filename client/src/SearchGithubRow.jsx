@@ -1,24 +1,41 @@
 import React from "react";
-import Box from '@mui/material/Box';
-import { Button, TextField, Typography, Link, Card, TableHead, TableRow, TableCell, Table, TableBody, TableFooter, TablePagination } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Link,
+  Card,
+  TableRow,
+  TableCell,
+  Grid,
+} from "@mui/material";
 
-const SearchGithubRow = ({name, link, description}) => {
-
-
-    return (
-        <TableRow>
-            <TableCell>
-            <Card sx={{padding:1}}>
-                <Link target="_blank" to={link}>{name}</Link>
-                <Typography>{description}</Typography>
-            </Card>
-            </TableCell>
-            <TableCell>
-            <Button variant="outlined">Follow</Button>
-            </TableCell>
-        </TableRow>
-    );
-
+const SearchGithubRow = ({ name, language, forks, updated }) => {
+  return (
+    <TableRow>
+      <TableCell>
+        <Card sx={{ padding: 1 }}>
+          <Link target="_blank" to="">
+            {name}
+          </Link>
+          <Grid container spacing={1}>
+            <Grid item xs={4}>
+              Language: {language}
+            </Grid>
+            <Grid item xs={4}>
+              Forked on Github: {forks}
+            </Grid>
+            <Grid item xs={4}>
+              Updated at: {updated}
+            </Grid>
+          </Grid>
+          <Typography></Typography>
+        </Card>
+      </TableCell>
+      <TableCell>
+        <Button variant="outlined">Follow</Button>
+      </TableCell>
+    </TableRow>
+  );
 };
 
 export default SearchGithubRow;
