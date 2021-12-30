@@ -131,6 +131,7 @@ def check_waiting_list(username):
         if (waiting_list is None) or (len(waiting_list) == 0):
             break
         for repo in waiting_list:
+            print("--- repo in waiting list %s ---" % repo)
             User.objects(username=username).update_one(pull__repo_waiting_list=repo)
 
             with app.app_context():

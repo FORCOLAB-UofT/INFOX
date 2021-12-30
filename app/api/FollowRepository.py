@@ -27,7 +27,7 @@ def db_followed_project(user, project_name):
 
 
 def add_repo(username, repo, repo_info):
-    User.objects(username=username).update_one(push_all__repo_waiting_list=repo)
+    User.objects(username=username).update_one(push_all__repo_waiting_list=[repo])
 
     # First updata for quick view.
 
