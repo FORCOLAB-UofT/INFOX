@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import {
   Box,
   Button,
-  Divider,
   Typography,
   TextField,
   Grid,
@@ -173,12 +172,16 @@ const SearchAndFilter = ({ filters, setFilters, setSearch }) => {
               horizontal: "left",
             }}
           >
-            <Box sx={{ border: 4 }} style={{ borderColor: SECONDARY }}>
-              <Box fontStyle="italic">
-                <Typography>Filter by</Typography>
+            <Box
+              sx={{ border: 4 }}
+              style={{ borderColor: SECONDARY }}
+              padding={1}
+            >
+              <Box paddingBottom={1}>
+                <Typography variant="h5">Filter by</Typography>
               </Box>
-              <Grid container spacing={1}>
-                <Grid item>
+              <Grid container spacing={1} padding={1}>
+                <Grid item border={1} style={{ borderColor: SECONDARY }}>
                   <Box sx={{ display: "flex" }}>
                     <Box
                       paddingRight={1}
@@ -207,12 +210,20 @@ const SearchAndFilter = ({ filters, setFilters, setSearch }) => {
                         </Grid>
                       ))}
                     </Box>
-                    <Divider orientation="vertical" flexItem />
                   </Box>
                 </Grid>
-                <Grid item>
+                <Grid
+                  item
+                  paddingRight={1}
+                  border={1}
+                  style={{ borderColor: SECONDARY }}
+                >
                   {!checkedFilter ? (
-                    <Box>Select a filter from the left side</Box>
+                    <Box paddingTop={1}>
+                      <Typography>
+                        Select a filter from the left side
+                      </Typography>
+                    </Box>
                   ) : (
                     <Box
                       paddingRight={1}

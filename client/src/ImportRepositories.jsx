@@ -17,7 +17,8 @@ const ImportRepositories = () => {
   const [filtersWithValues, setFiltersWithValues] = useState(null);
   const [filters, setFilters] = useState([]);
   const [search, setSearch] = useState("");
-  const [filteredRepositories, setFilteredRepositories] = useState(importRepositories);
+  const [filteredRepositories, setFilteredRepositories] =
+    useState(importRepositories);
   console.log("filters", filters);
   console.log("search", search);
   console.log("filterswihvalues", filtersWithValues);
@@ -39,14 +40,18 @@ const ImportRepositories = () => {
     const filteredRepos = [];
     let hasBeenFiltered = false;
 
-    if (!!importRepositories && !isEmpty(filtersWithValues)) {
+    if (
+      !!importRepositories &&
+      !isEmpty(filtersWithValues) &&
+      !isEmpty(filters)
+    ) {
       importRepositories.forEach((repo) => {
-        let matches = true;
+        let matches = false;
         if (!isEmpty(filters)) {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
-            if (repo[filt.key] !== filt.value) {
-              matches = false;
+            if (repo[filt.key] === filt.value) {
+              matches = true;
             }
           });
         }
@@ -139,8 +144,10 @@ const ImportRepositories = () => {
           </Box>
         </Box>
       )}
-      <Box style={{textAlign:"right"}}>
-         <Button variant="contained" style={{background: PRIMARY}}>Follow</Button>
+      <Box style={{ textAlign: "right" }}>
+        <Button variant="contained" style={{ background: PRIMARY }}>
+          Follow
+        </Button>
       </Box>
     </Box>
   );
