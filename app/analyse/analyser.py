@@ -2,13 +2,14 @@ import time
 import os
 import json
 from datetime import datetime
+import requests
 
 from flask import current_app, render_template
 from flask_github import GitHub
 from . import project_updater
 from .util import localfile_tool
 from ..models import *
-from .. import celery
+from ..celery import celery
 from flask_mail import Message
 from .. import mail
 
@@ -57,15 +58,25 @@ def start_analyse(repo, access_token):
         None
     """
     app = current_app._get_current_object()
-    github_api_caller = GitHub(app)
+    # github_api_caller = GitHub(app)
 
-    @github_api_caller.access_token_getter
-    def token_getter():
-        return access_token
+    # @github_api_caller.access_token_getter
+    # def token_getter():
+    #    return access_token
 
     print("-----start analysing for %s-----" % repo)
 
-    repo_info = github_api_caller.get("repos/%s" % repo)
+    # repo_info = github_api_caller.get("repos/%s" % repo)
+    request_url = "https://api.github.com/repos/%s" % repo
+
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    repo_info = res.json()
     print("finish fetch repo info for %s" % repo)
 
     # Save forks' list into local
@@ -76,7 +87,16 @@ def start_analyse(repo, access_token):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
     else:
-        repo_forks_list = github_api_caller.get("repos/%s/forks" % repo)
+        # repo_forks_list = github_api_caller.get("repos/%s/forks" % repo)
+        request_url = "https://api.github.com/repos/%s/forks" % repo
+        res = requests.get(
+            url=request_url,
+            headers={
+                "Accept": "application/json",
+                "Authorization": "token {}".format(access_token),
+            },
+        )
+        repo_forks_list = res.json()
         localfile_tool.write_to_file(forks_list_path, repo_forks_list)
 
     print("finish fetch fork list for %s" % repo)
@@ -111,6 +131,7 @@ def check_waiting_list(username):
         if (waiting_list is None) or (len(waiting_list) == 0):
             break
         for repo in waiting_list:
+            print("--- repo in waiting list %s ---" % repo)
             User.objects(username=username).update_one(pull__repo_waiting_list=repo)
 
             with app.app_context():

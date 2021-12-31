@@ -3,7 +3,6 @@ from flask import request, url_for
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
 from flask_github import GitHub
-from flask_mail import Mail
 from flask_cors import CORS
 from flask_restful import Api
 from flask_bcrypt import Bcrypt
@@ -11,22 +10,22 @@ from flask_jwt_extended import JWTManager
 from .api.FollowedRepositories import FollowedRepositories
 from .api.ImportRepositories import ImportRepositories
 from .api.SearchGithub import SearchGithub
+from .api.FollowRepository import FollowRepository
 from .api.Auth import Auth
 from .db import initialize_db
 from .loginmanager import login_manager
+from .mail import mail
 from datetime import timedelta
 
 # from flask_celery import Celery
 
-from celery import Celery
+from .celery import celery
 
 from config import config
 
 bootstrap = Bootstrap()
-mail = Mail()
 github = GitHub()
 # celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
-celery = Celery()
 
 
 def create_app(config_name):
@@ -76,6 +75,11 @@ def create_app(config_name):
         Auth,
         "/flask/auth",
         resource_class_kwargs={"bcrypt": bcrypt, "jwt": jwt},
+    )
+    api.add_resource(
+        FollowRepository,
+        "/flask/follow",
+        resource_class_kwargs={"jwt": jwt},
     )
 
     # TODO: get correct host, broker and backend depending on environment
