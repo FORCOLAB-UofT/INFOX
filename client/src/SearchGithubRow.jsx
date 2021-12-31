@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Typography,
@@ -11,6 +11,8 @@ import {
 import { postFollowRepository } from "./repository";
 
 const SearchGithubRow = ({ name, language, forks, updated, onFollow }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <TableRow>
       <TableCell>
@@ -36,12 +38,14 @@ const SearchGithubRow = ({ name, language, forks, updated, onFollow }) => {
         <Button
           variant="outlined"
           onClick={async () => {
+            setIsLoading(true);
             const res = await postFollowRepository(name);
             console.log("res", res);
             onFollow(res.data);
+            setIsLoading(false);
           }}
         >
-          Follow
+          {isLoading ? "Following..." : "Follow"}
         </Button>
       </TableCell>
     </TableRow>
