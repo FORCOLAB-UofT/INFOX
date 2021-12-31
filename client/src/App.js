@@ -14,6 +14,7 @@ import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
 import SearchGithub from "./SearchGithub";
+import AboutUs from "./AboutUs";
 import Home from "./Home";
 import LoginModal from "./LoginModal";
 import { getUserLogin } from "./repository";
@@ -104,6 +105,12 @@ const App = () => {
                 ) : (
                   <Navigate to="/login" />
                 )
+              }
+            />
+            <Route
+              path="/aboutus"
+              element={
+                <AboutUs />
               }
             />
           </Routes>
