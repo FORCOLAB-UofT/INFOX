@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { postFollowRepository } from "./repository";
 
-const SearchGithubRow = ({ name, language, forks, updated }) => {
+const SearchGithubRow = ({ name, language, forks, updated, onFollow }) => {
   return (
     <TableRow>
       <TableCell>
@@ -38,6 +38,7 @@ const SearchGithubRow = ({ name, language, forks, updated }) => {
           onClick={async () => {
             const res = await postFollowRepository(name);
             console.log("res", res);
+            onFollow(res.data);
           }}
         >
           Follow

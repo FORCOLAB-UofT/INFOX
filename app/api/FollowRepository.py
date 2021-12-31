@@ -67,10 +67,7 @@ class FollowRepository(Resource):
 
         if db_find_project(repo) is not None:
             db_followed_project(_user, repo)
-            msg = (
-                'The repo (%s) is already in INFOX. Followed successfully! Please click <a href="/project/%s" class="alert-link">here</a> to view.'
-                % (repo, repo)
-            )
+            msg = "The repo (%s) is already in INFOX. Followed successfully!" % (repo,)
         else:
             add_repo(_user.username, repo, res)
             db_followed_project(_user, repo)

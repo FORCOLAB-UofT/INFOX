@@ -13,8 +13,15 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 import SearchGithubRow from "./SearchGithubRow";
 import { postSearchGithub } from "./repository";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const SearchGithub = () => {
   const rows = [
@@ -62,6 +69,8 @@ const SearchGithub = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
+  const [followMsg, setFollowMsg] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -150,6 +159,10 @@ const SearchGithub = () => {
                             language={result.language}
                             forks={result.forks}
                             updated={result.updated_at}
+                            onFollow={(value) => {
+                              setFollowMsg(value);
+                              setOpenSnackbar(true);
+                            }}
                           />
                         );
                       })}
@@ -193,6 +206,33 @@ const SearchGithub = () => {
           </TableFooter>
         </Table>
       </Box>
+      <Stack spacing={2} sx={{ width: "100%" }}>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={(event, reason) => {
+            if (reason === "clickaway") {
+              return;
+            }
+
+            setOpenSnackbar(false);
+          }}
+        >
+          <Alert
+            onClose={(event, reason) => {
+              if (reason === "clickaway") {
+                return;
+              }
+
+              setOpenSnackbar(false);
+            }}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            {followMsg}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </Box>
   );
 };
