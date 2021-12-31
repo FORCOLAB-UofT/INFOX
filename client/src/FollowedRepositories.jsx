@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import { getUserFollowedRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
@@ -39,14 +39,18 @@ const FollowedRespositories = () => {
     const filteredRepos = [];
     let hasBeenFiltered = false;
 
-    if (!!followedRepositories && !isEmpty(filtersWithValues)) {
+    if (
+      !!followedRepositories &&
+      !isEmpty(filtersWithValues) &&
+      !isEmpty(filters)
+    ) {
       followedRepositories.forEach((repo) => {
-        let matches = true;
+        let matches = false;
         if (!isEmpty(filters)) {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
-            if (repo[filt.key] !== filt.value) {
-              matches = false;
+            if (repo[filt.key] === filt.value) {
+              matches = true;
             }
           });
         }

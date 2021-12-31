@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import {
   Box,
   Button,
-  Divider,
   Typography,
   TextField,
   Grid,
@@ -220,7 +219,7 @@ const SearchAndFilter = ({ filters, setFilters, setSearch }) => {
                   style={{ borderColor: SECONDARY }}
                 >
                   {!checkedFilter ? (
-                    <Box>
+                    <Box paddingTop={1}>
                       <Typography>
                         Select a filter from the left side
                       </Typography>
