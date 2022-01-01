@@ -82,4 +82,12 @@ class FollowRepository(Resource):
             analyser_progress="100%",
         )
 
-        return msg
+        return {
+            "msg": msg,
+            "repo": {
+                "language": res["language"],
+                "description": res["description"],
+                "timesForked": res["forks_count"],
+                "repo": res["full_name"],
+            },
+        }

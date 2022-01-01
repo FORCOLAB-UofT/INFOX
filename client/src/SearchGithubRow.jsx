@@ -8,9 +8,17 @@ import {
   TableCell,
   Grid,
 } from "@mui/material";
-import { postFollowRepository } from "./repository";
+import { postFollowRepository, deleteUserRepository } from "./repository";
 
-const SearchGithubRow = ({ name, language, forks, updated, onFollow }) => {
+const SearchGithubRow = ({
+  name,
+  language,
+  forks,
+  updated,
+  onFollow,
+  onRemoveRepo,
+  followedRepos,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -35,18 +43,32 @@ const SearchGithubRow = ({ name, language, forks, updated, onFollow }) => {
         </Card>
       </TableCell>
       <TableCell>
-        <Button
-          variant="outlined"
-          onClick={async () => {
-            setIsLoading(true);
-            const res = await postFollowRepository(name);
-            console.log("res", res);
-            onFollow(res.data);
-            setIsLoading(false);
-          }}
-        >
-          {isLoading ? "Following..." : "Follow"}
-        </Button>
+        {!followedRepos?.some((repo) => repo.repo === name) ? (
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              setIsLoading(true);
+              const res = await postFollowRepository(name);
+              console.log("res", res);
+              onFollow(res.data);
+              setIsLoading(false);
+            }}
+            disabled={isLoading}
+          >
+            {isLoading ? "Following..." : "Follow"}
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              deleteUserRepository(name);
+              onRemoveRepo(name);
+            }}
+          >
+            Remove
+          </Button>
+        )}
       </TableCell>
     </TableRow>
   );

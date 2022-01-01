@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
 import {
   Button,
@@ -17,7 +17,7 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import SearchGithubRow from "./SearchGithubRow";
-import { postSearchGithub } from "./repository";
+import { postSearchGithub, getUserFollowedRepositories } from "./repository";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -71,6 +71,7 @@ const SearchGithub = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [followMsg, setFollowMsg] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [followedRepos, setFollowedRepos] = useState(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,6 +98,15 @@ const SearchGithub = () => {
     setSearchResults(resp.data);
     setIsSearching(false);
   };
+
+  const fetchUserFollowedRepos = useCallback(async () => {
+    const res = await getUserFollowedRepositories();
+    setFollowedRepos(res.data);
+  }, []);
+
+  useEffect(() => {
+    fetchUserFollowedRepos();
+  }, [fetchUserFollowedRepos]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -159,9 +169,18 @@ const SearchGithub = () => {
                             language={result.language}
                             forks={result.forks}
                             updated={result.updated_at}
-                            onFollow={(value) => {
-                              setFollowMsg(value);
+                            onFollow={(data) => {
+                              setFollowMsg(data.msg);
                               setOpenSnackbar(true);
+                              setFollowedRepos([...followedRepos, data.repo]);
+                            }}
+                            followedRepos={followedRepos}
+                            onRemoveRepo={(value) => {
+                              setFollowedRepos(
+                                followedRepos.filter(
+                                  (repo) => repo.repo !== value
+                                )
+                              );
                             }}
                           />
                         );
