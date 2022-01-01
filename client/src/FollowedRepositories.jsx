@@ -32,6 +32,12 @@ const FollowedRespositories = () => {
     setIsLoading(false);
   }, []);
 
+  const onClickRemoveRepo = (value) => {
+    setFollowedRepositories(
+      followedRepositories.filter((repo) => repo.repo !== value)
+    );
+  };
+
   useEffect(() => {
     fetchFollowedRepositories();
   }, [fetchFollowedRepositories]);
@@ -72,7 +78,7 @@ const FollowedRespositories = () => {
     } else {
       setFilteredRepositories(followedRepositories);
     }
-  }, [filters, search]);
+  }, [filters, search, followedRepositories]);
 
   useEffect(() => {
     if (!isEmpty(followedRepositories)) {
@@ -147,6 +153,7 @@ const FollowedRespositories = () => {
                     description={description}
                     updated={updated}
                     timesForked={timesForked}
+                    onClickRemove={onClickRemoveRepo}
                   />
                 )
               )}

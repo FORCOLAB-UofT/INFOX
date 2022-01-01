@@ -63,3 +63,16 @@ export const postFollowRepository = async (value) => {
 
   return response;
 };
+
+export const deleteUserRepository = async (value) => {
+  const response = await axios({
+    method: "DELETE",
+    url: "http://localhost:5000/flask/followed",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+    data: { repo: value },
+  });
+
+  return response;
+};

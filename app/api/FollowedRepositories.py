@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from ..models import User, Project
 import json
+from flask import request
 
 
 class FollowedRepositories(Resource):
@@ -33,3 +34,15 @@ class FollowedRepositories(Resource):
                 }
             )
         return return_list
+
+    @jwt_required()
+    def delete(self):
+        req_data = request.get_json()
+        repo = req_data.get("repo")
+
+        current_user = get_jwt_identity()
+        _user = User.objects(username=current_user).first()
+
+        _user.update(pull__followed_projects=repo)
+
+        return True
