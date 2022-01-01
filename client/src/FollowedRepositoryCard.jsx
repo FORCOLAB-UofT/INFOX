@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Box,
-  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -11,7 +10,8 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RemoveButton from "./common/RemoveButton";
-import { REMOVE, PRIMARY, SECONDARY, TERTIARY } from "./common/constants";
+import { SECONDARY, TERTIARY } from "./common/constants";
+import { deleteUserRepository } from "./repository";
 
 const FollowedRepositoryCard = ({
   repo,
@@ -19,9 +19,12 @@ const FollowedRepositoryCard = ({
   language,
   timesForked,
   updated,
+  onClickRemove,
 }) => {
   const onRemove = (event) => {
     event.stopPropagation();
+    deleteUserRepository(repo);
+    onClickRemove(repo);
   };
   return (
     <Box paddingY={1}>
@@ -66,6 +69,7 @@ FollowedRepositoryCard.propTypes = {
   language: PropTypes.string,
   timesForked: PropTypes.number,
   lastUpdated: PropTypes.string,
+  onClickRemove: PropTypes.func,
 };
 
 export default FollowedRepositoryCard;

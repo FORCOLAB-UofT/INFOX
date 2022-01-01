@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Pagination, Grid } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import { getUserFollowedRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
@@ -17,6 +17,11 @@ const FollowedRespositories = () => {
   const [search, setSearch] = useState("");
   const [filteredRepositories, setFilteredRepositories] =
     useState(followedRepositories);
+  const [paginatedData, setPaginatedData] = useState(filteredRepositories);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(1);
+
+  const PER_PAGE = 10;
 
   console.log("filters", filters);
   console.log("search", search);
@@ -24,16 +29,41 @@ const FollowedRespositories = () => {
 
   const fetchFollowedRepositories = useCallback(async () => {
     const response = await getUserFollowedRepositories();
+    console.log("followed projects", response);
 
-    setFollowedRepositories(response.data.followedRepositories);
+    setFollowedRepositories(response.data);
     console.log("res", response);
 
     setIsLoading(false);
   }, []);
 
+  const onClickRemoveRepo = (value) => {
+    setFollowedRepositories(
+      followedRepositories.filter((repo) => repo.repo !== value)
+    );
+  };
+
+  const onClickPagination = (event, page) => {
+    setCurrentPage(page);
+  };
+
+  useEffect(() => {
+    setPaginatedData(
+      filteredRepositories?.slice(
+        (currentPage - 1) * PER_PAGE,
+        currentPage * PER_PAGE
+      )
+    );
+  }, [currentPage, filteredRepositories]);
+
   useEffect(() => {
     fetchFollowedRepositories();
   }, [fetchFollowedRepositories]);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(filteredRepositories?.length / PER_PAGE));
+    setCurrentPage(1);
+  }, [filteredRepositories]);
 
   useEffect(() => {
     const filteredRepos = [];
@@ -71,7 +101,7 @@ const FollowedRespositories = () => {
     } else {
       setFilteredRepositories(followedRepositories);
     }
-  }, [filters, search]);
+  }, [filters, search, followedRepositories]);
 
   useEffect(() => {
     if (!isEmpty(followedRepositories)) {
@@ -137,7 +167,7 @@ const FollowedRespositories = () => {
               />
             </Box>
             <Box>
-              {filteredRepositories?.map(
+              {paginatedData?.map(
                 ({ repo, language, description, updated, timesForked }) => (
                   <FollowedRepositoryCard
                     key={repo}
@@ -146,11 +176,24 @@ const FollowedRespositories = () => {
                     description={description}
                     updated={updated}
                     timesForked={timesForked}
+                    onClickRemove={onClickRemoveRepo}
                   />
                 )
               )}
             </Box>
           </Box>
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Pagination
+              count={pageCount}
+              page={currentPage}
+              onChange={onClickPagination}
+            />
+          </Grid>
         </Box>
       )}
     </Box>
