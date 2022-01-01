@@ -24,8 +24,9 @@ const FollowedRespositories = () => {
 
   const fetchFollowedRepositories = useCallback(async () => {
     const response = await getUserFollowedRepositories();
+    console.log("followed projects", response);
 
-    setFollowedRepositories(response.data.followedRepositories);
+    setFollowedRepositories(response.data);
     console.log("res", response);
 
     setIsLoading(false);

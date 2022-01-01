@@ -2,7 +2,14 @@ import axios from "axios";
 
 // TODO: convert the links to be based on prod environment or development, or implement a proxy
 export const getUserFollowedRepositories = async () => {
-  const response = await axios.get("http://localhost:5000/flask/followed");
+  const response = await axios({
+    method: "GET",
+    url: "http://localhost:5000/flask/followed",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+  });
+
   return response;
 };
 
@@ -32,7 +39,6 @@ export const getUserLogin = async () => {
 };
 
 export const postSearchGithub = async (value) => {
-  console.log("val", value);
   const response = await axios({
     method: "POST",
     url: "http://localhost:5000/flask/search",

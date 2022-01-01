@@ -68,7 +68,11 @@ def create_app(config_name):
     login_manager.init_app(app)
     celery.conf.update(app.config)
 
-    api.add_resource(FollowedRepositories, "/flask/followed")
+    api.add_resource(
+        FollowedRepositories,
+        "/flask/followed",
+        resource_class_kwargs={"jwt": jwt},
+    )
     api.add_resource(ImportRepositories, "/flask/import")
     api.add_resource(SearchGithub, "/flask/search")
     api.add_resource(
