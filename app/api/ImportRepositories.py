@@ -6,11 +6,11 @@ from flask import request
 import requests
 from ..models import User
 
-class ImportRepositories(Resource):
 
+class ImportRepositories(Resource):
     def __init__(self, jwt):
         self.jwt = jwt
-    
+
     @jwt_required()
     def get(self):
         # TODO: REPLACE FAKE DATA
@@ -41,37 +41,8 @@ class ImportRepositories(Resource):
                     "repo": repo["full_name"],
                     "description": repo["description"],
                     "language": repo["language"],
-                    "timesForked": repo["forks_count"]
+                    "timesForked": repo["forks_count"],
                 }
             )
 
         return return_list
-        # print("Repo import GET Request Response: ", res)
-        # return {
-        #     "importRepositories": [
-        #         {
-        #             "repo": "test/repo1",
-        #             "description": "test2 description1",
-        #             "language": "Python",
-        #             "timesForked": 1,
-        #         },
-        #         {
-        #             "repo": "test/repo2",
-        #             "description": "test description2",
-        #             "language": "JavaScript",
-        #             "timesForked": 2,
-        #         },
-        #         {
-        #             "repo": "test/repo3",
-        #             "description": "test description3",
-        #             "language": "Rust",
-        #             "timesForked": 3,
-        #         },
-        #         {
-        #             "repo": "test/repo4",
-        #             "description": "test description4",
-        #             "language": "C#",
-        #             "timesForked": 432,
-        #         },
-        #     ]
-        # }
