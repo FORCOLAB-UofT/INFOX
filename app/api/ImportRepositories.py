@@ -33,6 +33,45 @@ class ImportRepositories(Resource):
             raise AssertionError
 
         res = res.json()
+
+        return_list = {"importRepositories": []}
+        for repo in res:
+            return_list["importRepositories"].append(
+                {
+                    "repo": repo["full_name"],
+                    "description": repo["description"],
+                    "language": repo["language"],
+                    "timesForked": repo["forks_count"]
+                }
+            )
+
+        return return_list
         # print("Repo import GET Request Response: ", res)
-        
-        return res
+        # return {
+        #     "importRepositories": [
+        #         {
+        #             "repo": "test/repo1",
+        #             "description": "test2 description1",
+        #             "language": "Python",
+        #             "timesForked": 1,
+        #         },
+        #         {
+        #             "repo": "test/repo2",
+        #             "description": "test description2",
+        #             "language": "JavaScript",
+        #             "timesForked": 2,
+        #         },
+        #         {
+        #             "repo": "test/repo3",
+        #             "description": "test description3",
+        #             "language": "Rust",
+        #             "timesForked": 3,
+        #         },
+        #         {
+        #             "repo": "test/repo4",
+        #             "description": "test description4",
+        #             "language": "C#",
+        #             "timesForked": 432,
+        #         },
+        #     ]
+        # }
