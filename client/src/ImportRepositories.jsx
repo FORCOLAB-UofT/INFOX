@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import { getUserFollowedRepositories, getUserImportRepositories, postFollowRepository } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
@@ -7,11 +7,17 @@ import Loading from "./common/Loading";
 import Title from "./common/Title";
 import SearchAndFilter from "./common/SearchAndFilter";
 import ImportRepositoryCard from "./ImportRepositoryCard";
-// import Button from "@mui/material/Button";
-// import { PRIMARY, SECONDARY } from "./common/constants";
-// import FollowedRespositories from "./FollowedRepositories";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const ImportRepositories = () => {
+  const [followMsg, setFollowMsg] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [importRepositories, setImportRepositories] = useState(null);
   const [followedRepositories, setFollowedRepositories] = useState(null);
   console.log(importRepositories);
@@ -47,34 +53,11 @@ const ImportRepositories = () => {
     setIsFetchingFollowed(false);
   }, []);
 
-  // const addRepo = (value) => {
-  //   const newList = [...checkedRepositories, value];
-  //   setCheckedRepositories(newList);
-  // };
-
-  // const removeRepo = (value) => {
-  //   const newList = checkedRepositories.filter((repo) => repo != value);
-  //   setCheckedRepositories(newList);
-  // };
-
-  // const followCheckedRepos = () => {
-  //   checkedRepositories.forEach(async (repo) => {
-  //     if(!followedRepositories.includes(repo["repo"])){
-  //       const res = await postFollowRepository(repo);
-  //       console.log(res);
-  //     }
-  //   });
-  // };
-
   useEffect(() => {
-    if(!isFetchingImport && !isFetchingFollowed){
+    if (!isFetchingImport && !isFetchingFollowed) {
       setIsLoading(false);
     }
   }, [isFetchingFollowed, isFetchingImport]);
-
-  // useEffect(() => {
-  //   console.log("Current List: " + checkedRepositories);
-  // }, [checkedRepositories]);
 
   useEffect(() => {
     fetchImportRepositories();
@@ -186,8 +169,8 @@ const ImportRepositories = () => {
                     description={description}
                     timesForked={timesForked}
                     onFollow={(data) => {
-                      // setFollowMsg(data.msg);
-                      // setOpenSnackbar(true);
+                      setFollowMsg(data.msg);
+                      setOpenSnackbar(true);
                       setFollowedRepositories([...followedRepositories, data.repo]);
                     }}
                     onRemoveRepo={(value) => {
@@ -205,6 +188,33 @@ const ImportRepositories = () => {
           </Box>
         </Box>
       )}
+      <Stack spacing={2} sx={{ width: "100%" }}>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={(event, reason) => {
+            if (reason === "clickaway") {
+              return;
+            }
+
+            setOpenSnackbar(false);
+          }}
+        >
+          <Alert
+            onClose={(event, reason) => {
+              if (reason === "clickaway") {
+                return;
+              }
+
+              setOpenSnackbar(false);
+            }}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            {followMsg}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </Box>
   );
 };

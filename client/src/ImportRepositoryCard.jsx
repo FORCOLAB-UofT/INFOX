@@ -33,7 +33,8 @@ const ImportRepositoryCard = ({ name, description, language, timesForked, follow
               {!followedRepos?.some((repo) => repo.repo === name) ? (
                 <Button
                   variant="outlined"
-                  onClick={async () => {
+                  onClick={async (event) => {
+                    event.stopPropagation();
                     setIsLoading(true);
                     const res = await postFollowRepository(name);
                     console.log("res", res);
@@ -49,7 +50,8 @@ const ImportRepositoryCard = ({ name, description, language, timesForked, follow
                 <Button
                   variant="contained"
                   color="error"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     deleteUserRepository(name);
                     onRemoveRepo(name);
                   }}
