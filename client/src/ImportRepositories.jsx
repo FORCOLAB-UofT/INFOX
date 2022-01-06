@@ -1,24 +1,29 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
-import { getUserImportRepositories } from "./repository";
+import { getUserFollowedRepositories, getUserImportRepositories, postFollowRepository } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
 import Loading from "./common/Loading";
 import Title from "./common/Title";
 import SearchAndFilter from "./common/SearchAndFilter";
 import ImportRepositoryCard from "./ImportRepositoryCard";
-import Button from "@mui/material/Button";
-import { PRIMARY, SECONDARY } from "./common/constants";
+// import Button from "@mui/material/Button";
+// import { PRIMARY, SECONDARY } from "./common/constants";
+// import FollowedRespositories from "./FollowedRepositories";
 
 const ImportRepositories = () => {
   const [importRepositories, setImportRepositories] = useState(null);
+  const [followedRepositories, setFollowedRepositories] = useState(null);
   console.log(importRepositories);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingImport, setIsFetchingImport] = useState(true);
+  const [isFetchingFollowed, setIsFetchingFollowed] = useState(true);
   const [filtersWithValues, setFiltersWithValues] = useState(null);
   const [filters, setFilters] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredRepositories, setFilteredRepositories] =
     useState(importRepositories);
+  // const [checkedRepositories, setCheckedRepositories] = useState([])
   console.log("filters", filters);
   console.log("search", search);
   console.log("filterswihvalues", filtersWithValues);
@@ -27,14 +32,57 @@ const ImportRepositories = () => {
     const response = await getUserImportRepositories();
 
     setImportRepositories(response.data.importRepositories);
+    console.log("imported projects", response);
+
+    setIsFetchingImport(false);
+  }, []);
+
+  const fetchFollowedRepositories = useCallback(async () => {
+    const response = await getUserFollowedRepositories();
+    console.log("followed projects", response);
+
+    setFollowedRepositories(response.data);
     console.log("res", response);
 
-    setIsLoading(false);
+    setIsFetchingFollowed(false);
   }, []);
+
+  // const addRepo = (value) => {
+  //   const newList = [...checkedRepositories, value];
+  //   setCheckedRepositories(newList);
+  // };
+
+  // const removeRepo = (value) => {
+  //   const newList = checkedRepositories.filter((repo) => repo != value);
+  //   setCheckedRepositories(newList);
+  // };
+
+  // const followCheckedRepos = () => {
+  //   checkedRepositories.forEach(async (repo) => {
+  //     if(!followedRepositories.includes(repo["repo"])){
+  //       const res = await postFollowRepository(repo);
+  //       console.log(res);
+  //     }
+  //   });
+  // };
+
+  useEffect(() => {
+    if(!isFetchingImport && !isFetchingFollowed){
+      setIsLoading(false);
+    }
+  }, [isFetchingFollowed, isFetchingImport]);
+
+  // useEffect(() => {
+  //   console.log("Current List: " + checkedRepositories);
+  // }, [checkedRepositories]);
 
   useEffect(() => {
     fetchImportRepositories();
   }, [fetchImportRepositories]);
+
+  useEffect(() => {
+    fetchFollowedRepositories();
+  }, [fetchFollowedRepositories]);
 
   useEffect(() => {
     const filteredRepos = [];
@@ -133,10 +181,23 @@ const ImportRepositories = () => {
                 ({ repo, language, description, updated, timesForked }) => (
                   <ImportRepositoryCard
                     key={repo}
-                    repo={repo}
+                    name={repo}
                     language={language}
                     description={description}
                     timesForked={timesForked}
+                    onFollow={(data) => {
+                      // setFollowMsg(data.msg);
+                      // setOpenSnackbar(true);
+                      setFollowedRepositories([...followedRepositories, data.repo]);
+                    }}
+                    onRemoveRepo={(value) => {
+                      setFollowedRepositories(
+                        followedRepositories.filter(
+                          (repo) => repo.repo !== value
+                        )
+                      );
+                    }}
+                    followedRepos={followedRepositories}
                   />
                 )
               )}
@@ -144,11 +205,6 @@ const ImportRepositories = () => {
           </Box>
         </Box>
       )}
-      <Box style={{ textAlign: "right" }}>
-        <Button variant="contained" style={{ background: PRIMARY }}>
-          Follow
-        </Button>
-      </Box>
     </Box>
   );
 };

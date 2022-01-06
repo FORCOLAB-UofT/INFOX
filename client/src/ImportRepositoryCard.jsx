@@ -8,11 +8,15 @@ import {
   Typography,
   Grid,
   Checkbox,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { PRIMARY, SECONDARY, TERTIARY } from "./common/constants";
+import { PRIMARY, SECONDARY, TERTIARY, REMOVE } from "./common/constants";
+import { postFollowRepository, deleteUserRepository } from "./repository";
 
-const ImportRepositoryCard = ({ repo, description, language, timesForked }) => {
+const ImportRepositoryCard = ({ name, description, language, timesForked, followedRepos, onFollow, onRemoveRepo }) => {
+
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -21,17 +25,38 @@ const ImportRepositoryCard = ({ repo, description, language, timesForked }) => {
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item>
-              <Checkbox
-                style={{ width: "20px", padding: 0, color: "white" }}
-                value="checkedB"
-                color="primary"
-                onClick={(e) => e.stopPropagation()}
-                labelStyle={{ color: PRIMARY }}
-              />
+            
+            <Grid item xs={11}>
+              <Typography color="white">{name}</Typography>
             </Grid>
-            <Grid item sx={{ marginLeft: 1 }}>
-              <Typography color="white">{repo}</Typography>
+            <Grid item xs={1}>
+              {!followedRepos?.some((repo) => repo.repo === name) ? (
+                <Button
+                  variant="outlined"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    const res = await postFollowRepository(name);
+                    console.log("res", res);
+                    onFollow(res.data);
+                    setIsLoading(false);
+                  }}
+                  style={{ color: PRIMARY, background: REMOVE }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Following..." : "Follow"}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    deleteUserRepository(name);
+                    onRemoveRepo(name);
+                  }}
+                >
+                  Remove
+                </Button>
+              )}
             </Grid>
           </Grid>
         </AccordionSummary>
