@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, Pagination, Grid } from "@mui/material";
+import { Box, Pagination, Grid, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import { getUserFollowedRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
@@ -155,45 +155,67 @@ const FollowedRespositories = () => {
         <Box width="100%">
           <Title text="Followed Repositories" />
           <Box paddingLeft="4px">
-            <Box>
-              <SearchAndFilter
-                filters={filtersWithValues}
-                setFilters={(data) => {
-                  setFilters(data);
-                }}
-                setSearch={(data) => {
-                  setSearch(data);
-                }}
-              />
-            </Box>
-            <Box>
-              {paginatedData?.map(
-                ({ repo, language, description, updated, timesForked }) => (
-                  <FollowedRepositoryCard
-                    key={repo}
-                    repo={repo}
-                    language={language}
-                    description={description}
-                    updated={updated}
-                    timesForked={timesForked}
-                    onClickRemove={onClickRemoveRepo}
+            {!isEmpty(paginatedData) ? (
+              <>
+                <Box>
+                  <SearchAndFilter
+                    filters={filtersWithValues}
+                    setFilters={(data) => {
+                      setFilters(data);
+                    }}
+                    setSearch={(data) => {
+                      setSearch(data);
+                    }}
                   />
-                )
-              )}
-            </Box>
+                </Box>
+                <Box>
+                  {paginatedData?.map(
+                    ({ repo, language, description, updated, timesForked }) => (
+                      <FollowedRepositoryCard
+                        key={repo}
+                        repo={repo}
+                        language={language}
+                        description={description}
+                        updated={updated}
+                        timesForked={timesForked}
+                        onClickRemove={onClickRemoveRepo}
+                      />
+                    )
+                  )}
+                </Box>
+                <Grid
+                  container
+                  direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Pagination
+                    count={pageCount}
+                    page={currentPage}
+                    onChange={onClickPagination}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <Box>
+                <Grid
+                  container
+                  direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ minHeight: "70vh" }}
+                >
+                  <Typography variant="h4">
+                    You are not following any repositories!
+                  </Typography>
+                  <Typography>
+                    Go to the "Search Github" tab to search for repositories to
+                    follow
+                  </Typography>
+                </Grid>
+              </Box>
+            )}
           </Box>
-          <Grid
-            container
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Pagination
-              count={pageCount}
-              page={currentPage}
-              onChange={onClickPagination}
-            />
-          </Grid>
         </Box>
       )}
     </Box>
