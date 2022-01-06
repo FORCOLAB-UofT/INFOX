@@ -7,7 +7,6 @@ import {
   AccordionDetails,
   Typography,
   Grid,
-  Checkbox,
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -25,7 +24,7 @@ const ImportRepositoryCard = ({ name, description, language, timesForked, follow
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center">
-            
+
             <Grid item xs={11}>
               <Typography color="white">{name}</Typography>
             </Grid>

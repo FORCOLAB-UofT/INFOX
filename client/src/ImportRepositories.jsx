@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Box } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
-import { getUserFollowedRepositories, getUserImportRepositories, postFollowRepository } from "./repository";
+import { getUserFollowedRepositories, getUserImportRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
 import Loading from "./common/Loading";
 import Title from "./common/Title";
@@ -29,7 +29,6 @@ const ImportRepositories = () => {
   const [search, setSearch] = useState("");
   const [filteredRepositories, setFilteredRepositories] =
     useState(importRepositories);
-  // const [checkedRepositories, setCheckedRepositories] = useState([])
   console.log("filters", filters);
   console.log("search", search);
   console.log("filterswihvalues", filtersWithValues);
