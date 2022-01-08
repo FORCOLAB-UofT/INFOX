@@ -207,6 +207,17 @@ const SearchGithub = () => {
                     forks={row.forks}
                     language={row.language}
                     updated={row.updated}
+                    onFollow={(data) => {
+                      setFollowMsg(data.msg);
+                      setOpenSnackbar(true);
+                      setFollowedRepos([...followedRepos, data.repo]);
+                    }}
+                    followedRepos={followedRepos}
+                    onRemoveRepo={(value) => {
+                      setFollowedRepos(
+                        followedRepos.filter((repo) => repo.repo !== value)
+                      );
+                    }}
                   ></SearchGithubRow>
                 );
               })}
