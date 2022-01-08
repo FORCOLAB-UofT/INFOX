@@ -1,35 +1,48 @@
 from flask_restful import Resource
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+import json
+from flask import request
+import requests
+from ..models import User
 
 
 class ImportRepositories(Resource):
+    def __init__(self, jwt):
+        self.jwt = jwt
+
+    @jwt_required()
     def get(self):
         # TODO: REPLACE FAKE DATA
         # TODO: add active forks, last updated, forks containing unmerged code
-        return {
-            "importRepositories": [
+
+        current_user = get_jwt_identity()
+        _user = User.objects(username=current_user).first()
+
+        request_url = "https://api.github.com/users/%s/repos" % current_user
+
+        res = requests.get(
+            url=request_url,
+            headers={
+                "Accept": "application/json",
+                "Authorization": "token {}".format(_user.github_access_token),
+            },
+        )
+
+        if res.status_code != 200:
+            raise AssertionError
+
+        res = res.json()
+
+        return_list = {"importRepositories": []}
+        for repo in res:
+            return_list["importRepositories"].append(
                 {
-                    "repo": "test/repo1",
-                    "description": "test2 description1",
-                    "language": "Python",
-                    "timesForked": 1,
-                },
-                {
-                    "repo": "test/repo2",
-                    "description": "test description2",
-                    "language": "JavaScript",
-                    "timesForked": 2,
-                },
-                {
-                    "repo": "test/repo3",
-                    "description": "test description3",
-                    "language": "Rust",
-                    "timesForked": 3,
-                },
-                {
-                    "repo": "test/repo4",
-                    "description": "test description4",
-                    "language": "C#",
-                    "timesForked": 432,
-                },
-            ]
-        }
+                    "repo": repo["full_name"],
+                    "description": repo["description"],
+                    "language": repo["language"],
+                    "timesForked": repo["forks_count"],
+                }
+            )
+
+        return return_list

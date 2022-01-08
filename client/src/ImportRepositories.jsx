@@ -1,19 +1,29 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
-import { getUserImportRepositories } from "./repository";
+import { getUserFollowedRepositories, getUserImportRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
 import Loading from "./common/Loading";
 import Title from "./common/Title";
 import SearchAndFilter from "./common/SearchAndFilter";
 import ImportRepositoryCard from "./ImportRepositoryCard";
-import Button from "@mui/material/Button";
-import { PRIMARY, SECONDARY } from "./common/constants";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const ImportRepositories = () => {
+  const [followMsg, setFollowMsg] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [importRepositories, setImportRepositories] = useState(null);
+  const [followedRepositories, setFollowedRepositories] = useState(null);
   console.log(importRepositories);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingImport, setIsFetchingImport] = useState(true);
+  const [isFetchingFollowed, setIsFetchingFollowed] = useState(true);
   const [filtersWithValues, setFiltersWithValues] = useState(null);
   const [filters, setFilters] = useState([]);
   const [search, setSearch] = useState("");
@@ -27,14 +37,34 @@ const ImportRepositories = () => {
     const response = await getUserImportRepositories();
 
     setImportRepositories(response.data.importRepositories);
+    console.log("imported projects", response);
+
+    setIsFetchingImport(false);
+  }, []);
+
+  const fetchFollowedRepositories = useCallback(async () => {
+    const response = await getUserFollowedRepositories();
+    console.log("followed projects", response);
+
+    setFollowedRepositories(response.data);
     console.log("res", response);
 
-    setIsLoading(false);
+    setIsFetchingFollowed(false);
   }, []);
+
+  useEffect(() => {
+    if (!isFetchingImport && !isFetchingFollowed) {
+      setIsLoading(false);
+    }
+  }, [isFetchingFollowed, isFetchingImport]);
 
   useEffect(() => {
     fetchImportRepositories();
   }, [fetchImportRepositories]);
+
+  useEffect(() => {
+    fetchFollowedRepositories();
+  }, [fetchFollowedRepositories]);
 
   useEffect(() => {
     const filteredRepos = [];
@@ -133,10 +163,23 @@ const ImportRepositories = () => {
                 ({ repo, language, description, updated, timesForked }) => (
                   <ImportRepositoryCard
                     key={repo}
-                    repo={repo}
+                    name={repo}
                     language={language}
                     description={description}
                     timesForked={timesForked}
+                    onFollow={(data) => {
+                      setFollowMsg(data.msg);
+                      setOpenSnackbar(true);
+                      setFollowedRepositories([...followedRepositories, data.repo]);
+                    }}
+                    onRemoveRepo={(value) => {
+                      setFollowedRepositories(
+                        followedRepositories.filter(
+                          (repo) => repo.repo !== value
+                        )
+                      );
+                    }}
+                    followedRepos={followedRepositories}
                   />
                 )
               )}
@@ -144,11 +187,33 @@ const ImportRepositories = () => {
           </Box>
         </Box>
       )}
-      <Box style={{ textAlign: "right" }}>
-        <Button variant="contained" style={{ background: PRIMARY }}>
-          Follow
-        </Button>
-      </Box>
+      <Stack spacing={2} sx={{ width: "100%" }}>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={(event, reason) => {
+            if (reason === "clickaway") {
+              return;
+            }
+
+            setOpenSnackbar(false);
+          }}
+        >
+          <Alert
+            onClose={(event, reason) => {
+              if (reason === "clickaway") {
+                return;
+              }
+
+              setOpenSnackbar(false);
+            }}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            {followMsg}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </Box>
   );
 };

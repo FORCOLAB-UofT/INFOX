@@ -73,7 +73,11 @@ def create_app(config_name):
         "/flask/followed",
         resource_class_kwargs={"jwt": jwt},
     )
-    api.add_resource(ImportRepositories, "/flask/import")
+    api.add_resource(
+        ImportRepositories, 
+        "/flask/import",
+        resource_class_kwargs={"jwt": jwt},
+    )
     api.add_resource(SearchGithub, "/flask/search")
     api.add_resource(
         Auth,
