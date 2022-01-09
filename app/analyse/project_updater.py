@@ -82,14 +82,8 @@ class ForkUpdater:
         if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time) \
         and (last_update.total_changed_line_number != -1):
             return
-        if current_app.config['USE_LOCAL_FORK_INFO']: 
+        if current_app.config["USE_LOCAL_FORK_INFO"]:
             # load from local.
-            splitForkName = self.fork_name.split("/")
-            compare_result = compare_changes_crawler.fetch_compare_page(self.project_name, splitForkName[0])
-            if compare_result is not None:
-                localfile_tool.write_to_file(self.diff_result_path, compare_result)
-            else:
-                return
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
                     compare_result = json.load(read_file)
