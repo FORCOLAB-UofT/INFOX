@@ -53,7 +53,7 @@ def get_active_forks(repo, access_token):
     result_length = 100
     page = 1
 
-    while result_length == 100:
+    while result_length == 100 and page < 20:
         request_url = "https://api.github.com/repos/%s/forks?per_page=100&page=%d" % (
             repo,
             page,
@@ -112,26 +112,30 @@ def start_analyse(repo, access_token):
     forks_list_path = (
         current_app.config["LOCAL_DATA_PATH"] + "/" + repo + "/forks_list.json"
     )
+
+    active_forks = get_active_forks(repo,access_token )
+
     if current_app.config["USE_LOCAL_FORKS_LIST"] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
+            project_updater.start_update(repo, repo_info, repo_forks_list)
+            return
     else:
         # repo_forks_list = github_api_caller.get("repos/%s/forks" % repo)
-        request_url = "https://api.github.com/repos/%s/forks" % repo
-        res = requests.get(
-            url=request_url,
-            headers={
-                "Accept": "application/json",
-                "Authorization": "token {}".format(access_token),
-            },
-        )
-        repo_forks_list = res.json()
-        active_forks = get_active_forks(repo,access_token )
+        # request_url = "https://api.github.com/repos/%s/forks" % repo
+        # res = requests.get(
+        #     url=request_url,
+        #     headers={
+        #         "Accept": "application/json",
+        #         "Authorization": "token {}".format(access_token),
+        #     },
+        # )
+        # repo_forks_list = res.json()
         localfile_tool.write_to_file(forks_list_path, active_forks)
 
     print("finish fetch fork list for %s" % repo)
 
-    project_updater.start_update(repo, repo_info, repo_forks_list)
+    project_updater.start_update(repo, repo_info, active_forks)
 
     # TODO: Fix email sending functionality
     # temporarily commented out to get working on local - laith

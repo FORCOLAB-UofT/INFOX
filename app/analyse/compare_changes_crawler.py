@@ -9,6 +9,7 @@ from .util import language_tool
 def fetch_commit_list(repo, fork):
     commit_list = []
     # todo find correct url for different branches. Here we make the assumption we are comparing master branches
+    # later on might have to change to main
     url = "https://github.com/%s/compare/master...%s:master" % (
         repo,
         fork,
