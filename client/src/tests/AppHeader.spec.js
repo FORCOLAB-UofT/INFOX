@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
