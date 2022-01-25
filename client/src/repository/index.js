@@ -14,7 +14,13 @@ export const getUserFollowedRepositories = async () => {
 };
 
 export const getUserImportRepositories = async () => {
-  const response = await axios.get("http://localhost:5000/flask/import");
+  const response = await axios({
+    method: "GET",
+    url: "http://localhost:5000/flask/import",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+  });
   return response;
 };
 
