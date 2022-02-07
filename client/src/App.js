@@ -17,6 +17,7 @@ import SearchGithub from "./SearchGithub";
 import AboutUs from "./AboutUs";
 import Home from "./Home";
 import LoginModal from "./LoginModal";
+import ForkCluster from "./ForkCluster";
 import { getUserLogin } from "./repository";
 
 const theme = createTheme({
@@ -107,12 +108,8 @@ const App = () => {
                 )
               }
             />
-            <Route
-              path="/aboutus"
-              element={
-                <AboutUs />
-              }
-            />
+            <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="/cluster" element={<ForkCluster />} />
           </Routes>
         </Router>
       </Box>
