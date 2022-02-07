@@ -70,4 +70,34 @@ class ForkClustering(Resource):
             "color": "rgb(244, 117, 96)"
         }]
 
-        
+        links = []
+
+        for key, value in common_words.items():
+            nodes.append({
+                "id": key,
+                "height": 1,
+                "size": 30,
+                "color": "rgb(97, 205, 187)"
+            })
+
+            links.append({
+                "source": repo,
+                "target": key,
+                "distance": 80
+            })
+
+            for frk in value:
+                nodes.append({
+                    "id": frk["name"],
+                    "height": 0,
+                    "size": 12,
+                    "color": "rgb(232, 193, 160)"
+                })
+
+                links.append({
+                    "source": key,
+                    "target": frk["name"],
+                    "distance": 50
+                })
+
+        fndsk = ""
