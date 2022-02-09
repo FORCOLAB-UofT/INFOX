@@ -2,7 +2,7 @@ import requests
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from ..models import User, Project, Permission, login_manager
+from ..models import Project, User, ProjectCluster, Permission, login_manager
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 from ..analyse.analyser import get_active_forks
@@ -23,6 +23,10 @@ class ForkClustering(Resource):
 
         current_user = get_jwt_identity()
         _user = User.objects(username=current_user).first()
+        cluster = ProjectCluster.objects(project_name=repo).first()
+
+        if cluster:
+            return {"nodes": cluster.nodes, "links": cluster.links}
 
         request_url = "https://api.github.com/repos/%s" % (
             repo,
@@ -57,11 +61,13 @@ class ForkClustering(Resource):
         for key, value in key_words.items():
             for word in value:
                 if word not in common_words:
-                    common_words[word] = [fork]
+                    common_words[word] = [key]
                 else:
-                    common_words[word].append(fork)
+                    common_words[word].append(key)
 
         check = ""
+
+        top_common_words = dict(sorted(common_words.items(), key= lambda x: len(x[1]), reverse=True)[:20])
 
         nodes = [{
             "id": repo,
@@ -72,7 +78,7 @@ class ForkClustering(Resource):
 
         links = []
 
-        for key, value in common_words.items():
+        for key, value in top_common_words.items():
             nodes.append({
                 "id": key,
                 "height": 1,
@@ -87,17 +93,27 @@ class ForkClustering(Resource):
             })
 
             for frk in value:
-                nodes.append({
-                    "id": frk["name"],
+                frk_node = {
+                    "id": frk,
                     "height": 0,
                     "size": 12,
                     "color": "rgb(232, 193, 160)"
-                })
+                }
+
+                if(frk_node) not in nodes:
+                    nodes.append(frk_node)
 
                 links.append({
                     "source": key,
-                    "target": frk["name"],
+                    "target": frk,
                     "distance": 50
                 })
 
-        fndsk = ""
+        
+
+        ProjectCluster(project_name=repo, nodes=nodes, links=links, key_words=key_words, common_words=common_words, top_common_words=top_common_words).save()
+
+        return {
+            "nodes": nodes,
+            "links": links
+        }
