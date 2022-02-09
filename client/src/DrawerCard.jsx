@@ -8,13 +8,14 @@ import ButtonBase from "@mui/material/ButtonBase";
 import { PRIMARY, TERTIARY } from "./common/constants";
 import { useNavigate } from "react-router-dom";
 
-const DrawerCard = ({ title, description, link }) => {
+const DrawerCard = ({ title, description, link, onCloseDrawer }) => {
   const [color, setColor] = useState("white");
   const navigate = useNavigate();
   return (
     <Box padding={1}>
       <ButtonBase
         onClick={() => {
+          onCloseDrawer();
           navigate(link);
         }}
       >

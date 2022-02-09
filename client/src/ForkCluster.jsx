@@ -58,34 +58,6 @@ const ForkCluster = () => {
             </Grid>
           </Grid>
         </form>
-
-        <button
-          onClick={async () => {
-            const response = await getForkClustering("home-assistant/core");
-            console.log(response);
-            setData(response.data);
-
-            let ann = [];
-            response.data.nodes.forEach((node) => {
-              if (node.height === 1) {
-                ann.push({
-                  type: "circle",
-                  match: {
-                    id: node.id,
-                  },
-                  note: node.id,
-                  noteX: 10,
-                  noteY: 30,
-                  offset: 2,
-                  noteTextOffset: 3,
-                });
-              }
-            });
-            setAnnotations(ann);
-          }}
-        >
-          here
-        </button>
       </Box>
 
       {loading ? (

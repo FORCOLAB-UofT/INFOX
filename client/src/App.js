@@ -93,14 +93,19 @@ const App = () => {
               title="Fork Clustering"
               description="Cluster forks of a respository according to keywords in their commit messages."
               link="/cluster"
+              onCloseDrawer={handleCloseDrawer}
             />
             <DrawerCard
               title="Fork Comparison"
               description="Compare forks against each other in terms of code changes. Includes: files changed, number of commits, lines changes, etc."
+              onCloseDrawer={handleCloseDrawer}
+              link="/compare"
             />
             <DrawerCard
               title="Fork Conflict Detection"
               description="Check for possible conflicts for a fork"
+              onCloseDrawer={handleCloseDrawer}
+              link="/conflict"
             />
           </Drawer>
           <Routes>
@@ -147,7 +152,16 @@ const App = () => {
               }
             />
             <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/cluster" element={<ForkCluster />} />
+            <Route
+              path="/cluster"
+              element={
+                !isEmpty(currentUser) ? (
+                  <ForkCluster />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
           </Routes>
         </Router>
       </Box>
