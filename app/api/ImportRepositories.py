@@ -13,8 +13,6 @@ class ImportRepositories(Resource):
 
     @jwt_required()
     def get(self):
-        # TODO: REPLACE FAKE DATA
-        # TODO: add active forks, last updated, forks containing unmerged code
 
         current_user = get_jwt_identity()
         _user = User.objects(username=current_user).first()
