@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 import json
 from flask import request
 import requests
-from ..models import User
+from ..models import User, ProjectFork
 from ..analyse.compare_changes_crawler import fetch_commit_list
 from ..analyse.analyser import get_active_forks
 from rake_nltk import Rake
@@ -23,8 +23,10 @@ class ForkComparison(Resource):
         forkNames = req_data.get("forks")
         repoName = req_data.get("repo")
 
+        forks_info = ProjectFork.objects(project_name=repoName)
+
         # a dictionary where each key (fork name) contains all commit messages of that fork  
-        forkCommits = dict()
+        # forkCommits = dict()
 
         # a list of all commits for each fork to be analyzed by Rake
         forkSentences = []
@@ -32,7 +34,7 @@ class ForkComparison(Resource):
         # active_forks = get_active_forks(repoName, _user.github_access_token)
 
         for fork in forkNames:
-            forkCommits[fork] = fetch_commit_list(repoName, fork)
+            # forkCommits[fork] = fetch_commit_list(repoName, fork)
             forkSentences.append(fetch_commit_list(repoName, fork))
 
         # extract common keywords between all selected forks
@@ -40,4 +42,5 @@ class ForkComparison(Resource):
 
         return {
             "keywords" : common_keywords,
+            "forks" : forks_info
         }
