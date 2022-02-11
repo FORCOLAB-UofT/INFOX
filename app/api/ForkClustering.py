@@ -6,11 +6,15 @@ from ..models import Project, User, ProjectCluster, Permission, login_manager
 from requests.adapters import HTTPAdapter
 from bs4 import BeautifulSoup
 from ..analyse.analyser import get_active_forks
-from ..analyse.compare_changes_crawler import fetch_commit_list
+from ..analyse.compare_changes_crawler import fetch_commit_list, fetch_diff_code
 import re
 from rake_nltk import Rake
 
-rake = Rake()
+programming_languages = ['html', 'js', 'json', 'py', 'php', 'css','md', 'babel', 'yml']
+common_programming_words = ['if', 'else','for', 'return', 'and', 'or']
+stop_words = programming_languages + common_programming_words
+punctuations = ['\n', '{', '}', '.', '/', "(", ")", ":", "=", ">", "<", "=>", "==", "===", "<=", ">=", ";", "|", '||', '&&', '[', ']', "-"]
+rake = Rake(stopwords=stop_words, punctuations=punctuations)
 
 class ForkClustering(Resource):
     def __init__(self, jwt):
@@ -25,8 +29,8 @@ class ForkClustering(Resource):
         _user = User.objects(username=current_user).first()
         cluster = ProjectCluster.objects(project_name=repo).first()
 
-        if cluster:
-            return {"nodes": cluster.nodes, "links": cluster.links}
+        #if cluster:
+        #    return {"nodes": cluster.nodes, "links": cluster.links}
 
         request_url = "https://api.github.com/repos/%s" % (
             repo,
@@ -49,10 +53,18 @@ class ForkClustering(Resource):
         for fork in active_forks:
             fork_name = fork["full_name"][: -(len(fork["name"]) + 1)]
             commit_msgs = fetch_commit_list(repo, fork_name, repository['default_branch'])
+            code_changes = fetch_diff_code(repo, fork_name, repository['default_branch'])
 
             sentences = []
             for msg in commit_msgs:
                 sentences.append(msg['title'])
+
+            for fork_info in code_changes:
+                if fork_info['file_full_name']:
+                    sentences.append(fork_info['file_full_name'])
+                
+                if fork_info['added_code']:
+                    sentences.append(fork_info['added_code'])
             
             if sentences:
                 rake.extract_keywords_from_sentences(sentences)

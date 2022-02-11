@@ -61,7 +61,9 @@ const ForkCluster = () => {
       </Box>
 
       {loading ? (
-        <Loading loadingMessage="Please wait. This may take a few minutes." />
+        <Box height="80vh">
+          <Loading loadingMessage="Please wait. This may take a few minutes." />
+        </Box>
       ) : data ? (
         <div
           style={{

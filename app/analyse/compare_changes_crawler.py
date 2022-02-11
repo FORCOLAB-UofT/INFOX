@@ -39,7 +39,7 @@ def fetch_commit_list(repo, fork, default_branch="master"):
     return commit_list
 
 
-def fetch_diff_code(repo, fork):
+def fetch_diff_code(repo, fork, default_branch="master"):
     """
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -53,9 +53,11 @@ def fetch_diff_code(repo, fork):
         }
     """
     file_list = []
-    url = "https://github.com/%s/compare/master...%s:master" % (
+    url = "https://github.com/%s/compare/%s...%s:%s" % (
         repo,
+        default_branch,
         fork,
+        default_branch
     )
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
@@ -65,7 +67,8 @@ def fetch_diff_code(repo, fork):
         if r.status_code != requests.codes.ok:
             raise Exception("error on fetch compare page on %s!" % repo)
     except:
-        raise Exception("error on fetch compare page on %s!" % repo)
+        #raise Exception("error on fetch compare page on %s!" % repo)
+        return []
 
     diff_list = r.text.split("diff --git")
     for diff in diff_list[1:]:
