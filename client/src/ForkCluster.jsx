@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { getForkClustering } from "./repository";
 import { ResponsiveNetworkCanvas } from "@nivo/network";
-import { Box, Button, TextField, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Grid,
+  Checkbox,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import Loading from "./common/Loading";
 
 const ForkCluster = () => {
@@ -9,11 +20,24 @@ const ForkCluster = () => {
   const [annotations, setAnnotations] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [analyzeCode, setAnalyzeCode] = useState(true);
+  const [analyzeFiles, setAnalyzeFiles] = useState(true);
+  const [analyzeCommits, setAnalyzeCommits] = useState(true);
+  const [clusterNumber, setClusterNumber] = useState(10);
 
   const onClickSearch = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const response = await getForkClustering(searchText);
+
+    const searchInfo = {
+      repo: searchText,
+      analyzeCode: analyzeCode,
+      analyzeFiles: analyzeFiles,
+      analyzeCommits: analyzeCommits,
+      clusterNumber: clusterNumber,
+    };
+
+    const response = await getForkClustering(searchInfo);
     setData(response.data);
 
     let ann = [];
@@ -55,6 +79,73 @@ const ForkCluster = () => {
               <Button variant="contained" type="submit">
                 Search
               </Button>
+            </Grid>
+            <Grid item marginTop={1}>
+              <Grid container>
+                <Grid item>
+                  <Grid container>
+                    <Grid item>
+                      <Checkbox
+                        checked={analyzeCode}
+                        onChange={(e) => {
+                          setAnalyzeCode(e.target.checked);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item marginTop={1}>
+                      <Typography>Analyze Code Changes</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item>
+                  <Grid container>
+                    <Grid item>
+                      <Checkbox
+                        checked={analyzeFiles}
+                        onChange={(e) => {
+                          setAnalyzeFiles(e.target.checked);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item marginTop={1}>
+                      <Typography>Analyze Files Changed</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item>
+                  <Grid container>
+                    <Grid item>
+                      <Checkbox
+                        checked={analyzeCommits}
+                        onChange={(e) => {
+                          setAnalyzeCommits(e.target.checked);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item marginTop={1}>
+                      <Typography>Analyze Commit Messages</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={1} marginTop={1} paddingLeft={1}>
+              <FormControl fullWidth>
+                <InputLabel id="clusterNumber">Clusters</InputLabel>
+                <Select
+                  id="clusterNumber"
+                  label="Clusters"
+                  value={clusterNumber}
+                  onChange={(e) => {
+                    setClusterNumber(e.target.value);
+                  }}
+                >
+                  <MenuItem value={5}>Five</MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={15}>Fifteen</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </form>
