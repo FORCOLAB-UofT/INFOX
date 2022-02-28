@@ -13,6 +13,17 @@ export const getUserFollowedRepositories = async () => {
   return response;
 };
 
+export const getRepoForks = async (value) => {
+  const response = await axios({
+    method: "GET",
+    url: `http://localhost:5000/flask/forklist?repo=${value}`,
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+  });
+  return response;
+}
+
 export const getUserImportRepositories = async () => {
   const response = await axios({
     method: "GET",

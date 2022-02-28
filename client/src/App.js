@@ -9,7 +9,7 @@ import {
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import isEmpty from "lodash/isEmpty";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { userState } from "./recoil/atoms";
+import { userState, repoState } from "./recoil/atoms";
 import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
@@ -18,6 +18,7 @@ import AboutUs from "./AboutUs";
 import Home from "./Home";
 import LoginModal from "./LoginModal";
 import { getUserLogin } from "./repository";
+import Forklist from "./Forklist"
 
 const theme = createTheme({
   typography: {
@@ -29,6 +30,9 @@ const App = () => {
   const setUser = useSetRecoilState(userState);
   const currentUser = useRecoilValue(userState);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+  const setRepo = useSetRecoilState(repoState);
+  const currentRepo = useRecoilValue(repoState);
 
   const fetchUser = useCallback(async () => {
     setIsLoadingUser(true);
@@ -111,6 +115,16 @@ const App = () => {
               path="/aboutus"
               element={
                 <AboutUs />
+              }
+            />
+            <Route
+              path="/forklist"
+              element={
+                !isEmpty(currentRepo) ? (
+                  <Forklist />
+                ) : (
+                  <Navigate to="/followed" />
+                )
               }
             />
           </Routes>
