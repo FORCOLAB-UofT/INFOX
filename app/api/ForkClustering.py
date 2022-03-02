@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 import requests
 from flask import request
 from flask_restful import Resource
@@ -24,13 +25,60 @@ class ForkClustering(Resource):
     def get(self):
         req_data = request.args
         repo = req_data.get("repo")
+        cluster_number = int(req_data.get("clusterNumber"))
 
         current_user = get_jwt_identity()
         _user = User.objects(username=current_user).first()
         cluster = ProjectCluster.objects(project_name=repo).first()
 
-        #if cluster:
-        #    return {"nodes": cluster.nodes, "links": cluster.links}
+        if cluster:
+            if cluster_number == 20:
+                return {"nodes": cluster.nodes, "links": cluster.links}
+            else:
+                top_common_words = dict(sorted(cluster.common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+
+                nodes = [{
+                    "id": repo,
+                    "height": 2,
+                    "size": 32,
+                    "color": "rgb(244, 117, 96)"
+                }]
+
+                links = []
+
+                for key, value in top_common_words.items():
+                    nodes.append({
+                        "id": key,
+                        "height": 1,
+                        "size": 30,
+                        "color": "rgb(97, 205, 187)"
+                    })
+
+                    links.append({
+                        "source": repo,
+                        "target": key,
+                        "distance": 80
+                    })
+
+                    for frk in value:
+                        frk_node = {
+                            "id": frk,
+                            "height": 0,
+                            "size": 12,
+                            "color": "rgb(232, 193, 160)"
+                        }
+
+                        if(frk_node) not in nodes:
+                            nodes.append(frk_node)
+
+                        links.append({
+                            "source": key,
+                            "target": frk,
+                            "distance": 50
+                        })
+
+                return {"nodes": nodes, "links": links}
+
 
         request_url = "https://api.github.com/repos/%s" % (
             repo,
@@ -72,12 +120,11 @@ class ForkClustering(Resource):
 
         for key, value in key_words.items():
             for word in value:
-                if word not in common_words:
-                    common_words[word] = [key]
-                else:
-                    common_words[word].append(key)
-
-        check = ""
+                if not isdigit(word):
+                    if word not in common_words:
+                        common_words[word] = [key]
+                    else:
+                        common_words[word].append(key)
 
         top_common_words = dict(sorted(common_words.items(), key= lambda x: len(x[1]), reverse=True)[:20])
 
@@ -120,8 +167,6 @@ class ForkClustering(Resource):
                     "target": frk,
                     "distance": 50
                 })
-
-        
 
         ProjectCluster(project_name=repo, nodes=nodes, links=links, key_words=key_words, common_words=common_words, top_common_words=top_common_words).save()
 
