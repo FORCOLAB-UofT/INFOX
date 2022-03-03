@@ -71,6 +71,14 @@ class Project(db.Document):
     project_name_show = db.StringField()
     last_updated_time = db.DateTimeField()
 
+class ProjectCluster(db.Document):
+    project_name = db.StringField(required=True, primary_key=True)
+    nodes = db.ListField(db.DictField())
+    links = db.ListField(db.DictField())
+    common_words = db.DictField()
+    key_words = db.DictField()
+    top_common_words = db.DictField()
+
 
 class ForkTag(db.Document):
     fork_full_name = db.StringField(required=True)

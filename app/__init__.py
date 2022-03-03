@@ -13,6 +13,7 @@ from .api.SearchGithub import SearchGithub
 from .api.FollowRepository import FollowRepository
 from .api.Auth import Auth
 from .api.ForkList import ForkList
+from .api.ForkClustering import ForkClustering
 from .db import initialize_db
 from .loginmanager import login_manager
 from .mail import mail
@@ -75,7 +76,7 @@ def create_app(config_name):
         resource_class_kwargs={"jwt": jwt},
     )
     api.add_resource(
-        ImportRepositories, 
+        ImportRepositories,
         "/flask/import",
         resource_class_kwargs={"jwt": jwt},
     )
@@ -89,6 +90,9 @@ def create_app(config_name):
         FollowRepository,
         "/flask/follow",
         resource_class_kwargs={"jwt": jwt},
+    )
+    api.add_resource(
+        ForkClustering, "/flask/cluster", resource_class_kwargs={"jwt": jwt}
     )
 
     api.add_resource(

@@ -10,13 +10,13 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SearchIcon from "@mui/icons-material/Search";
 import { useRecoilValue } from "recoil";
 import ButtonLink from "./common/ButtonLink";
-import LinkIcon from '@mui/icons-material/Link';
+import LinkIcon from "@mui/icons-material/Link";
 import { PRIMARY } from "./common/constants";
 import Login from "./Login";
 import Logout from "./Logout";
 import { userState } from "./recoil/atoms";
 
-const AppHeader = () => {
+const AppHeader = ({ onOpenDrawer }) => {
   const currentUser = useRecoilValue(userState);
   console.log("appheader current", currentUser);
   return (
@@ -29,6 +29,7 @@ const AppHeader = () => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={onOpenDrawer}
           >
             <MenuIcon />
           </IconButton>
