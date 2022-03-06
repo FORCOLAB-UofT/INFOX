@@ -29,7 +29,10 @@ class ForkList(Resource):
                     "fork_name": fork["fork_name"],
                     "project_name": fork["project_name"],
                     "num_changed_files": fork["total_changed_file_number"],
-                    "num_changed_lines": fork["total_changed_line_number"]
+                    "num_changed_lines": fork["total_changed_line_number"],
+                    "key_words": fork["key_words"],
+                    "tags": fork["tags"],
+                    "total_commit_number": fork["total_commit_number"]
                 }
             )
 

@@ -14,10 +14,8 @@ import RemoveButton from "./common/RemoveButton";
 import { SECONDARY, TERTIARY } from "./common/constants";
 import { deleteUserRepository } from "./repository";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
-import { useSetRecoilState } from "recoil";
-import { repoState } from "./recoil/atoms";
 import { useNavigate } from "react-router";
-
+import { PRIMARY, REMOVE } from "./common/constants";
 
 const FollowedRepositoryCard = ({
   repo,
@@ -33,17 +31,17 @@ const FollowedRepositoryCard = ({
     onClickRemove(repo);
   };
 
-  const setRepo = useSetRecoilState(repoState);
   const navigate = useNavigate();
 
   const navigateToFork = () => {
-    navigate("/forklist")
-  }
+    console.log("repo nav", repo);
+    navigate(`/forks/${repo}`, { replace: true });
+  };
 
   const setCompareRepo = () => {
-      setRepo(repo);
-      navigateToFork();
-  }
+    navigateToFork();
+  };
+
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -52,20 +50,25 @@ const FollowedRepositoryCard = ({
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item xs={10}>
+            <Grid item xs={9}>
               <Typography color="white">{repo}</Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
               <Box style={{ textAlign: "right" }}>
-                <RemoveButton onClickRemove={onRemove} />
+                <Button
+                  color="inherit"
+                  startIcon={<SignalCellularAltIcon />}
+                  onClick={setCompareRepo}
+                  style={{ background: REMOVE }}
+                >
+                  View Forks
+                </Button>
               </Box>
             </Grid>
             <Grid item xs={1}>
-              <Button
-              color="inherit"
-              startIcon={<SignalCellularAltIcon />}
-              onClick={setCompareRepo}
-              >View Forks</Button>
+              <Box style={{ textAlign: "center" }}>
+                <RemoveButton onClickRemove={onRemove} />
+              </Box>
             </Grid>
           </Grid>
         </AccordionSummary>

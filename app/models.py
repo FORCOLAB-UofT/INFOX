@@ -75,7 +75,6 @@ class ProjectCluster(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     nodes = db.ListField(db.DictField())
     links = db.ListField(db.DictField())
-    common_words = db.DictField()
     key_words = db.DictField()
     top_common_words = db.DictField()
 

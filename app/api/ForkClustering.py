@@ -12,9 +12,9 @@ import re
 from rake_nltk import Rake
 
 programming_languages = ['html', 'js', 'json', 'py', 'php', 'css','md', 'babel', 'yml']
-common_programming_words = ['if', 'else','for', 'return', 'and', 'or']
+common_programming_words = ['if', 'else','for', 'return', 'and', 'or', 'merge']
 stop_words = programming_languages + common_programming_words
-punctuations = ['\n', '{', '}', '.', '/', "(", ")", ":", "=", ">", "<", "=>", "==", "===", "<=", ">=", ";", "|", '||', '&&', '[', ']', "-"]
+punctuations = ['\n', '{', '}', '.', '/', "(", ")", ":", "=", ">", "<", "=>", "==", "===", "<=", ">=", ";", "|", '||', '&&', '[', ']', "-", "$"]
 rake = Rake(stopwords=stop_words, punctuations=punctuations)
 
 class ForkClustering(Resource):
@@ -35,8 +35,8 @@ class ForkClustering(Resource):
             if cluster_number == 20:
                 return {"nodes": cluster.nodes, "links": cluster.links}
             else:
-                top_common_words = dict(sorted(cluster.common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
-
+                #top_common_words = dict(sorted(cluster.common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+                top_common_words = dict(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
                 nodes = [{
                     "id": repo,
                     "height": 2,
@@ -120,7 +120,7 @@ class ForkClustering(Resource):
 
         for key, value in key_words.items():
             for word in value:
-                if not isdigit(word):
+                if not word.isnumeric():
                     if word not in common_words:
                         common_words[word] = [key]
                     else:
@@ -168,7 +168,7 @@ class ForkClustering(Resource):
                     "distance": 50
                 })
 
-        ProjectCluster(project_name=repo, nodes=nodes, links=links, key_words=key_words, common_words=common_words, top_common_words=top_common_words).save()
+        ProjectCluster(project_name=repo, nodes=nodes, links=links, key_words=key_words, top_common_words=top_common_words).save()
 
         return {
             "nodes": nodes,

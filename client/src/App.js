@@ -11,7 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import isEmpty from "lodash/isEmpty";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { userState, repoState } from "./recoil/atoms";
+import { userState } from "./recoil/atoms";
 import AppHeader from "./AppHeader";
 import FollowedRespositories from "./FollowedRepositories";
 import ImportRepositories from "./ImportRepositories";
@@ -35,9 +35,6 @@ const App = () => {
   const currentUser = useRecoilValue(userState);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [openDrawer, setOpenDrawer] = useState(false);
-
-  const setRepo = useSetRecoilState(repoState);
-  const currentRepo = useRecoilValue(repoState);
 
   const fetchUser = useCallback(async () => {
     setIsLoadingUser(true);
@@ -167,9 +164,9 @@ const App = () => {
               }
             />
             <Route
-              path="/forklist"
+              path="/forks/:repo1/:repo2"
               element={
-                !isEmpty(currentRepo) ? (
+                !isEmpty(currentUser) ? (
                   <Forklist />
                 ) : (
                   <Navigate to="/followed" />
