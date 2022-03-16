@@ -102,7 +102,7 @@ def create_app(config_name):
     )
 
     # TODO: get correct host, broker and backend depending on environment
-    redis_host = "redis://localhost:6379/0"
+    redis_host = "redis://redis:6379/0"
     celery.conf.broker_url = redis_host
     celery.conf.result_backend = redis_host
     # celery.init_app(app)
