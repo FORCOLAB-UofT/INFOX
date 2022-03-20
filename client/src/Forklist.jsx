@@ -38,13 +38,23 @@ function createData(
   fork_name,
   num_changed_files,
   num_changed_lines,
-  total_commit_number
+  total_commit_number,
+  key_words
 ) {
+  
+  console.log("key words received:", key_words)
+  let parsed_words = []
+  for (let i = 0; i < key_words.length; i++){
+    parsed_words.push(key_words[i].concat(", "));
+  }
+  console.log("Parsed words:", parsed_words)
+
   return {
     fork_name,
     num_changed_files,
     num_changed_lines,
     total_commit_number,
+    parsed_words,
   };
 }
 
@@ -102,6 +112,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "# Commits",
+  },
+  {
+    id: "keywords",
+    numeric: false,
+    disablePadding: false,
+    label: "Keywords",
   },
 ];
 
@@ -238,7 +254,8 @@ const EnhancedTable = ({ data }) => {
         value.fork_name,
         value.num_changed_files ?? 0,
         value.num_changed_lines ?? 0,
-        value.total_commit_number ?? 0
+        value.total_commit_number ?? 0,
+        value.key_words,
       )
     );
   });
@@ -373,6 +390,9 @@ const EnhancedTable = ({ data }) => {
                       <TableCell align="left">
                         {row.total_commit_number}
                       </TableCell>
+                      <TableCell align="left">
+                        {row.parsed_words}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -408,7 +428,8 @@ const ForkList = () => {
 
   const fetchForks = useCallback(async (repo) => {
     const response = await getRepoForks(repo);
-    console.log("response", response);
+    console.log("Fetching forks list for ", repo)
+    console.log("forks list response", response);
     setData(response.data.forks);
   }, []);
 
