@@ -107,7 +107,18 @@ class ForkList(Resource):
                         key_words=[]
                     )
 
-            for key, value in key_words.items():
+        
+
+            # print("Common words found by rake", top_common_words)
+
+        forks_info = ProjectFork.objects(project_name=repoName)
+
+        db_keyword_dict = {}
+        top_common_words = {}
+        for fork in forks_info:
+            db_keyword_dict[fork["fork_name"]] = fork["key_words"]
+
+            for key, value in db_keyword_dict.items():
                 for word in value:
                     if word not in common_words:
                         common_words[word] = [key]
@@ -117,11 +128,6 @@ class ForkList(Resource):
             top_common_words = dict(
                 sorted(common_words.items(), key=lambda x: len(x[1]), reverse=True)[:20]
             )
-
-            # print("Common words found by rake", top_common_words)
-
-        forks_info = ProjectFork.objects(project_name=repoName)
-
         return_list = []
         for fork in forks_info:
             return_list.append(
