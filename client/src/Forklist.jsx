@@ -39,15 +39,17 @@ function createData(
   num_changed_files,
   num_changed_lines,
   total_commit_number,
-  key_words
+  key_words,
+  last_committed_time,
+  created_time
 ) {
   
-  console.log("key words received:", key_words)
+  // console.log("key words received:", key_words)
   let parsed_words = []
   for (let i = 0; i < key_words.length; i++){
     parsed_words.push(key_words[i].concat(", "));
   }
-  console.log("Parsed words:", parsed_words)
+  // console.log("Parsed words:", parsed_words)
 
   return {
     fork_name,
@@ -55,6 +57,8 @@ function createData(
     num_changed_lines,
     total_commit_number,
     parsed_words,
+    last_committed_time,
+    created_time,
   };
 }
 
@@ -118,6 +122,17 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Keywords",
+  },
+  {
+    id: "last_committed_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Last Commit Time",
+  },{
+    id: "created_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Creation Date",
   },
 ];
 
@@ -256,6 +271,8 @@ const EnhancedTable = ({ data }) => {
         value.num_changed_lines ?? 0,
         value.total_commit_number ?? 0,
         value.key_words,
+        value.last_committed_time,
+        value.created_time
       )
     );
   });
@@ -392,6 +409,12 @@ const EnhancedTable = ({ data }) => {
                       </TableCell>
                       <TableCell align="left">
                         {row.parsed_words}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.last_committed_time}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.created_time}
                       </TableCell>
                     </TableRow>
                   );
