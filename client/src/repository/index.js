@@ -82,3 +82,20 @@ export const deleteUserRepository = async (value) => {
 
   return response;
 };
+
+export const getForkClustering = async ({
+  repo,
+  analyzeCode,
+  analyzeFiles,
+  analyzeCommits,
+  clusterNumber,
+}) => {
+  const response = await axios({
+    method: "GET",
+    url: `http://localhost:5000/flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}`,
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+  });
+  return response;
+};
