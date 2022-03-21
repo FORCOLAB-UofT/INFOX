@@ -47,7 +47,7 @@ function createData(
 
   // console.log("key words received:", key_words)
   let parsed_words = []
-  for (let i = 0; i < key_words.length; i++) {
+  for (let i = 0; i < key_words.length && i < 20; i++) {
     parsed_words.push(key_words[i].concat(", "));
   }
   // console.log("Parsed words:", parsed_words)
@@ -246,7 +246,7 @@ const EnhancedTableToolbar = (props) => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-          
+
         </>
       ) : (
         <Tooltip title="Filter list">
@@ -287,6 +287,8 @@ const EnhancedTable = ({ data }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [visibleRows, setVisibleRows] = useState(rows);
+  const [commonKeywords, setCommonKeywords] = useState([]);
+  const [displayCompare, setDisplayCompare] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -344,16 +346,18 @@ const EnhancedTable = ({ data }) => {
     console.log("Selected forks:", selected)
 
     let comparisonKeywords = [];
-    for(let i = 0; i < selected.length; i++){
+    for (let i = 0; i < selected.length; i++) {
       let words = selected[i]["parsed_words"];
       comparisonKeywords.push(words);
     }
 
-    let commonKeywords = [];
-    for(let i = 1; i < comparisonKeywords.length; i++){
-      commonKeywords = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
+    let commonKeywordsTemp = [];
+    for (let i = 1; i < comparisonKeywords.length; i++) {
+      commonKeywordsTemp = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
     }
-    console.log("Common keywords:", commonKeywords)
+    console.log("Common keywords:", commonKeywords);
+    setCommonKeywords(commonKeywordsTemp);
+    setDisplayCompare(true);
   };
 
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
@@ -465,6 +469,10 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      {displayCompare && commonKeywords.length > 0 && <Paper sx={{width:"20%", padding:1}}> 
+        <Typography variant="h6">Common Words from Selected Forks</Typography>
+        <Typography paragraph>{commonKeywords}</Typography>
+      </Paper>}
     </Box>
   );
 };
@@ -485,7 +493,9 @@ const ForkList = () => {
     fetchForks(repo);
   }, [fetchForks]);
 
-  return <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>;
+  return (
+    <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>
+  );
 };
 
 export default ForkList;

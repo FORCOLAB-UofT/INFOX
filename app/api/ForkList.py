@@ -9,7 +9,7 @@ from ..analyse.compare_changes_crawler import fetch_commit_list, fetch_diff_code
 from ..analyse.analyser import get_active_forks
 from rake_nltk import Rake
 
-programming_languages = ["html", "js", "json", "py", "php", "css", "md", "babel", "yml"]
+programming_languages = ["html", "js", "json", "py", "php", "css", "md", "babel", "yml", "java", "python", "javascript"]
 common_programming_words = [
     "if",
     "else",
@@ -20,6 +20,15 @@ common_programming_words = [
     "merge",
     "in",
     "to",
+    "init",
+    "is",
+    "not",
+    "a",
+    "main",
+    "src",
+    "com",
+    "xml",
+    "txt",
 ]
 stop_words = programming_languages + common_programming_words
 punctuations = [
@@ -47,8 +56,18 @@ punctuations = [
     "]",
     "-",
     "$",
+    "+",
+    "-",
+    ",",
+    "'",
+    "`",
+    "()",
+    "())",
+    "__",
+    "_",
+
 ]
-rake = Rake(stopwords=stop_words, punctuations=punctuations)
+rake = Rake(stopwords=stop_words, punctuations=punctuations, include_repeated_phrases=False)
 
 
 class ForkList(Resource):
@@ -66,7 +85,7 @@ class ForkList(Resource):
         repo = repoName
 
         forks_info = ProjectFork.objects(project_name=repoName)
-        parentRepo = Project.objects(project_name=repoName)
+        # parentRepo = Project.objects(project_name=repoName)
 
         request_url = "http://localhost:5000/flask/follow"
         if not forks_info:
@@ -100,8 +119,8 @@ class ForkList(Resource):
                     if fork_info["file_full_name"]:
                         sentences.append(fork_info["file_full_name"])
 
-                    if fork_info["added_code"]:
-                        sentences.append(fork_info["added_code"])
+                    # if fork_info["added_code"]:
+                    #     sentences.append(fork_info["added_code"])
 
                 if sentences:
                     rake.extract_keywords_from_sentences(sentences)
