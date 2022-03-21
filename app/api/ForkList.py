@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required
 import json
 from flask import request
 import requests
-from ..models import User, ProjectFork
+from ..models import User, ProjectFork, Project
 from ..analyse.compare_changes_crawler import fetch_commit_list, fetch_diff_code
 from ..analyse.analyser import get_active_forks
 from rake_nltk import Rake
@@ -63,11 +63,20 @@ class ForkList(Resource):
 
         req_data = request.args
         repoName = req_data.get("repo")
+        repo = repoName
 
         forks_info = ProjectFork.objects(project_name=repoName)
+        parentRepo = Project.objects(project_name=repoName)
+
+        request_url = "http://localhost:5000/flask/follow"
+        if not forks_info:
+            
+            response = requests.post(request_url, json={"repo":repo}, headers={"Authorization": request.headers.get("Authorization")})
+            
 
         key_words = {}
         common_words = {}
+        top_common_words = []
 
         # active_forks = get_active_forks(repoName, _user.github_access_token)
         active_forks = get_active_forks(repoName, _user.github_access_token)
@@ -106,28 +115,33 @@ class ForkList(Resource):
                     ProjectFork.objects(fork_name=fork["full_name"]).update(
                         key_words=[]
                     )
-
-        
+                # for key, value in key_words.items():
+                #     for word in value:
+                #         if not word.isnumeric():
+                #             if word not in common_words:
+                #                 common_words[word] = [key]
+                #             else:
+                #                 common_words[word].append(key)
+                # top_common_words = dict(
+                #     sorted(common_words.items(), key=lambda x: len(x[1]), reverse=True)[:20]
+                # )
+                # Project.objects(project_name=repoName).update(common_fork_keywords=top_common_words)
 
             # print("Common words found by rake", top_common_words)
 
-        forks_info = ProjectFork.objects(project_name=repoName)
+        # forks_info = ProjectFork.objects(project_name=repoName)
+        # db_keyword_dict = {}
+        # top_common_words = {}
+        # for fork in forks_info:
+        #     db_keyword_dict[fork["fork_name"]] = fork["key_words"]
 
-        db_keyword_dict = {}
-        top_common_words = {}
-        for fork in forks_info:
-            db_keyword_dict[fork["fork_name"]] = fork["key_words"]
+        #     for key, value in db_keyword_dict.items():
+        #         for word in value:
+        #             if word not in common_words:
+        #                 common_words[word] = [key]
+        #             else:
+        #                 common_words[word].append(key)
 
-            for key, value in db_keyword_dict.items():
-                for word in value:
-                    if word not in common_words:
-                        common_words[word] = [key]
-                    else:
-                        common_words[word].append(key)
-
-            top_common_words = dict(
-                sorted(common_words.items(), key=lambda x: len(x[1]), reverse=True)[:20]
-            )
         return_list = []
         for fork in forks_info:
             return_list.append(
@@ -140,11 +154,8 @@ class ForkList(Resource):
                     "tags": fork["tags"],
                     "total_commit_number": fork["total_commit_number"],
                     "last_committed_time": str(fork["last_committed_time"]),
-                    "created_time": str(fork["created_time"])
+                    "created_time": str(fork["created_time"]),
                 }
             )
 
-        return {
-            "forks": return_list,
-            "top_common_words": top_common_words
-        }
+        return {"forks": return_list}
