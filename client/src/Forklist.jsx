@@ -24,11 +24,12 @@ import { visuallyHidden } from "@mui/utils";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRecoilState } from "recoil";
-import { Snackbar } from "@mui/material";
+import { Button, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
+import Loading from "./common/Loading"
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -43,10 +44,10 @@ function createData(
   last_committed_time,
   created_time
 ) {
-  
+
   // console.log("key words received:", key_words)
   let parsed_words = []
-  for (let i = 0; i < key_words.length; i++){
+  for (let i = 0; i < key_words.length; i++) {
     parsed_words.push(key_words[i].concat(", "));
   }
   // console.log("Parsed words:", parsed_words)
@@ -128,7 +129,7 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Last Commit Time",
-  },{
+  }, {
     id: "created_time",
     numeric: false,
     disablePadding: false,
@@ -223,6 +224,7 @@ const EnhancedTableToolbar = (props) => {
           component="div"
         >
           {numSelected} selected
+
         </Typography>
       ) : (
         <Typography
@@ -232,7 +234,9 @@ const EnhancedTableToolbar = (props) => {
           component="div"
         >
           Search Results
+
         </Typography>
+
       )}
 
       {numSelected > 0 ? (
@@ -242,6 +246,7 @@ const EnhancedTableToolbar = (props) => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
+          
         </>
       ) : (
         <Tooltip title="Filter list">
@@ -335,6 +340,22 @@ const EnhancedTable = ({ data }) => {
     setSelected([]);
   };
 
+  const handleCompareButton = () => {
+    console.log("Selected forks:", selected)
+
+    let comparisonKeywords = [];
+    for(let i = 0; i < selected.length; i++){
+      let words = selected[i]["parsed_words"];
+      comparisonKeywords.push(words);
+    }
+
+    let commonKeywords = [];
+    for(let i = 1; i < comparisonKeywords.length; i++){
+      commonKeywords = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
+    }
+    console.log("Common keywords:", commonKeywords)
+  };
+
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -344,10 +365,13 @@ const EnhancedTable = ({ data }) => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
+
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDelete={handleDelete}
         />
+        <Button onClick={handleCompareButton}>Compare Selected Forks</Button>
+
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -461,7 +485,7 @@ const ForkList = () => {
     fetchForks(repo);
   }, [fetchForks]);
 
-  return <>{data ? <EnhancedTable data={data} /> : <>Loading</>}</>;
+  return <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>;
 };
 
 export default ForkList;
