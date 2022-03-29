@@ -39,6 +39,7 @@ const Alert = forwardRef(function Alert(props, ref) {
 function createData(
   fork_name,
   num_changed_files,
+  changed_files,
   num_changed_lines,
   total_commit_number,
   key_words,
@@ -47,18 +48,26 @@ function createData(
 ) {
 
   // console.log("key words received:", key_words)
-  let parsed_words = []
-  for (let i = 0; i < key_words.length && i < 20; i++) {
+  let parsed_words = [];
+  for (let i = 0; i < key_words.length && i < 10; i++) {
     parsed_words.push(key_words[i].concat(", "));
+  }
+
+  let parsed_files = [];
+  for (let i = 0; i < changed_files.length && i < 10; i++) {
+    parsed_files.push(changed_files[i].concat(", "));
   }
   // console.log("Parsed words:", parsed_words)
 
   return {
     fork_name,
     num_changed_files,
+    parsed_files,
+    changed_files,
     num_changed_lines,
     total_commit_number,
     parsed_words,
+    key_words,
     last_committed_time,
     created_time,
   };
@@ -106,6 +115,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "# Changed Files",
+  },
+  {
+    id: "changed_files",
+    numeric: false,
+    disablePadding: false,
+    label: "File List",
   },
   {
     id: "num_changed_lines",
@@ -274,6 +289,7 @@ const EnhancedTable = ({ data }) => {
       createData(
         value.fork_name,
         value.num_changed_files ?? 0,
+        value.changed_files,
         value.num_changed_lines ?? 0,
         value.total_commit_number ?? 0,
         value.key_words,
@@ -289,6 +305,7 @@ const EnhancedTable = ({ data }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [visibleRows, setVisibleRows] = useState(rows);
   const [commonKeywords, setCommonKeywords] = useState([]);
+  const [commonFiles, setCommonFiles] = useState([]);
   const [displayCompare, setDisplayCompare] = useState(false);
 
   const handleRequestSort = (event, property) => {
@@ -348,17 +365,42 @@ const EnhancedTable = ({ data }) => {
 
     let comparisonKeywords = [];
     for (let i = 0; i < selected.length; i++) {
-      let words = selected[i]["parsed_words"];
+      let words = selected[i]["key_words"];
       comparisonKeywords.push(words);
+    }
+
+    let comparisonFiles = [];
+    for (let i = 0; i < selected.length; i++) {
+      let words = selected[i]["changed_files"];
+      comparisonFiles.push(words);
     }
 
     let commonKeywordsTemp = [];
     for (let i = 1; i < comparisonKeywords.length; i++) {
       commonKeywordsTemp = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
     }
-    console.log("Common keywords:", commonKeywords);
-    setCommonKeywords(commonKeywordsTemp);
+
+    let commonFilesTemp = [];
+    for (let i = 1; i < comparisonFiles.length; i++) {
+      commonFilesTemp = comparisonFiles[0].filter(x => comparisonFiles[i].includes(x));
+    }
+
+    let commonKeywordsTempTwo = [];
+    for (let i = 0; i < commonKeywordsTemp.length; i++) {
+      commonKeywordsTempTwo.push(commonKeywordsTemp[i].concat(", "));
+    }
+
+    let commonFilesTempTwo = [];
+    for (let i = 0; i < commonFilesTemp.length; i++) {
+      commonFilesTempTwo.push(commonFilesTemp[i].concat(", "));
+    }
+
+    setCommonKeywords(commonKeywordsTempTwo);
+    setCommonFiles(commonFilesTempTwo);
     setDisplayCompare(true);
+
+    console.log(commonKeywordsTempTwo)
+    console.log(comparisonFiles)
   };
 
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
@@ -431,6 +473,9 @@ const EnhancedTable = ({ data }) => {
                         {row.num_changed_files}
                       </TableCell>
                       <TableCell align="left">
+                        {row.parsed_files}
+                      </TableCell>
+                      <TableCell align="left">
                         {row.num_changed_lines}
                       </TableCell>
                       <TableCell align="left">
@@ -470,10 +515,17 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {displayCompare && commonKeywords.length > 0 && <Paper sx={{ width: "20%", padding: 1 }}>
-        <Typography variant="h6">Common Words from Selected Forks</Typography>
-        <Typography paragraph>{commonKeywords}</Typography>
-      </Paper>}
+      <Box sx={{ display: "flex" }}>
+        {displayCompare && commonKeywords.length > 0 && <Paper sx={{ width: "20%", padding: 1, marginRight: 1 }}>
+          <Typography variant="h6">Common Words from Selected Forks</Typography>
+          <Typography paragraph>{commonKeywords}</Typography>
+        </Paper>}
+        {displayCompare && commonFiles.length > 0 && <Paper sx={{ width: "20%", padding: 1 }}>
+          <Typography variant="h6">Common Files Changed from Selected Forks</Typography>
+          <Typography paragraph>{commonFiles}</Typography>
+        </Paper>}
+      </Box>
+
     </Box>
   );
 };
