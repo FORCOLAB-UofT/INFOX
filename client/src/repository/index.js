@@ -36,7 +36,7 @@ export const getUserImportRepositories = async () => {
 };
 
 export const postUserLogin = async (values) => {
-  const response = await axios.post("http://localhost:5000/flask/auth", {
+  const response = await axios.post("flask/auth", {
     code: values,
   });
 
@@ -46,7 +46,7 @@ export const postUserLogin = async (values) => {
 export const getUserLogin = async () => {
   const response = await axios({
     method: "GET",
-    url: "http://localhost:5000/flask/auth",
+    url: "flask/auth",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },

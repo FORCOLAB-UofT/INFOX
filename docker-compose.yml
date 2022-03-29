@@ -1,7 +1,8 @@
 version: "3.4"
 
 services:
-  api:
+  backend:
+    container_name: backend
     build:
       context: .
       dockerfile: Dockerfile.api
@@ -13,7 +14,7 @@ services:
       dockerfile: Dockerfile.client
     image: react-flask-app-client
     ports:
-      - "3000:80"
+      - "80:80"
 
   redis:
     env_file:
@@ -57,7 +58,7 @@ services:
       context: "."
       args:
         - "FLASK_ENV=${FLASK_ENV:-production}"
-    command: celery -A celery_worker.celery worker --loglevel=info 
+    command: celery -A celery_worker.celery worker 
     depends_on:
       - "redis"
     env_file:
