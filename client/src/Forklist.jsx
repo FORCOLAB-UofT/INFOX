@@ -24,13 +24,15 @@ import { visuallyHidden } from "@mui/utils";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRecoilState } from "recoil";
-import { Button, Snackbar } from "@mui/material";
+import { Button, DialogContent, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
 import Loading from "./common/Loading"
 import SearchAndFilter from "./common/SearchAndFilter";
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -307,6 +309,7 @@ const EnhancedTable = ({ data }) => {
   const [commonKeywords, setCommonKeywords] = useState([]);
   const [commonFiles, setCommonFiles] = useState([]);
   const [displayCompare, setDisplayCompare] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -363,6 +366,8 @@ const EnhancedTable = ({ data }) => {
   const handleCompareButton = () => {
     console.log("Selected forks:", selected)
 
+    const maxLength = 65;
+
     let comparisonKeywords = [];
     for (let i = 0; i < selected.length; i++) {
       let words = selected[i]["key_words"];
@@ -387,21 +392,38 @@ const EnhancedTable = ({ data }) => {
 
     let commonKeywordsTempTwo = [];
     for (let i = 0; i < commonKeywordsTemp.length; i++) {
-      commonKeywordsTempTwo.push(commonKeywordsTemp[i].concat(", "));
+      if (commonKeywordsTemp[i].length < maxLength) {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].concat(", "));
+      } else {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].substring(0, maxLength).concat(", "));
+      }
     }
 
     let commonFilesTempTwo = [];
     for (let i = 0; i < commonFilesTemp.length; i++) {
-      commonFilesTempTwo.push(commonFilesTemp[i].concat(", "));
+      if (commonFilesTemp[i].length < maxLength) {
+        commonFilesTempTwo.push(commonFilesTemp[i].concat(", "));
+      } else {
+        commonFilesTempTwo.push(commonFilesTemp[i].substring(0, maxLength).concat("..., "));
+      }
     }
 
     setCommonKeywords(commonKeywordsTempTwo);
     setCommonFiles(commonFilesTempTwo);
     setDisplayCompare(true);
+    handleOpen();
 
     console.log(commonKeywordsTempTwo)
     console.log(comparisonFiles)
   };
+
+  const handleOpen = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
 
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
@@ -515,20 +537,39 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <Box sx={{ display: "flex" }}>
-        {displayCompare && commonKeywords.length > 0 && <Paper sx={{ width: "20%", padding: 1, marginRight: 1 }}>
-          <Typography variant="h6">Common Words from Selected Forks</Typography>
-          <Typography paragraph>{commonKeywords}</Typography>
-        </Paper>}
-        {displayCompare && commonFiles.length > 0 && <Paper sx={{ width: "20%", padding: 1 }}>
-          <Typography variant="h6">Common Files Changed from Selected Forks</Typography>
-          <Typography paragraph>{commonFiles}</Typography>
-        </Paper>}
-      </Box>
+      <ComparisonDialogue open={open} commonFiles={commonFiles} commonKeywords={commonKeywords} onClose={handleClose}></ComparisonDialogue>
 
     </Box>
   );
 };
+
+const ComparisonDialogue = ({ open, commonKeywords, commonFiles, onClose }) => {
+  const handleClose = () => {
+    onClose();
+  }
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth={'lg'} fullWidth={true}>
+      <DialogTitle>Fork Comparison</DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: "flex" }}>
+          {commonKeywords.length > 0 && <Paper sx={{ width: "50%", padding: 1, marginRight: 1 }}>
+            <Typography variant="h6">Common Words from Selected Forks</Typography>
+            <Typography paragraph>{commonKeywords}</Typography>
+          </Paper>}
+          {commonFiles.length > 0 && <Paper sx={{ width: "50%", padding: 1 }}>
+            <Typography variant="h6">Common Files Changed from Selected Forks</Typography>
+            <Typography paragraph>{commonFiles}</Typography>
+          </Paper>}
+        </Box>
+      </DialogContent>
+
+    </Dialog>
+  );
+}
+
+ComparisonDialogue.propTypes = {
+  open: PropTypes.bool.isRequired,
+}
 
 const ForkList = () => {
   const { repo1, repo2 } = useParams();
