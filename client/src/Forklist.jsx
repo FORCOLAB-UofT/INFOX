@@ -30,6 +30,7 @@ import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
 import Loading from "./common/Loading"
+import SearchAndFilter from "./common/SearchAndFilter";
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -374,7 +375,7 @@ const EnhancedTable = ({ data }) => {
           numSelected={selected.length}
           onDelete={handleDelete}
         />
-        <Button onClick={handleCompareButton}>Compare Selected Forks</Button>
+        {selected.length > 0 && <Button onClick={handleCompareButton}>Compare Selected Forks</Button>}
 
         <TableContainer>
           <Table
@@ -469,7 +470,7 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {displayCompare && commonKeywords.length > 0 && <Paper sx={{width:"20%", padding:1}}> 
+      {displayCompare && commonKeywords.length > 0 && <Paper sx={{ width: "20%", padding: 1 }}>
         <Typography variant="h6">Common Words from Selected Forks</Typography>
         <Typography paragraph>{commonKeywords}</Typography>
       </Paper>}
