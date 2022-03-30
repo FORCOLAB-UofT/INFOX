@@ -24,11 +24,15 @@ import { visuallyHidden } from "@mui/utils";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRecoilState } from "recoil";
-import { Snackbar } from "@mui/material";
+import { Button, DialogContent, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
+import Loading from "./common/Loading"
+import SearchAndFilter from "./common/SearchAndFilter";
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -37,14 +41,37 @@ const Alert = forwardRef(function Alert(props, ref) {
 function createData(
   fork_name,
   num_changed_files,
+  changed_files,
   num_changed_lines,
-  total_commit_number
+  total_commit_number,
+  key_words,
+  last_committed_time,
+  created_time
 ) {
+
+  // console.log("key words received:", key_words)
+  let parsed_words = [];
+  for (let i = 0; i < key_words.length && i < 10; i++) {
+    parsed_words.push(key_words[i].concat(", "));
+  }
+
+  let parsed_files = [];
+  for (let i = 0; i < changed_files.length && i < 10; i++) {
+    parsed_files.push(changed_files[i].concat(", "));
+  }
+  // console.log("Parsed words:", parsed_words)
+
   return {
     fork_name,
     num_changed_files,
+    parsed_files,
+    changed_files,
     num_changed_lines,
     total_commit_number,
+    parsed_words,
+    key_words,
+    last_committed_time,
+    created_time,
   };
 }
 
@@ -92,6 +119,12 @@ const headCells = [
     label: "# Changed Files",
   },
   {
+    id: "changed_files",
+    numeric: false,
+    disablePadding: false,
+    label: "File List",
+  },
+  {
     id: "num_changed_lines",
     numeric: false,
     disablePadding: false,
@@ -102,6 +135,23 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "# Commits",
+  },
+  {
+    id: "keywords",
+    numeric: false,
+    disablePadding: false,
+    label: "Keywords",
+  },
+  {
+    id: "last_committed_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Last Commit Time",
+  }, {
+    id: "created_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Creation Date",
   },
 ];
 
@@ -192,6 +242,7 @@ const EnhancedTableToolbar = (props) => {
           component="div"
         >
           {numSelected} selected
+
         </Typography>
       ) : (
         <Typography
@@ -201,7 +252,9 @@ const EnhancedTableToolbar = (props) => {
           component="div"
         >
           Search Results
+
         </Typography>
+
       )}
 
       {numSelected > 0 ? (
@@ -211,6 +264,7 @@ const EnhancedTableToolbar = (props) => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
+
         </>
       ) : (
         <Tooltip title="Filter list">
@@ -237,8 +291,12 @@ const EnhancedTable = ({ data }) => {
       createData(
         value.fork_name,
         value.num_changed_files ?? 0,
+        value.changed_files,
         value.num_changed_lines ?? 0,
-        value.total_commit_number ?? 0
+        value.total_commit_number ?? 0,
+        value.key_words,
+        value.last_committed_time,
+        value.created_time
       )
     );
   });
@@ -248,6 +306,10 @@ const EnhancedTable = ({ data }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [visibleRows, setVisibleRows] = useState(rows);
+  const [commonKeywords, setCommonKeywords] = useState([]);
+  const [commonFiles, setCommonFiles] = useState([]);
+  const [displayCompare, setDisplayCompare] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -301,6 +363,68 @@ const EnhancedTable = ({ data }) => {
     setSelected([]);
   };
 
+  const handleCompareButton = () => {
+    console.log("Selected forks:", selected)
+
+    const maxLength = 65;
+
+    let comparisonKeywords = [];
+    for (let i = 0; i < selected.length; i++) {
+      let words = selected[i]["key_words"];
+      comparisonKeywords.push(words);
+    }
+
+    let comparisonFiles = [];
+    for (let i = 0; i < selected.length; i++) {
+      let words = selected[i]["changed_files"];
+      comparisonFiles.push(words);
+    }
+
+    let commonKeywordsTemp = [];
+    for (let i = 1; i < comparisonKeywords.length; i++) {
+      commonKeywordsTemp = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
+    }
+
+    let commonFilesTemp = [];
+    for (let i = 1; i < comparisonFiles.length; i++) {
+      commonFilesTemp = comparisonFiles[0].filter(x => comparisonFiles[i].includes(x));
+    }
+
+    let commonKeywordsTempTwo = [];
+    for (let i = 0; i < commonKeywordsTemp.length; i++) {
+      if (commonKeywordsTemp[i].length < maxLength) {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].concat(", "));
+      } else {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].substring(0, maxLength).concat(", "));
+      }
+    }
+
+    let commonFilesTempTwo = [];
+    for (let i = 0; i < commonFilesTemp.length; i++) {
+      if (commonFilesTemp[i].length < maxLength) {
+        commonFilesTempTwo.push(commonFilesTemp[i].concat(", "));
+      } else {
+        commonFilesTempTwo.push(commonFilesTemp[i].substring(0, maxLength).concat("..., "));
+      }
+    }
+
+    setCommonKeywords(commonKeywordsTempTwo);
+    setCommonFiles(commonFilesTempTwo);
+    setDisplayCompare(true);
+    handleOpen();
+
+    console.log(commonKeywordsTempTwo)
+    console.log(comparisonFiles)
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -310,10 +434,13 @@ const EnhancedTable = ({ data }) => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
+
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDelete={handleDelete}
         />
+        {selected.length > 0 && <Button onClick={handleCompareButton}>Compare Selected Forks</Button>}
+
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -368,10 +495,22 @@ const EnhancedTable = ({ data }) => {
                         {row.num_changed_files}
                       </TableCell>
                       <TableCell align="left">
+                        {row.parsed_files}
+                      </TableCell>
+                      <TableCell align="left">
                         {row.num_changed_lines}
                       </TableCell>
                       <TableCell align="left">
                         {row.total_commit_number}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.parsed_words}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.last_committed_time}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.created_time}
                       </TableCell>
                     </TableRow>
                   );
@@ -398,9 +537,39 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <ComparisonDialogue open={open} commonFiles={commonFiles} commonKeywords={commonKeywords} onClose={handleClose}></ComparisonDialogue>
+
     </Box>
   );
 };
+
+const ComparisonDialogue = ({ open, commonKeywords, commonFiles, onClose }) => {
+  const handleClose = () => {
+    onClose();
+  }
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth={'lg'} fullWidth={true}>
+      <DialogTitle>Fork Comparison</DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: "flex" }}>
+          {commonKeywords.length > 0 && <Paper sx={{ width: "50%", padding: 1, marginRight: 1 }}>
+            <Typography variant="h6">Common Words from Selected Forks</Typography>
+            <Typography paragraph>{commonKeywords}</Typography>
+          </Paper>}
+          {commonFiles.length > 0 && <Paper sx={{ width: "50%", padding: 1 }}>
+            <Typography variant="h6">Common Files Changed from Selected Forks</Typography>
+            <Typography paragraph>{commonFiles}</Typography>
+          </Paper>}
+        </Box>
+      </DialogContent>
+
+    </Dialog>
+  );
+}
+
+ComparisonDialogue.propTypes = {
+  open: PropTypes.bool.isRequired,
+}
 
 const ForkList = () => {
   const { repo1, repo2 } = useParams();
@@ -408,7 +577,8 @@ const ForkList = () => {
 
   const fetchForks = useCallback(async (repo) => {
     const response = await getRepoForks(repo);
-    console.log("response", response);
+    console.log("Fetching forks list for ", repo)
+    console.log("forks list response", response);
     setData(response.data.forks);
   }, []);
 
@@ -417,7 +587,9 @@ const ForkList = () => {
     fetchForks(repo);
   }, [fetchForks]);
 
-  return <>{data ? <EnhancedTable data={data} /> : <>Loading</>}</>;
+  return (
+    <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>
+  );
 };
 
 export default ForkList;

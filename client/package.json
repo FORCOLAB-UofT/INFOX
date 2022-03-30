@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.11.2",
     "@mui/icons-material": "^5.2.0",
     "@mui/material": "^5.2.0",
+    "@nivo/core": "^0.79.0",
     "@nivo/network": "^0.79.1",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^11.2.7",
