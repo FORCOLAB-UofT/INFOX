@@ -407,6 +407,8 @@ const ForkList = () => {
   const [data, setData] = useState(null);
 
   const fetchForks = useCallback(async (repo) => {
+    console.log('repo1',repo1);
+    console.log('repo2', repo2);
     const response = await getRepoForks(repo);
     console.log("response", response);
     setData(response.data.forks);

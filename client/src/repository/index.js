@@ -16,7 +16,7 @@ export const getUserFollowedRepositories = async () => {
 export const getRepoForks = async (value) => {
   const response = await axios({
     method: "GET",
-    url: `flask/forklist?repo=${value}`,
+    url: `http://forks-insight.com/flask/forklist?repo=${value}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
