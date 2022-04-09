@@ -24,13 +24,13 @@ import { visuallyHidden } from "@mui/utils";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRecoilState } from "recoil";
-import { Button, DialogContent, Snackbar } from "@mui/material";
+import { Button, DialogContent, Snackbar, TextField } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
 import Loading from "./common/Loading"
-import SearchAndFilter from "./common/SearchAndFilter";
+import Filter from "./common/Filter";
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import isEmpty from "lodash/isEmpty";
@@ -315,6 +315,10 @@ const EnhancedTable = ({ data }) => {
   const [filtersWithValues, setFiltersWithValues] = useState(null);
   const [filteredRows, setFilteredRows] = useState(rows);
   const [search, setSearch] = useState("");
+  const [keywordSearch, setKeywordSearch] = useState(null);
+  const [fileNameSearch, setFileNameSearch] = useState(null);
+  const [keywordFilter, setKeywordFilter] = useState(null);
+  const [fileNameFilter, setFileNameFilter] = useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -453,17 +457,17 @@ const EnhancedTable = ({ data }) => {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
             console.log("filt:", filt)
-            if(filt.key == "changed_files"){
+            if (filt.key == "changed_files") {
               console.log("filter value", filt.value);
               repo[filt.key].forEach((fileName) => {
-                if (fileName === filt.value){
+                if (fileName === filt.value) {
                   matches = true;
                 }
               });
-            }else if(filt.key == "key_words"){
+            } else if (filt.key == "key_words") {
               console.log("filter value", filt.value);
               repo[filt.key].forEach((word) => {
-                if (word === filt.value){
+                if (word === filt.value) {
                   matches = true;
                 }
               });
@@ -474,12 +478,12 @@ const EnhancedTable = ({ data }) => {
           });
         }
 
-        // if (search !== "" && matches) {
-        //   hasBeenFiltered = true;
-        //   if (!repo.repo.includes(search)) {
-        //     matches = false;
-        //   }
-        // }
+        if (search !== "" && matches) {
+          hasBeenFiltered = true;
+          if (!repo.repo.includes(search)) {
+            matches = false;
+          }
+        }
 
         if (matches) {
           filteredRepos.push(repo);
@@ -487,13 +491,14 @@ const EnhancedTable = ({ data }) => {
       });
 
       console.log("Filtered rows list:", filteredRepos);
+      console.log("Filters: ", filters)
       setFilteredRows(filteredRepos);
       setVisibleRows(filteredRepos);
     } else {
       setFilteredRows(rows);
       setVisibleRows(rows);
     }
-  }, [filters, search]);
+  }, [filters, search, data]);
   useEffect(() => {
     const initialFilters = {
       changedFiles: {
@@ -544,7 +549,7 @@ const EnhancedTable = ({ data }) => {
       if (!initialFilters.changedFiles.values.some((item) => item === row.num_changed_files)) {
         initialFilters.changedFiles.values.push(row.num_changed_files);
       }
-      
+
       row.changed_files.forEach((fileName) => {
         if (!initialFilters.fileName.values.some((item) => item === fileName)) {
           initialFilters.fileName.values.push(fileName);
@@ -564,7 +569,7 @@ const EnhancedTable = ({ data }) => {
         }
         // console.log("word in key words list:", word)
       });
-      
+
       if (!initialFilters.updated.values.some((item) => item === row.last_committed_time)) {
         initialFilters.updated.values.push(row.last_committed_time);
       }
@@ -578,19 +583,62 @@ const EnhancedTable = ({ data }) => {
 
   }, [data]);
 
+  const updateKeywordSearch = (e) => {
+    setKeywordSearch(e.target.value);
+    console.log("Keyword search term:", e.target.value);
+  }
+
+  const updateFileNameSearch = (e) => {
+    setFileNameSearch(e.target.value);
+    console.log("File name search term:", e.target.value);
+  }
+
+  const handleKeywordSearch = (e) => {
+    let newFilter = {
+      key: "key_words",
+      display: "Keyword",
+      type: "string",
+      value: keywordSearch,
+    }
+    if(keywordSearch != ""){
+      setKeywordFilter([newFilter]);
+    }
+    
+  }
+
+  const handleFileNameSearch = (e) => {
+    let newFilter = {
+      key: "changed_files",
+      display: "File Name",
+      type: "string",
+      value: fileNameSearch,
+    }
+    if(fileNameSearch != ""){
+      setFileNameFilter([newFilter]);
+    }
+    
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Box>
-          {!isEmpty(filtersWithValues) ? <SearchAndFilter
-            filters={filtersWithValues}
-            setFilters={(data) => {
-              setFilters(data);
-            }}
-            setSearch={(data) => {
-              setSearch(data);
-            }}
-          /> : null}
+          {!isEmpty(filtersWithValues) ?
+            <Box>
+              <Filter
+                filters={filtersWithValues}
+                setFilters={(data) => {
+                  setFilters(data);
+                }}
+                setSearch={(data) => {
+                  setSearch(data);
+                }}
+                externalKeyword={keywordFilter}
+                externalFileName={fileNameFilter}
+              />
+
+            </Box>
+            : null}
         </Box>
         <EnhancedTableToolbar
           numSelected={selected.length}
@@ -694,6 +742,28 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <TextField onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleKeywordSearch();
+              ev.preventDefault();
+            }
+          }} placeholder="Search for custom keyword" onChange={updateKeywordSearch}></TextField>
+          <Button onClick={handleKeywordSearch}>Search</Button>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <TextField onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleFileNameSearch();
+              ev.preventDefault();
+            }
+          }} sx={{ marginLeft: 1 }} placeholder="Search for custom file name" onChange={updateFileNameSearch}></TextField>
+          <Button onClick={handleFileNameSearch}>Search</Button>
+        </Box>
+
+
+      </Box>
       <ComparisonDialogue open={open} commonFiles={commonFiles} commonKeywords={commonKeywords} onClose={handleClose}></ComparisonDialogue>
 
     </Box>
