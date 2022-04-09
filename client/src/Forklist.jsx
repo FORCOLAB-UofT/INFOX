@@ -33,6 +33,7 @@ import Loading from "./common/Loading"
 import SearchAndFilter from "./common/SearchAndFilter";
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import isEmpty from "lodash/isEmpty";
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -251,7 +252,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Search Results
+          {/* Search Results */}
 
         </Typography>
 
@@ -310,6 +311,10 @@ const EnhancedTable = ({ data }) => {
   const [commonFiles, setCommonFiles] = useState([]);
   const [displayCompare, setDisplayCompare] = useState(false);
   const [open, setOpen] = useState(false);
+  const [filters, setFilters] = useState([]);
+  const [filtersWithValues, setFiltersWithValues] = useState(null);
+  const [filteredRows, setFilteredRows] = useState(rows);
+  const [search, setSearch] = useState("");
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -431,10 +436,137 @@ const EnhancedTable = ({ data }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - visibleRows.length) : 0;
 
+  console.log("Filters with values init:", filtersWithValues);
+
+  useEffect(() => {
+    const filteredRepos = [];
+    let hasBeenFiltered = false;
+
+    if (
+      !!rows &&
+      !isEmpty(filtersWithValues) &&
+      !isEmpty(filters)
+    ) {
+      rows.forEach((repo) => {
+        let matches = false;
+        if (!isEmpty(filters)) {
+          hasBeenFiltered = true;
+          filters.forEach((filt) => {
+            if (repo[filt.key] === filt.value) {
+              matches = true;
+            }
+          });
+        }
+
+        // if (search !== "" && matches) {
+        //   hasBeenFiltered = true;
+        //   if (!repo.repo.includes(search)) {
+        //     matches = false;
+        //   }
+        // }
+
+        if (matches) {
+          filteredRepos.push(repo);
+        }
+      });
+
+      console.log("Filtered rows list:", filteredRepos);
+      setFilteredRows(filteredRepos);
+      setVisibleRows(filteredRepos);
+    } else {
+      setFilteredRows(rows);
+      setVisibleRows(rows);
+    }
+  }, [filters, search]);
+  useEffect(() => {
+    const initialFilters = {
+      changedFiles: {
+        key: "num_changed_files",
+        display: "# of Changed Files",
+        type: "numeric",
+        values: [],
+      },
+      // fileName: {
+      //   key: "changed_files",
+      //   display: "File Name",
+      //   type: "list",
+      //   values: [],
+      // },
+      changedLines: {
+        key: "num_changed_lines",
+        display: "# of Changed Lines",
+        type: "numeric",
+        values: [],
+      },
+      numCommits: {
+        key: "total_commit_number",
+        display: "# of Commits",
+        type: "numeric",
+        values: [],
+      },
+      // keyword: {
+      //   key: "key_words",
+      //   display: "Keyword",
+      //   type: "list",
+      //   values: [],
+      // },
+      updated: {
+        key: "last_committed_time",
+        display: "Last Updated",
+        type: "date",
+        values: [],
+      },
+      created: {
+        key: "created_time",
+        display: "Created",
+        type: "date",
+        values: [],
+      }
+    };
+    rows?.forEach((row) => {
+      // console.log("for each row: ", row);
+      if (!initialFilters.changedFiles.values.some((item) => item === row.num_changed_files)) {
+        initialFilters.changedFiles.values.push(row.num_changed_files);
+      }
+      // if (!initialFilters.fileName.values.some((item) => item === row.changed_files)) {
+      //   initialFilters.fileName.values.push(row.changed_files);
+      // }
+      if (!initialFilters.changedLines.values.some((item) => item === row.num_changed_lines)) {
+        initialFilters.changedLines.values.push(row.num_changed_lines);
+      }
+      if (!initialFilters.numCommits.values.some((item) => item === row.total_commit_number)) {
+        initialFilters.numCommits.values.push(row.total_commit_number);
+      }
+      // if (!initialFilters.keyword.values.some((item) => item === row.key_words)) {
+      //   initialFilters.keyword.values.push(row.key_words);
+      // }
+      if (!initialFilters.updated.values.some((item) => item === row.last_committed_time)) {
+        initialFilters.updated.values.push(row.last_committed_time);
+      }
+      if (!initialFilters.created.values.some((item) => item === row.created_time)) {
+        initialFilters.created.values.push(row.created_time);
+      }
+    });
+
+    setFiltersWithValues(initialFilters);
+    console.log("Initial filters: ", initialFilters);
+
+  }, [data]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-
+        <Box>
+          {!isEmpty(filtersWithValues) ? <SearchAndFilter
+            filters={filtersWithValues}
+            setFilters={(data) => {
+              setFilters(data);
+            }}
+            setSearch={(data) => {
+              setSearch(data);
+            }}
+          /> : null}
+        </Box>
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDelete={handleDelete}
