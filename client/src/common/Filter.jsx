@@ -140,10 +140,10 @@ const Filter = ({ filters, setFilters, setSearch, externalKeyword, externalFileN
                 spacing={1}
             >
                 <Grid item>
-                    <Typography variant="h5">Search by name</Typography>
+                    {/* <Typography variant="h5">Add a filter</Typography> */}
                 </Grid>
                 <Grid item>
-                    <TextField
+                    {/* <TextField
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                         }}
@@ -155,7 +155,7 @@ const Filter = ({ filters, setFilters, setSearch, externalKeyword, externalFileN
                                 </InputAdornment>
                             ),
                         }}
-                    />
+                    /> */}
                 </Grid>
                 <Grid item>
                     <Box
@@ -281,7 +281,7 @@ const Filter = ({ filters, setFilters, setSearch, externalKeyword, externalFileN
                         </Box>
                     </Popover>
                 </Grid>
-                <Grid container direction="row" spacing={1}>
+                <Grid container direction="row" spacing={1} marginLeft={2} marginTop={1} marginBottom={1}>
                     {addedFilters.map((filt) => (
                         <FilterBubble
                             filter={filt.display}
