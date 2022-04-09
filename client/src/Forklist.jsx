@@ -436,7 +436,7 @@ const EnhancedTable = ({ data }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - visibleRows.length) : 0;
 
-  console.log("Filters with values init:", filtersWithValues);
+  // console.log("Filters with values init:", filtersWithValues);
 
   useEffect(() => {
     const filteredRepos = [];
@@ -452,7 +452,23 @@ const EnhancedTable = ({ data }) => {
         if (!isEmpty(filters)) {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
-            if (repo[filt.key] === filt.value) {
+            console.log("filt:", filt)
+            if(filt.key == "changed_files"){
+              console.log("filter value", filt.value);
+              repo[filt.key].forEach((fileName) => {
+                if (fileName === filt.value){
+                  matches = true;
+                }
+              });
+            }else if(filt.key == "key_words"){
+              console.log("filter value", filt.value);
+              repo[filt.key].forEach((word) => {
+                if (word === filt.value){
+                  matches = true;
+                }
+              });
+            }
+            else if (repo[filt.key] === filt.value) {
               matches = true;
             }
           });
@@ -486,12 +502,12 @@ const EnhancedTable = ({ data }) => {
         type: "numeric",
         values: [],
       },
-      // fileName: {
-      //   key: "changed_files",
-      //   display: "File Name",
-      //   type: "list",
-      //   values: [],
-      // },
+      fileName: {
+        key: "changed_files",
+        display: "File Name",
+        type: "string",
+        values: [],
+      },
       changedLines: {
         key: "num_changed_lines",
         display: "# of Changed Lines",
@@ -504,12 +520,12 @@ const EnhancedTable = ({ data }) => {
         type: "numeric",
         values: [],
       },
-      // keyword: {
-      //   key: "key_words",
-      //   display: "Keyword",
-      //   type: "list",
-      //   values: [],
-      // },
+      keyword: {
+        key: "key_words",
+        display: "Keyword",
+        type: "string",
+        values: [],
+      },
       updated: {
         key: "last_committed_time",
         display: "Last Updated",
@@ -528,18 +544,27 @@ const EnhancedTable = ({ data }) => {
       if (!initialFilters.changedFiles.values.some((item) => item === row.num_changed_files)) {
         initialFilters.changedFiles.values.push(row.num_changed_files);
       }
-      // if (!initialFilters.fileName.values.some((item) => item === row.changed_files)) {
-      //   initialFilters.fileName.values.push(row.changed_files);
-      // }
+      
+      row.changed_files.forEach((fileName) => {
+        if (!initialFilters.fileName.values.some((item) => item === fileName)) {
+          initialFilters.fileName.values.push(fileName);
+        }
+        // console.log("word in key words list:", fileName)
+      });
+
       if (!initialFilters.changedLines.values.some((item) => item === row.num_changed_lines)) {
         initialFilters.changedLines.values.push(row.num_changed_lines);
       }
       if (!initialFilters.numCommits.values.some((item) => item === row.total_commit_number)) {
         initialFilters.numCommits.values.push(row.total_commit_number);
       }
-      // if (!initialFilters.keyword.values.some((item) => item === row.key_words)) {
-      //   initialFilters.keyword.values.push(row.key_words);
-      // }
+      row.key_words.forEach((word) => {
+        if (!initialFilters.keyword.values.some((item) => item === word)) {
+          initialFilters.keyword.values.push(word);
+        }
+        // console.log("word in key words list:", word)
+      });
+      
       if (!initialFilters.updated.values.some((item) => item === row.last_committed_time)) {
         initialFilters.updated.values.push(row.last_committed_time);
       }
