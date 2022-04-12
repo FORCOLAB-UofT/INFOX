@@ -4,7 +4,7 @@ import axios from "axios";
 export const getUserFollowedRepositories = async () => {
   const response = await axios({
     method: "GET",
-    url: "http://localhost:5000/flask/followed",
+    url: "flask/followed",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -16,18 +16,18 @@ export const getUserFollowedRepositories = async () => {
 export const getRepoForks = async (value) => {
   const response = await axios({
     method: "GET",
-    url: `http://localhost:5000/flask/forklist?repo=${value}`,
+    url: `flask/forklist?repo=${value}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
   });
   return response;
-}
+};
 
 export const getUserImportRepositories = async () => {
   const response = await axios({
     method: "GET",
-    url: "http://localhost:5000/flask/import",
+    url: "flask/import",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -36,7 +36,7 @@ export const getUserImportRepositories = async () => {
 };
 
 export const postUserLogin = async (values) => {
-  const response = await axios.post("http://localhost:5000/flask/auth", {
+  const response = await axios.post("flask/auth", {
     code: values,
   });
 
@@ -46,7 +46,7 @@ export const postUserLogin = async (values) => {
 export const getUserLogin = async () => {
   const response = await axios({
     method: "GET",
-    url: "http://localhost:5000/flask/auth",
+    url: "flask/auth",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -58,7 +58,7 @@ export const getUserLogin = async () => {
 export const postSearchGithub = async (value) => {
   const response = await axios({
     method: "POST",
-    url: "http://localhost:5000/flask/search",
+    url: "flask/search",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -71,7 +71,7 @@ export const postSearchGithub = async (value) => {
 export const postFollowRepository = async (value) => {
   const response = await axios({
     method: "POST",
-    url: "http://localhost:5000/flask/follow",
+    url: "flask/follow",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -84,7 +84,7 @@ export const postFollowRepository = async (value) => {
 export const deleteUserRepository = async (value) => {
   const response = await axios({
     method: "DELETE",
-    url: "http://localhost:5000/flask/followed",
+    url: "flask/followed",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -104,7 +104,7 @@ export const getForkClustering = async ({
 }) => {
   const response = await axios({
     method: "GET",
-    url: `http://localhost:5000/flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}&userInputWords=${userInputWords}`,
+    url: `flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}&userInputWords=${userInputWords}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
