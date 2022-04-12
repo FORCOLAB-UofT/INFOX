@@ -100,10 +100,11 @@ export const getForkClustering = async ({
   analyzeFiles,
   analyzeCommits,
   clusterNumber,
+  userInputWords,
 }) => {
   const response = await axios({
     method: "GET",
-    url: `http://localhost:5000/flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}`,
+    url: `http://localhost:5000/flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}&userInputWords=${userInputWords}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },

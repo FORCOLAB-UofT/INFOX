@@ -1,4 +1,5 @@
 from curses.ascii import isdigit
+import json
 import requests
 from flask import request
 from flask_restful import Resource
@@ -10,6 +11,13 @@ from ..analyse.analyser import get_active_forks
 from ..analyse.compare_changes_crawler import fetch_commit_list, fetch_diff_code
 import re
 from rake_nltk import Rake
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from os import path
+from PIL import Image
+from random import shuffle
 
 programming_languages = ['html', 'js', 'json', 'py', 'php', 'css','md', 'babel', 'yml']
 common_programming_words = ['if', 'else','for', 'return', 'and', 'or', 'merge']
@@ -27,16 +35,39 @@ class ForkClustering(Resource):
         repo = req_data.get("repo")
         cluster_number = int(req_data.get("clusterNumber"))
 
+        split_req_data = req_data.get("userInputWords").split(",")
+        
+        stop_words_with_user_input = stop_words + split_req_data + ["a", "the", "pull request"]
+        
+
+        print("req data:", req_data.get("userInputWords"))
+        
+        print(stop_words_with_user_input)
+        print(stop_words)
+
         current_user = get_jwt_identity()
         _user = User.objects(username=current_user).first()
         cluster = ProjectCluster.objects(project_name=repo).first()
 
         if cluster:
-            if cluster_number == 20:
+            if cluster_number == 21:
                 return {"nodes": cluster.nodes, "links": cluster.links}
             else:
                 #top_common_words = dict(sorted(cluster.common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
-                top_common_words = dict(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+                #top_common_words = dict(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+                counter = 0
+                top_common_words = []
+
+                for i in range(len(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True))):
+                    if counter == cluster_number:
+                        break
+                    print("item:", list(cluster.top_common_words.items())[i][0])
+                    if list(cluster.top_common_words.items())[i][0] not in stop_words_with_user_input:
+                        top_common_words.append(list(cluster.top_common_words.items())[i])
+                        counter += 1 
+
+                top_common_words = dict(top_common_words)
+
                 nodes = [{
                     "id": repo,
                     "height": 2,
@@ -45,8 +76,11 @@ class ForkClustering(Resource):
                 }]
 
                 links = []
+                wordcloud_text = ""
 
                 for key, value in top_common_words.items():
+                    wordcloud_text += ((str(key) + " ") * len(value))
+                    
                     nodes.append({
                         "id": key,
                         "height": 1,
@@ -77,7 +111,16 @@ class ForkClustering(Resource):
                             "distance": 50
                         })
 
-                return {"nodes": nodes, "links": links}
+                split = wordcloud_text.split()
+                shuffle(split)
+                wordcloud_text =  ' '.join(split)
+                wordcloud_display = WordCloud(background_color="white").generate(wordcloud_text)
+                print(wordcloud_display)
+
+                wordcloud_display.to_file('A.png')
+
+
+                return {"nodes": nodes, "links": links, "wordcloud": list(top_common_words.items())}
 
 
         request_url = "https://api.github.com/repos/%s" % (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getForkClustering } from "./repository";
 import { ResponsiveNetworkCanvas } from "@nivo/network";
+import ReactWordcloud from 'react-wordcloud';
 import {
   Box,
   Button,
@@ -14,6 +15,24 @@ import {
   InputLabel,
 } from "@mui/material";
 import Loading from "./common/Loading";
+import FilterBubble from "./common/SearchAndFilter";
+import { isEmpty, words } from "lodash";
+import Bubble from "./Bubble";
+
+const options = {
+  colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
+  enableTooltip: true,
+  deterministic: false,
+  fontSizes: [20, 100],
+  fontStyle: "normal",
+  fontWeight: "normal",
+  padding: 1,
+  rotations: 3,
+  rotationAngles: [0],
+  scale: "sqrt",
+  spiral: "archimedean",
+  transitionDuration: 1000
+};
 
 const ForkCluster = () => {
   const [data, setData] = useState(null);
@@ -24,6 +43,9 @@ const ForkCluster = () => {
   const [analyzeFiles, setAnalyzeFiles] = useState(true);
   const [analyzeCommits, setAnalyzeCommits] = useState(true);
   const [clusterNumber, setClusterNumber] = useState(10);
+  const [userInputWords, setUserInputWords] = useState([]);
+  const [userInputEx, setUserInputEx] = useState("");
+  const [wordcloudWords, setWordcloudWords] = useState({});
 
   const onClickSearch = async (event) => {
     event.preventDefault();
@@ -35,6 +57,7 @@ const ForkCluster = () => {
       analyzeFiles: analyzeFiles,
       analyzeCommits: analyzeCommits,
       clusterNumber: clusterNumber,
+      userInputWords: userInputWords,
     };
 
     const response = await getForkClustering(searchInfo);
@@ -58,7 +81,14 @@ const ForkCluster = () => {
     });
     setAnnotations(ann);
     setLoading(false);
+
+    let wordcloud_words = {};
+    wordcloud_words = response.data.wordcloud.map(x => ({text: x.slice(0)[0], value: x.slice(-1)[0].length}));
+    setWordcloudWords(wordcloud_words);
   };
+
+  
+
 
   return (
     <Box>
@@ -148,6 +178,42 @@ const ForkCluster = () => {
               </FormControl>
             </Grid>
           </Grid>
+          <Box>
+          <Grid container>
+          <Grid item paddingRight={1}>
+              <TextField
+                variant="standard"
+                label="Exclude Key Words"
+                value={userInputEx}
+                onChange={(event) => {
+                  setUserInputEx(event.target.value)
+                }}
+              />
+            </Grid>
+            <Grid item marginTop={1}>
+              <Button variant="contained" type="submit"
+                onClick={(event) => {
+                    setUserInputWords([...userInputWords, userInputEx])
+                    setUserInputEx("")
+                  }}>
+                Add
+              </Button>
+            </Grid>
+            <Grid container>
+              {
+                !isEmpty(userInputWords)?<Grid container>
+                {
+                  userInputWords.map( (value) => {
+                    return(<Bubble value = {value} onClickRemoveFilter= { () => {
+                      setUserInputWords(userInputWords.filter(word => word !== value ))
+                    }}/>)
+                  })
+                }
+                </Grid>:null
+              }
+            </Grid>
+            </Grid>
+          </Box>
         </form>
       </Box>
 
@@ -183,6 +249,9 @@ const ForkCluster = () => {
             }}
             annotations={annotations}
           />
+            <Grid>
+              <ReactWordcloud options={options} words={wordcloudWords} />
+            </Grid>
         </div>
       ) : null}
     </Box>
