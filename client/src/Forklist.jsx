@@ -24,11 +24,16 @@ import { visuallyHidden } from "@mui/utils";
 import { Link } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRecoilState } from "recoil";
-import { Snackbar } from "@mui/material";
+import { Button, DialogContent, Snackbar, TextField } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
+import Loading from "./common/Loading"
+import Filter from "./common/Filter";
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import isEmpty from "lodash/isEmpty";
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -37,14 +42,37 @@ const Alert = forwardRef(function Alert(props, ref) {
 function createData(
   fork_name,
   num_changed_files,
+  changed_files,
   num_changed_lines,
-  total_commit_number
+  total_commit_number,
+  key_words,
+  last_committed_time,
+  created_time
 ) {
+
+  // console.log("key words received:", key_words)
+  let parsed_words = [];
+  for (let i = 0; i < key_words.length && i < 10; i++) {
+    parsed_words.push(key_words[i].concat(", "));
+  }
+
+  let parsed_files = [];
+  for (let i = 0; i < changed_files.length && i < 10; i++) {
+    parsed_files.push(changed_files[i].concat(", "));
+  }
+  // console.log("Parsed words:", parsed_words)
+
   return {
     fork_name,
     num_changed_files,
+    parsed_files,
+    changed_files,
     num_changed_lines,
     total_commit_number,
+    parsed_words,
+    key_words,
+    last_committed_time,
+    created_time,
   };
 }
 
@@ -92,6 +120,12 @@ const headCells = [
     label: "# Changed Files",
   },
   {
+    id: "changed_files",
+    numeric: false,
+    disablePadding: false,
+    label: "File List",
+  },
+  {
     id: "num_changed_lines",
     numeric: false,
     disablePadding: false,
@@ -102,6 +136,23 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "# Commits",
+  },
+  {
+    id: "keywords",
+    numeric: false,
+    disablePadding: false,
+    label: "Keywords",
+  },
+  {
+    id: "last_committed_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Last Commit Time",
+  }, {
+    id: "created_time",
+    numeric: false,
+    disablePadding: false,
+    label: "Creation Date",
   },
 ];
 
@@ -192,6 +243,7 @@ const EnhancedTableToolbar = (props) => {
           component="div"
         >
           {numSelected} selected
+
         </Typography>
       ) : (
         <Typography
@@ -200,8 +252,10 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Search Results
+          {/* Search Results */}
+
         </Typography>
+
       )}
 
       {numSelected > 0 ? (
@@ -211,6 +265,7 @@ const EnhancedTableToolbar = (props) => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
+
         </>
       ) : (
         <Tooltip title="Filter list">
@@ -237,8 +292,12 @@ const EnhancedTable = ({ data }) => {
       createData(
         value.fork_name,
         value.num_changed_files ?? 0,
+        value.changed_files,
         value.num_changed_lines ?? 0,
-        value.total_commit_number ?? 0
+        value.total_commit_number ?? 0,
+        value.key_words,
+        value.last_committed_time,
+        value.created_time
       )
     );
   });
@@ -248,6 +307,18 @@ const EnhancedTable = ({ data }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [visibleRows, setVisibleRows] = useState(rows);
+  const [commonKeywords, setCommonKeywords] = useState([]);
+  const [commonFiles, setCommonFiles] = useState([]);
+  const [displayCompare, setDisplayCompare] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [filters, setFilters] = useState([]);
+  const [filtersWithValues, setFiltersWithValues] = useState(null);
+  const [filteredRows, setFilteredRows] = useState(rows);
+  const [search, setSearch] = useState("");
+  const [keywordSearch, setKeywordSearch] = useState(null);
+  const [fileNameSearch, setFileNameSearch] = useState(null);
+  const [keywordFilter, setKeywordFilter] = useState(null);
+  const [fileNameFilter, setFileNameFilter] = useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -301,19 +372,280 @@ const EnhancedTable = ({ data }) => {
     setSelected([]);
   };
 
+  const handleCompareButton = () => {
+    console.log("Selected forks:", selected)
+
+    const maxLength = 65;
+
+    let comparisonKeywords = [];
+    for (let i = 0; i < selected.length; i++) {
+      let words = selected[i]["key_words"];
+      comparisonKeywords.push(words);
+    }
+
+    let comparisonFiles = [];
+    for (let i = 0; i < selected.length; i++) {
+      let words = selected[i]["changed_files"];
+      comparisonFiles.push(words);
+    }
+
+    let commonKeywordsTemp = [];
+    for (let i = 1; i < comparisonKeywords.length; i++) {
+      commonKeywordsTemp = comparisonKeywords[0].filter(x => comparisonKeywords[i].includes(x));
+    }
+
+    let commonFilesTemp = [];
+    for (let i = 1; i < comparisonFiles.length; i++) {
+      commonFilesTemp = comparisonFiles[0].filter(x => comparisonFiles[i].includes(x));
+    }
+
+    let commonKeywordsTempTwo = [];
+    for (let i = 0; i < commonKeywordsTemp.length; i++) {
+      if (commonKeywordsTemp[i].length < maxLength) {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].concat(", "));
+      } else {
+        commonKeywordsTempTwo.push(commonKeywordsTemp[i].substring(0, maxLength).concat(", "));
+      }
+    }
+
+    let commonFilesTempTwo = [];
+    for (let i = 0; i < commonFilesTemp.length; i++) {
+      if (commonFilesTemp[i].length < maxLength) {
+        commonFilesTempTwo.push(commonFilesTemp[i].concat(", "));
+      } else {
+        commonFilesTempTwo.push(commonFilesTemp[i].substring(0, maxLength).concat("..., "));
+      }
+    }
+
+    setCommonKeywords(commonKeywordsTempTwo);
+    setCommonFiles(commonFilesTempTwo);
+    setDisplayCompare(true);
+    handleOpen();
+
+    console.log(commonKeywordsTempTwo)
+    console.log(comparisonFiles)
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - visibleRows.length) : 0;
 
+  // console.log("Filters with values init:", filtersWithValues);
+
+  useEffect(() => {
+    const filteredRepos = [];
+    let hasBeenFiltered = false;
+
+    if (
+      !!rows &&
+      !isEmpty(filtersWithValues) &&
+      !isEmpty(filters)
+    ) {
+      rows.forEach((repo) => {
+        let matches = false;
+        if (!isEmpty(filters)) {
+          hasBeenFiltered = true;
+          filters.forEach((filt) => {
+            console.log("filt:", filt)
+            if (filt.key == "changed_files") {
+              console.log("filter value", filt.value);
+              repo[filt.key].forEach((fileName) => {
+                if (fileName === filt.value) {
+                  matches = true;
+                }
+              });
+            } else if (filt.key == "key_words") {
+              console.log("filter value", filt.value);
+              repo[filt.key].forEach((word) => {
+                if (word === filt.value) {
+                  matches = true;
+                }
+              });
+            }
+            else if (repo[filt.key] === filt.value) {
+              matches = true;
+            }
+          });
+        }
+
+        if (search !== "" && matches) {
+          hasBeenFiltered = true;
+          if (!repo.repo.includes(search)) {
+            matches = false;
+          }
+        }
+
+        if (matches) {
+          filteredRepos.push(repo);
+        }
+      });
+
+      console.log("Filtered rows list:", filteredRepos);
+      console.log("Filters: ", filters)
+      setFilteredRows(filteredRepos);
+      setVisibleRows(filteredRepos);
+    } else {
+      setFilteredRows(rows);
+      setVisibleRows(rows);
+    }
+  }, [filters, search, data]);
+  useEffect(() => {
+    const initialFilters = {
+      changedFiles: {
+        key: "num_changed_files",
+        display: "# of Changed Files",
+        type: "numeric",
+        values: [],
+      },
+      fileName: {
+        key: "changed_files",
+        display: "File Name",
+        type: "string",
+        values: [],
+      },
+      changedLines: {
+        key: "num_changed_lines",
+        display: "# of Changed Lines",
+        type: "numeric",
+        values: [],
+      },
+      numCommits: {
+        key: "total_commit_number",
+        display: "# of Commits",
+        type: "numeric",
+        values: [],
+      },
+      keyword: {
+        key: "key_words",
+        display: "Keyword",
+        type: "string",
+        values: [],
+      },
+      updated: {
+        key: "last_committed_time",
+        display: "Last Updated",
+        type: "date",
+        values: [],
+      },
+      created: {
+        key: "created_time",
+        display: "Created",
+        type: "date",
+        values: [],
+      }
+    };
+    rows?.forEach((row) => {
+      // console.log("for each row: ", row);
+      if (!initialFilters.changedFiles.values.some((item) => item === row.num_changed_files)) {
+        initialFilters.changedFiles.values.push(row.num_changed_files);
+      }
+
+      row.changed_files.forEach((fileName) => {
+        if (!initialFilters.fileName.values.some((item) => item === fileName)) {
+          initialFilters.fileName.values.push(fileName);
+        }
+        // console.log("word in key words list:", fileName)
+      });
+
+      if (!initialFilters.changedLines.values.some((item) => item === row.num_changed_lines)) {
+        initialFilters.changedLines.values.push(row.num_changed_lines);
+      }
+      if (!initialFilters.numCommits.values.some((item) => item === row.total_commit_number)) {
+        initialFilters.numCommits.values.push(row.total_commit_number);
+      }
+      row.key_words.forEach((word) => {
+        if (!initialFilters.keyword.values.some((item) => item === word)) {
+          initialFilters.keyword.values.push(word);
+        }
+        // console.log("word in key words list:", word)
+      });
+
+      if (!initialFilters.updated.values.some((item) => item === row.last_committed_time)) {
+        initialFilters.updated.values.push(row.last_committed_time);
+      }
+      if (!initialFilters.created.values.some((item) => item === row.created_time)) {
+        initialFilters.created.values.push(row.created_time);
+      }
+    });
+
+    setFiltersWithValues(initialFilters);
+    console.log("Initial filters: ", initialFilters);
+
+  }, [data]);
+
+  const updateKeywordSearch = (e) => {
+    setKeywordSearch(e.target.value);
+    console.log("Keyword search term:", e.target.value);
+  }
+
+  const updateFileNameSearch = (e) => {
+    setFileNameSearch(e.target.value);
+    console.log("File name search term:", e.target.value);
+  }
+
+  const handleKeywordSearch = (e) => {
+    let newFilter = {
+      key: "key_words",
+      display: "Keyword",
+      type: "string",
+      value: keywordSearch,
+    }
+    if(keywordSearch != ""){
+      setKeywordFilter([newFilter]);
+    }
+    
+  }
+
+  const handleFileNameSearch = (e) => {
+    let newFilter = {
+      key: "changed_files",
+      display: "File Name",
+      type: "string",
+      value: fileNameSearch,
+    }
+    if(fileNameSearch != ""){
+      setFileNameFilter([newFilter]);
+    }
+    
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2, mt:1 }}>
+        <Box>
+          {!isEmpty(filtersWithValues) ?
+            <Box>
+              <Filter
+                filters={filtersWithValues}
+                setFilters={(data) => {
+                  setFilters(data);
+                }}
+                setSearch={(data) => {
+                  setSearch(data);
+                }}
+                externalKeyword={keywordFilter}
+                externalFileName={fileNameFilter}
+              />
+
+            </Box>
+            : null}
+        </Box>
         <EnhancedTableToolbar
           numSelected={selected.length}
           onDelete={handleDelete}
         />
+        {selected.length > 0 && <Button onClick={handleCompareButton}>Compare Selected Forks</Button>}
+
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -368,10 +700,22 @@ const EnhancedTable = ({ data }) => {
                         {row.num_changed_files}
                       </TableCell>
                       <TableCell align="left">
+                        {row.parsed_files}
+                      </TableCell>
+                      <TableCell align="left">
                         {row.num_changed_lines}
                       </TableCell>
                       <TableCell align="left">
                         {row.total_commit_number}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.parsed_words}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.last_committed_time}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.created_time}
                       </TableCell>
                     </TableRow>
                   );
@@ -398,9 +742,61 @@ const EnhancedTable = ({ data }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <TextField onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleKeywordSearch();
+              ev.preventDefault();
+            }
+          }} placeholder="Search for custom keyword" onChange={updateKeywordSearch}></TextField>
+          <Button onClick={handleKeywordSearch}>Search</Button>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <TextField onKeyPress={(ev) => {
+            if (ev.key === 'Enter') {
+              handleFileNameSearch();
+              ev.preventDefault();
+            }
+          }} sx={{ marginLeft: 1 }} placeholder="Search for custom file name" onChange={updateFileNameSearch}></TextField>
+          <Button onClick={handleFileNameSearch}>Search</Button>
+        </Box>
+
+
+      </Box>
+      <ComparisonDialogue open={open} commonFiles={commonFiles} commonKeywords={commonKeywords} onClose={handleClose}></ComparisonDialogue>
+
     </Box>
   );
 };
+
+const ComparisonDialogue = ({ open, commonKeywords, commonFiles, onClose }) => {
+  const handleClose = () => {
+    onClose();
+  }
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth={'lg'} fullWidth={true}>
+      <DialogTitle>Fork Comparison</DialogTitle>
+      <DialogContent>
+        <Box sx={{ display: "flex" }}>
+          {commonKeywords.length > 0 && <Paper sx={{ width: "50%", padding: 1, marginRight: 1 }}>
+            <Typography variant="h6">Common Words from Selected Forks</Typography>
+            <Typography paragraph>{commonKeywords}</Typography>
+          </Paper>}
+          {commonFiles.length > 0 && <Paper sx={{ width: "50%", padding: 1 }}>
+            <Typography variant="h6">Common Files Changed from Selected Forks</Typography>
+            <Typography paragraph>{commonFiles}</Typography>
+          </Paper>}
+        </Box>
+      </DialogContent>
+
+    </Dialog>
+  );
+}
+
+ComparisonDialogue.propTypes = {
+  open: PropTypes.bool.isRequired,
+}
 
 const ForkList = () => {
   const { repo1, repo2 } = useParams();
@@ -408,7 +804,8 @@ const ForkList = () => {
 
   const fetchForks = useCallback(async (repo) => {
     const response = await getRepoForks(repo);
-    console.log("response", response);
+    console.log("Fetching forks list for ", repo)
+    console.log("forks list response", response);
     setData(response.data.forks);
   }, []);
 
@@ -417,7 +814,9 @@ const ForkList = () => {
     fetchForks(repo);
   }, [fetchForks]);
 
-  return <>{data ? <EnhancedTable data={data} /> : <>Loading</>}</>;
+  return (
+    <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>
+  );
 };
 
 export default ForkList;
