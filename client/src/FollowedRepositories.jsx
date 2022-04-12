@@ -69,13 +69,10 @@ const FollowedRespositories = () => {
     const filteredRepos = [];
     let hasBeenFiltered = false;
 
-    if (
-      !!followedRepositories &&
-      !isEmpty(filtersWithValues) &&
-      !isEmpty(filters)
-    ) {
+    if (!!followedRepositories && !isEmpty(filtersWithValues)) {
       followedRepositories.forEach((repo) => {
         let matches = false;
+
         if (!isEmpty(filters)) {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
@@ -83,12 +80,16 @@ const FollowedRespositories = () => {
               matches = true;
             }
           });
+        } else {
+          matches = true;
         }
 
-        if (search !== "" && matches) {
+        if (search !== "") {
           hasBeenFiltered = true;
           if (!repo.repo.includes(search)) {
             matches = false;
+          } else {
+            matches = true;
           }
         }
 

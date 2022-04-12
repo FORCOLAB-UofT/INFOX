@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { getForkClustering } from "./repository";
 import { ResponsiveNetworkCanvas } from "@nivo/network";
-import ReactWordcloud from 'react-wordcloud';
+import ReactWordcloud from "react-wordcloud";
 import {
   Box,
   Button,
@@ -31,7 +31,7 @@ const options = {
   rotationAngles: [0],
   scale: "sqrt",
   spiral: "archimedean",
-  transitionDuration: 1000
+  transitionDuration: 1000,
 };
 
 const ForkCluster = () => {
@@ -46,6 +46,7 @@ const ForkCluster = () => {
   const [userInputWords, setUserInputWords] = useState([]);
   const [userInputEx, setUserInputEx] = useState("");
   const [wordcloudWords, setWordcloudWords] = useState({});
+  const [error, setError] = useState(false);
 
   const onClickSearch = async (event) => {
     event.preventDefault();
@@ -60,35 +61,41 @@ const ForkCluster = () => {
       userInputWords: userInputWords,
     };
 
-    const response = await getForkClustering(searchInfo);
-    setData(response.data);
+    try {
+      const response = await getForkClustering(searchInfo);
+      console.log("resp", response);
 
-    let ann = [];
-    response.data.nodes.forEach((node) => {
-      if (node.height === 1) {
-        ann.push({
-          type: "circle",
-          match: {
-            id: node.id,
-          },
-          note: node.id,
-          noteX: 10,
-          noteY: 30,
-          offset: 2,
-          noteTextOffset: 3,
-        });
-      }
-    });
-    setAnnotations(ann);
+      setData(response.data);
+
+      let ann = [];
+      response.data.nodes.forEach((node) => {
+        if (node.height === 1) {
+          ann.push({
+            type: "circle",
+            match: {
+              id: node.id,
+            },
+            note: node.id,
+            noteX: 10,
+            noteY: 30,
+            offset: 2,
+            noteTextOffset: 3,
+          });
+        }
+      });
+      setAnnotations(ann);
+      let wordcloud_words = {};
+      wordcloud_words = response.data.wordcloud.map((x) => ({
+        text: x.slice(0)[0],
+        value: x.slice(-1)[0].length,
+      }));
+      setWordcloudWords(wordcloud_words);
+      setError(false);
+    } catch {
+      setError(true);
+    }
     setLoading(false);
-
-    let wordcloud_words = {};
-    wordcloud_words = response.data.wordcloud.map(x => ({text: x.slice(0)[0], value: x.slice(-1)[0].length}));
-    setWordcloudWords(wordcloud_words);
   };
-
-  
-
 
   return (
     <Box>
@@ -179,39 +186,47 @@ const ForkCluster = () => {
             </Grid>
           </Grid>
           <Box>
-          <Grid container>
-          <Grid item paddingRight={1}>
-              <TextField
-                variant="standard"
-                label="Exclude Key Words"
-                value={userInputEx}
-                onChange={(event) => {
-                  setUserInputEx(event.target.value)
-                }}
-              />
-            </Grid>
-            <Grid item marginTop={1}>
-              <Button variant="contained" type="submit"
-                onClick={(event) => {
-                    setUserInputWords([...userInputWords, userInputEx])
-                    setUserInputEx("")
-                  }}>
-                Add
-              </Button>
-            </Grid>
             <Grid container>
-              {
-                !isEmpty(userInputWords)?<Grid container>
-                {
-                  userInputWords.map( (value) => {
-                    return(<Bubble value = {value} onClickRemoveFilter= { () => {
-                      setUserInputWords(userInputWords.filter(word => word !== value ))
-                    }}/>)
-                  })
-                }
-                </Grid>:null
-              }
-            </Grid>
+              <Grid item paddingRight={1}>
+                <TextField
+                  variant="standard"
+                  label="Exclude Key Words"
+                  value={userInputEx}
+                  onChange={(event) => {
+                    setUserInputEx(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item marginTop={1}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  onClick={(event) => {
+                    setUserInputWords([...userInputWords, userInputEx]);
+                    setUserInputEx("");
+                  }}
+                >
+                  Add
+                </Button>
+              </Grid>
+              <Grid container>
+                {!isEmpty(userInputWords) ? (
+                  <Grid container>
+                    {userInputWords.map((value) => {
+                      return (
+                        <Bubble
+                          value={value}
+                          onClickRemoveFilter={() => {
+                            setUserInputWords(
+                              userInputWords.filter((word) => word !== value)
+                            );
+                          }}
+                        />
+                      );
+                    })}
+                  </Grid>
+                ) : null}
+              </Grid>
             </Grid>
           </Box>
         </form>
@@ -220,6 +235,11 @@ const ForkCluster = () => {
       {loading ? (
         <Box height="80vh">
           <Loading loadingMessage="Please wait. This may take a few minutes." />
+        </Box>
+      ) : error ? (
+        <Box>
+          Could not cluster repository. This is a work in progress and we will
+          address this issue soon!.
         </Box>
       ) : data ? (
         <div
@@ -249,9 +269,9 @@ const ForkCluster = () => {
             }}
             annotations={annotations}
           />
-            <Grid>
-              <ReactWordcloud options={options} words={wordcloudWords} />
-            </Grid>
+          <Grid>
+            <ReactWordcloud options={options} words={wordcloudWords} />
+          </Grid>
         </div>
       ) : null}
     </Box>

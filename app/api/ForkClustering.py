@@ -111,13 +111,13 @@ class ForkClustering(Resource):
                             "distance": 50
                         })
 
-                split = wordcloud_text.split()
-                shuffle(split)
-                wordcloud_text =  ' '.join(split)
-                wordcloud_display = WordCloud(background_color="white").generate(wordcloud_text)
-                print(wordcloud_display)
+                #split = wordcloud_text.split()
+                #shuffle(split)
+                #wordcloud_text =  ' '.join(split)
+                #wordcloud_display = WordCloud(background_color="white").generate(wordcloud_text)
+                #print(wordcloud_display)
 
-                wordcloud_display.to_file('A.png')
+                #wordcloud_display.to_file('A.png')
 
 
                 return {"nodes": nodes, "links": links, "wordcloud": list(top_common_words.items())}
