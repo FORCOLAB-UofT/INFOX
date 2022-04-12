@@ -67,7 +67,7 @@ punctuations = [
     "_",
 
 ]
-rake = Rake(stopwords=stop_words, punctuations=punctuations, include_repeated_phrases=False)
+rake = Rake(stopwords=stop_words, punctuations=punctuations)
 
 
 class ForkList(Resource):

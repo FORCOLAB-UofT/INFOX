@@ -4,7 +4,7 @@ RUN mkdir -p /usr/src/app
 COPY client/package.json /usr/src/app
 
 WORKDIR /usr/src/app
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY client /usr/src/app
 RUN npm run build
