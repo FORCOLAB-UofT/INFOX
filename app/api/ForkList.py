@@ -67,7 +67,7 @@ punctuations = [
     "_",
 
 ]
-rake = Rake(stopwords=stop_words, punctuations=punctuations, include_repeated_phrases=False)
+rake = Rake(stopwords=stop_words, punctuations=punctuations)
 
 
 class ForkList(Resource):
@@ -87,7 +87,7 @@ class ForkList(Resource):
         forks_info = ProjectFork.objects(project_name=repoName)
         # parentRepo = Project.objects(project_name=repoName)
 
-        request_url = "http://localhost:5000/flask/follow"
+        request_url = "http://forks-insight.com/flask/follow"
         if not forks_info:
             
             response = requests.post(request_url, json={"repo":repo}, headers={"Authorization": request.headers.get("Authorization")})

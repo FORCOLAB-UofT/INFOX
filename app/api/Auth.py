@@ -56,8 +56,8 @@ class Auth(Resource):
         if code:
             # we got a code let's exchange it for an access token
             data = {
-                "client_id": "2d8e058ac0d5cf153c9e",
-                "client_secret": "fee47e019a3b7a9510692b07b22c80a69c326ca5",
+                "client_id": "9f23dab0d1f20bd6944b",
+                "client_secret": "19613db2d5cc6c98a002f9adc9f0631b647f5296",
                 "code": code,
             }
             # exchange the 'code' for an access token
