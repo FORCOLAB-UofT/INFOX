@@ -18,6 +18,7 @@ import pandas as pd
 from os import path
 from PIL import Image
 from random import shuffle
+from ..celery import celery
 
 programming_languages = ['html', 'js', 'json', 'py', 'php', 'css','md', 'babel', 'yml']
 common_programming_words = ['if', 'else','for', 'return', 'and', 'or', 'merge']
@@ -28,27 +29,10 @@ rake = Rake(stopwords=stop_words, punctuations=punctuations)
 class ForkClustering(Resource):
     def __init__(self, jwt):
         self.jwt = jwt
-
-    @jwt_required()
-    def get(self):
-        req_data = request.args
-        repo = req_data.get("repo")
-        cluster_number = int(req_data.get("clusterNumber"))
-
-        split_req_data = req_data.get("userInputWords").split(",")
-        
-        stop_words_with_user_input = stop_words + split_req_data + ["a", "the", "pull request"]
-        
-
-        print("req data:", req_data.get("userInputWords"))
-        
-        print(stop_words_with_user_input)
-        print(stop_words)
-
-        current_user = get_jwt_identity()
-        _user = User.objects(username=current_user).first()
+    
+    @celery.task
+    def clusterRepo(repo, cluster_number, stop_words_with_user_input, github_access_token):
         cluster = ProjectCluster.objects(project_name=repo).first()
-
         if cluster:
             if cluster_number == 21:
                 return {"nodes": cluster.nodes, "links": cluster.links}
@@ -131,13 +115,13 @@ class ForkClustering(Resource):
             url=request_url,
             headers={
                 "Accept": "application/json",
-                "Authorization": "token {}".format(_user.github_access_token),
+                "Authorization": "token {}".format(github_access_token),
             },
         )
 
         repository = res.json()
 
-        active_forks = get_active_forks(repo, _user.github_access_token)
+        active_forks = get_active_forks(repo, github_access_token)
         key_words = {}
         common_words = {}
 
@@ -217,3 +201,102 @@ class ForkClustering(Resource):
             "nodes": nodes,
             "links": links
         }
+
+    @jwt_required()
+    def get(self):
+        req_data = request.args
+        repo = req_data.get("repo")
+        cluster_number = int(req_data.get("clusterNumber"))
+
+        split_req_data = req_data.get("userInputWords").split(",")
+        
+        stop_words_with_user_input = stop_words + split_req_data + ["a", "the", "pull request"]
+        
+
+        print("req data:", req_data.get("userInputWords"))
+        
+        print(stop_words_with_user_input)
+        print(stop_words)
+
+        current_user = get_jwt_identity()
+        _user = User.objects(username=current_user).first()
+
+        cluster = ProjectCluster.objects(project_name=repo).first()
+        if cluster:
+            if cluster_number == 21:
+                return {"nodes": cluster.nodes, "links": cluster.links}
+            else:
+                #top_common_words = dict(sorted(cluster.common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+                #top_common_words = dict(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True)[:cluster_number])
+                counter = 0
+                top_common_words = []
+
+                for i in range(len(sorted(cluster.top_common_words.items(), key= lambda x: len(x[1]), reverse=True))):
+                    if counter == cluster_number:
+                        break
+                    print("item:", list(cluster.top_common_words.items())[i][0])
+                    if list(cluster.top_common_words.items())[i][0] not in stop_words_with_user_input:
+                        top_common_words.append(list(cluster.top_common_words.items())[i])
+                        counter += 1 
+
+                top_common_words = dict(top_common_words)
+
+                nodes = [{
+                    "id": repo,
+                    "height": 2,
+                    "size": 32,
+                    "color": "rgb(244, 117, 96)"
+                }]
+
+                links = []
+                wordcloud_text = ""
+
+                for key, value in top_common_words.items():
+                    wordcloud_text += ((str(key) + " ") * len(value))
+                    
+                    nodes.append({
+                        "id": key,
+                        "height": 1,
+                        "size": 30,
+                        "color": "rgb(97, 205, 187)"
+                    })
+
+                    links.append({
+                        "source": repo,
+                        "target": key,
+                        "distance": 80
+                    })
+
+                    for frk in value:
+                        frk_node = {
+                            "id": frk,
+                            "height": 0,
+                            "size": 12,
+                            "color": "rgb(232, 193, 160)"
+                        }
+
+                        if(frk_node) not in nodes:
+                            nodes.append(frk_node)
+
+                        links.append({
+                            "source": key,
+                            "target": frk,
+                            "distance": 50
+                        })
+
+                #split = wordcloud_text.split()
+                #shuffle(split)
+                #wordcloud_text =  ' '.join(split)
+                #wordcloud_display = WordCloud(background_color="white").generate(wordcloud_text)
+                #print(wordcloud_display)
+
+                #wordcloud_display.to_file('A.png')
+
+
+                return {"nodes": nodes, "links": links, "wordcloud": list(top_common_words.items())}
+        else:
+                self.clusterRepo.delay(repo, cluster_number, stop_words_with_user_input, _user.github_access_token)
+
+        return None
+
+    
