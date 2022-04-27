@@ -15,14 +15,14 @@ class Config:
 
     MONGODB_SETTINGS = {
         "db": "forks-insights",
-        "host": "insert-host-here",  # Replace this with the host string mongodb+srv://....
+        "host": "mongodb+srv://admin:f5U!g$hMXtZP4@forks-insights.wgrvb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",  # Replace this with the host string mongodb+srv://....
     }
 
     # TODO: get this from environment
     # LOCAL_DATA_PATH used for storing the raw data from crawling the github.
     # LOCAL_DATA_PATH = os.environ.get("INFOX_LOCAL_DATA_PATH")
     LOCAL_DATA_PATH = (
-        "Documents/University\ of\ Toronto/Fourth\ Year/Capstone/INFOX/Infox_Local_Data"
+        "~/DATA"
     )
 
     # Overview page config.
@@ -30,10 +30,10 @@ class Config:
 
     # TODO: set up to get from environment based on dev versus prod
     # Github Oauth Apps config.
-    GITHUB_CLIENT_ID = "client_id"  # insert client id
-    GITHUB_CLIENT_SECRET = "secret_key"  # insert secret key
-    # GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
-    # GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
+    GITHUB_CLIENT_ID = "5255e9520f2c9ed5c860"  # insert client id
+    GITHUB_CLIENT_SECRET = "bed341d2f7b9a14828efc8e18afba9e316eebd47"  # insert secret key
+    # GITHUB_CLIENT_ID = "5255e9520f2c9ed5c860"
+    # GITHUB_CLIENT_SECRET = "bed341d2f7b9a14828efc8e18afba9e316eebd47"
 
     # secret key is a random string.
     SECRET_KEY = os.environ.get("INFOX_SECRET_KEY")

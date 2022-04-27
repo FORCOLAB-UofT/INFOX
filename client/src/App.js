@@ -21,6 +21,7 @@ import Home from "./Home";
 import LoginModal from "./LoginModal";
 import ForkCluster from "./ForkCluster";
 import { getUserLogin } from "./repository";
+import Forklist from "./Forklist";
 import DrawerCard from "./DrawerCard";
 
 const theme = createTheme({
@@ -159,6 +160,16 @@ const App = () => {
                   <ForkCluster />
                 ) : (
                   <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/forks/:repo1/:repo2"
+              element={
+                !isEmpty(currentUser) ? (
+                  <Forklist />
+                ) : (
+                  <Navigate to="/followed" />
                 )
               }
             />

@@ -70,12 +70,12 @@ class Project(db.Document):
     analyser_progress = db.StringField()
     project_name_show = db.StringField()
     last_updated_time = db.DateTimeField()
+    common_fork_keywords = db.ListField(db.StringField())
 
 class ProjectCluster(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     nodes = db.ListField(db.DictField())
     links = db.ListField(db.DictField())
-    common_words = db.DictField()
     key_words = db.DictField()
     top_common_words = db.DictField()
 

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   Box,
+  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -12,6 +13,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RemoveButton from "./common/RemoveButton";
 import { SECONDARY, TERTIARY } from "./common/constants";
 import { deleteUserRepository } from "./repository";
+import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
+import { useNavigate } from "react-router";
+import { PRIMARY, REMOVE } from "./common/constants";
 
 const FollowedRepositoryCard = ({
   repo,
@@ -26,6 +30,18 @@ const FollowedRepositoryCard = ({
     deleteUserRepository(repo);
     onClickRemove(repo);
   };
+
+  const navigate = useNavigate();
+
+  const navigateToFork = () => {
+    console.log("repo nav", repo);
+    navigate(`/forks/${repo}`, { replace: true });
+  };
+
+  const setCompareRepo = () => {
+    navigateToFork();
+  };
+
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -34,11 +50,23 @@ const FollowedRepositoryCard = ({
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item xs={11}>
+            <Grid item xs={9}>
               <Typography color="white">{repo}</Typography>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
               <Box style={{ textAlign: "right" }}>
+                <Button
+                  color="inherit"
+                  startIcon={<SignalCellularAltIcon />}
+                  onClick={setCompareRepo}
+                  style={{ background: REMOVE }}
+                >
+                  View Forks
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item xs={1}>
+              <Box style={{ textAlign: "center" }}>
                 <RemoveButton onClickRemove={onRemove} />
               </Box>
             </Grid>

@@ -70,13 +70,10 @@ const ImportRepositories = () => {
     const filteredRepos = [];
     let hasBeenFiltered = false;
 
-    if (
-      !!importRepositories &&
-      !isEmpty(filtersWithValues) &&
-      !isEmpty(filters)
-    ) {
+    if (!!importRepositories && !isEmpty(filtersWithValues)) {
       importRepositories.forEach((repo) => {
         let matches = false;
+
         if (!isEmpty(filters)) {
           hasBeenFiltered = true;
           filters.forEach((filt) => {
@@ -84,12 +81,16 @@ const ImportRepositories = () => {
               matches = true;
             }
           });
+        } else {
+          matches = true;
         }
 
-        if (search !== "" && matches) {
+        if (search !== "") {
           hasBeenFiltered = true;
           if (!repo.repo.includes(search)) {
             matches = false;
+          } else {
+            matches = true;
           }
         }
 
@@ -102,7 +103,7 @@ const ImportRepositories = () => {
     } else {
       setFilteredRepositories(importRepositories);
     }
-  }, [filters, search]);
+  }, [filters, search, importRepositories]);
 
   useEffect(() => {
     if (!isEmpty(importRepositories)) {

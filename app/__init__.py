@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, url_for
+from flask import request, url_for, send_from_directory
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
 from flask_github import GitHub
@@ -12,6 +12,7 @@ from .api.ImportRepositories import ImportRepositories
 from .api.SearchGithub import SearchGithub
 from .api.FollowRepository import FollowRepository
 from .api.Auth import Auth
+from .api.ForkList import ForkList
 from .api.ForkClustering import ForkClustering
 from .db import initialize_db
 from .loginmanager import login_manager
@@ -34,7 +35,7 @@ def create_app(config_name):
     :param config_name
     :return: app object
     """
-    app = Flask(__name__, static_folder="static")
+    app = Flask(__name__, static_url_path="", static_folder="client/build")
     CORS(app)
     api = Api(app)
     bcrypt = Bcrypt(app)
@@ -69,6 +70,10 @@ def create_app(config_name):
     login_manager.init_app(app)
     celery.conf.update(app.config)
 
+    @app.route("/", defaults={"path": ""})
+    def serve(path):
+        return send_from_directory(app.static_folder, "index.html")
+
     api.add_resource(
         FollowedRepositories,
         "/flask/followed",
@@ -94,8 +99,14 @@ def create_app(config_name):
         ForkClustering, "/flask/cluster", resource_class_kwargs={"jwt": jwt}
     )
 
+    api.add_resource(
+        ForkList,
+        "/flask/forklist",
+        resource_class_kwargs={"jwt": jwt},
+    )
+
     # TODO: get correct host, broker and backend depending on environment
-    redis_host = "redis://localhost:6379/0"
+    redis_host = "redis://redis:6379/0"
     celery.conf.broker_url = redis_host
     celery.conf.result_backend = redis_host
     # celery.init_app(app)
