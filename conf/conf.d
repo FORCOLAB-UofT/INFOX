@@ -21,9 +21,8 @@ http {
         index  index.html index.htm;
         try_files $uri $uri/ /index.html;
         add_header Cache-Control "no-cache";
-        proxy_read_timeout 3000;
-        proxy_connect_timeout 750;
-        proxy_send_timeout 3000;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 750s;
     }
 
     error_page 500 502 503 504 /50x.html;

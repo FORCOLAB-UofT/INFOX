@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, url_for
+from flask import request, url_for, send_from_directory
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
 from flask_github import GitHub
@@ -35,7 +35,7 @@ def create_app(config_name):
     :param config_name
     :return: app object
     """
-    app = Flask(__name__, static_folder="static")
+    app = Flask(__name__, static_url_path="", static_folder="client/build")
     CORS(app)
     api = Api(app)
     bcrypt = Bcrypt(app)
@@ -69,6 +69,10 @@ def create_app(config_name):
     github.init_app(app)
     login_manager.init_app(app)
     celery.conf.update(app.config)
+
+    @app.route("/", defaults={"path": ""})
+    def serve(path):
+        return send_from_directory(app.static_folder, "index.html")
 
     api.add_resource(
         FollowedRepositories,

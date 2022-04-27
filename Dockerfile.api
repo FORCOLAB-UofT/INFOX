@@ -8,4 +8,4 @@ ENV FLASK_ENV production
 COPY . .
 
 EXPOSE 5000
-CMD ["gunicorn", "-b", ":5000", "manage:app"]
+CMD ["gunicorn", "--timeout", "1000", "-b", ":5000", "manage:app"]
