@@ -58,13 +58,13 @@ More on [Wiki Page](https://github.com/FancyCoder0/INFOX/wiki)
          export INFOX_MAIL_PASSWORD=[smtp_password]
          ```
 
-4. Run http server on localhost: 
+*4. Run http server on localhost: 
 
    ```bash
    python manage.py runserver --threaded
    ```
 
-5. Run worker for async crawling on localhost:
+*5. Run worker for async crawling on localhost:
    ```bash
    celery worker -A celery_worker.celery --loglevel=info
    ```
@@ -79,6 +79,16 @@ More on [Wiki Page](https://github.com/FancyCoder0/INFOX/wiki)
 
    Another online tutorial: [Serve Flask Applications with uWSGI and Nginx on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04)
 
+
+***Note: if using docker container, there is a problem connecting to redis, we haven't figured out a solution yet.**
+
+Some of the stackoverflow posts we've looked at discussing this problem include: 
+https://stackoverflow.com/questions/54965291/error-99-connecting-to-localhost6379-cannot-assign-requested-address
+https://stackoverflow.com/questions/47272072/celery-workers-unable-to-connect-to-redis-on-docker-instances?rq=1
+https://stackoverflow.com/questions/33142139/error-could-not-connect-to-redis-at-redis6379-name-or-service-not-known
+https://stackoverflow.com/questions/50818146/docker-cant-connect-to-redis-from-another-service 
+https://stackoverflow.com/questions/51639652/how-to-configure-docker-to-use-redis-with-celery
+https://stackoverflow.com/questions/57461129/error-connecting-celery-to-redis-when-using-docker 
 
 
 # Architecture Overview:

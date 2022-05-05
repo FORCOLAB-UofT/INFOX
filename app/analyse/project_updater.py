@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from collections import OrderedDict
 from datetime import datetime
 from flask import current_app
@@ -11,7 +12,7 @@ from .util import localfile_tool
 from .clone_crawler import CloneCrawler
 from ..models import *
 
-DATABASE_UPDATE_MODE=True
+DATABASE_UPDATE_MODE = True
 
 class ForkUpdater:
     def __init__(self, project_name, author, fork_info, code_clone_crawler):
@@ -77,14 +78,11 @@ class ForkUpdater:
         # Ignore the fork if it doesn't have commits after fork.
         if self.last_committed_time <= self.created_time:
             return
-        
         last_update = ProjectFork.objects(full_name=self.project_name + '/' + self.fork_name).first()
-
         if (not current_app.config['FORCED_UPDATING']) and (last_update is not None) and (datetime.strptime(self.last_committed_time, "%Y-%m-%dT%H:%M:%SZ") == last_update.last_committed_time) \
         and (last_update.total_changed_line_number != -1):
             return
-
-        if current_app.config['USE_LOCAL_FORK_INFO']:
+        if current_app.config["USE_LOCAL_FORK_INFO"]:
             # load from local.
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
@@ -94,12 +92,12 @@ class ForkUpdater:
                 return
         else:
             # If the compare result is not crawled, start to crawl.
-            compare_result = compare_changes_crawler.fetch_compare_page(self.fork_name)
+            splitForkName = self.fork_name.split("/")
+            compare_result = compare_changes_crawler.fetch_compare_page(self.project_name, splitForkName[0])
             if compare_result is not None:
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
             else:
                 return
-
         # Update time first.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,
@@ -121,7 +119,6 @@ class ForkUpdater:
             changed_code_name_list = []
             changed_code_func_list = []
         # print(word_extractor.get_top_words(changed_code_name_list, 10))
-        
 
         # Update forks in database.
         full_name = self.project_name + '/' + self.fork_name
@@ -179,7 +176,6 @@ def project_init(project_name, repo_info):
 
 def start_update(project_name, repo_info, forks_info):
     Project.objects(project_name=project_name).update(activate_fork_number=get_activate_fork_number(forks_info))
-
     forks_number = len(forks_info)
     forks_count = 0
     code_clone_crawler = CloneCrawler(project_name)
@@ -193,4 +189,3 @@ def start_update(project_name, repo_info, forks_info):
             Project.objects(project_name=project_name).update(analyser_progress="%d%%" % (100 * forks_count / forks_number))
             Project.objects(project_name=project_name).update(last_updated_time=datetime.utcnow())
     Project.objects(project_name=project_name).update(analyser_progress="%d%%" % 100)
-
