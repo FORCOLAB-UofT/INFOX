@@ -49,7 +49,7 @@ const Login = () => {
 
   const onClickLogin = () => {
     window.location.href =
-      "https://github.com/login/oauth/authorize?scope=user:email&client_id=9f23dab0d1f20bd6944b";
+      "https://github.com/login/oauth/authorize?scope=user:email&client_id=2d8e058ac0d5cf153c9e";
   };
 
   return (
