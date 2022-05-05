@@ -26,7 +26,7 @@ import DrawerCard from "./DrawerCard";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Roboto",
+    fontFamily: "Zilla Slab",
   },
 });
 
