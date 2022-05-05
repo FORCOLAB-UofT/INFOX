@@ -238,8 +238,7 @@ const ForkCluster = () => {
         </Box>
       ) : error ? (
         <Box>
-          Could not cluster repository. This is a work in progress and we will
-          address this issue soon!.
+          We started clustering this repository! This might take a while so try again in a few minutes.
         </Box>
       ) : data ? (
         <div

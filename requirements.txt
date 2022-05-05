@@ -126,3 +126,4 @@ flask_cors
 flask_restful
 pytest
 wordcloud
+pandas
