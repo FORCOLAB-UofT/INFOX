@@ -15,7 +15,7 @@ class Config:
 
     MONGODB_SETTINGS = {
         "db": "forks-insights",
-        "host": "mongodb+srv://admin:f5U!g$hMXtZP4@forks-insights.wgrvb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true",  # Replace this with the host string mongodb+srv://....
+        "host": "mongodb+srv://admin:f5U!g$hMXtZP4@forks-insights.wgrvb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",  # Replace this with the host string mongodb+srv://....
     }
 
     # TODO: get this from environment
