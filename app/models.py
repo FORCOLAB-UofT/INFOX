@@ -31,6 +31,8 @@ class ChangedFile(db.Document):
 class ProjectFork(db.Document):
     full_name = db.StringField(required=True, primary_key=True)
     fork_name = db.StringField()
+    fork_star = db.IntField()
+    fork_count = db.IntField()
     project_name = db.StringField()
     last_committed_time = db.DateTimeField()
     created_time = db.DateTimeField()
@@ -39,6 +41,7 @@ class ProjectFork(db.Document):
     total_commit_number = db.IntField()
     file_list = db.ListField(db.StringField())
     commit_list = db.ListField(db.DictField())
+    commit_freq = db.ListField(db.IntField())
     key_words = db.ListField(db.StringField())
     key_words_dict = db.DictField()
     key_words_tfidf = db.ListField(db.StringField())
@@ -64,6 +67,7 @@ class Project(db.Document):
     project_name = db.StringField(required=True, primary_key=True)
     language = db.StringField()
     fork_number = db.IntField(default=-1)
+    fork_star = db.IntField(default=-1)
     activate_fork_number = db.IntField(default=-1)
     feature_number = db.IntField(default=-1)
     description = db.StringField()
@@ -159,3 +163,4 @@ class TagType:
     BUG_FIX = 3
     CONFIGURE = 4
     OTHER = 5
+
