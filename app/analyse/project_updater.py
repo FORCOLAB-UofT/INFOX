@@ -169,6 +169,7 @@ def project_init(project_name, repo_info):
         project_name=project_name,
         language=repo_info["language"],
         fork_number=repo_info["forks"],
+        fork_star=repo_info["stargazers_count"],
         activate_fork_number=-1,
         description=str(repo_info["description"]),
         analyser_progress="0%",
