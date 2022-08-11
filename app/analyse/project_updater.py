@@ -15,7 +15,7 @@ from ..models import *
 DATABASE_UPDATE_MODE = True
 
 class ForkUpdater:
-    def __init__(self, project_name, author, fork_info, code_clone_crawler, access_token):
+    def __init__(self, project_name, author, fork_info, code_clone_crawler):
         self.project_name = project_name
         self.author = author
         self.fork_name = fork_info["full_name"]
@@ -24,7 +24,6 @@ class ForkUpdater:
         self.code_clone_crawler = code_clone_crawler
         self.diff_result_path = current_app.config['LOCAL_DATA_PATH'] + "/" + self.project_name + '/' + self.author + '/diff_result.json'
         self.all_tokens = []
-        self.access_token = access_token
         # self.all_stemmed_tokens = []
         self.all_lemmatize_tokens = []
     
@@ -184,7 +183,7 @@ def start_update(project_name, repo_info, forks_info, access_token):
     for fork in forks_info:
         forks_count += 1
         try:
-            ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler, access_token).work()
+            ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
         except Exception as inst:
             print(inst)
         finally:

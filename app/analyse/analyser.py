@@ -89,8 +89,8 @@ def get_commit_number(repo, access_token):
             "Authorization": "token {}".format(access_token),
         },
     )
-    repo_info = res.json()
-    return repo_info['all']
+    commit_info = res.json()
+    return commit_info['all']
 
 @celery.task
 def start_analyse(repo, access_token):
@@ -132,7 +132,7 @@ def start_analyse(repo, access_token):
     if current_app.config["USE_LOCAL_FORKS_LIST"] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
-            project_updater.start_update(repo, repo_info, repo_forks_list, access_token)
+            project_updater.start_update(repo, repo_info, repo_forks_list)
             return
     else:
         # repo_forks_list = github_api_caller.get("repos/%s/forks" % repo)
@@ -149,7 +149,7 @@ def start_analyse(repo, access_token):
 
     print("finish fetch fork list for %s" % repo)
 
-    project_updater.start_update(repo, repo_info, active_forks, access_token)
+    project_updater.start_update(repo, repo_info, active_forks)
 
     # TODO: Fix email sending functionality
     # temporarily commented out to get working on local - laith
