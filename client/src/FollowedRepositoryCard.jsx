@@ -42,6 +42,11 @@ const FollowedRepositoryCard = ({
     navigateToFork();
   };
 
+  const setForkGraph = () => {
+    console.log("repo nav", repo);
+    navigate(`/visual/${repo}`, { replace: true });
+  };
+
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -62,6 +67,13 @@ const FollowedRepositoryCard = ({
                   style={{ background: REMOVE }}
                 >
                   View Forks
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={setForkGraph}
+                  style={{ background: REMOVE }}
+                >
+                  View Graph
                 </Button>
               </Box>
             </Grid>

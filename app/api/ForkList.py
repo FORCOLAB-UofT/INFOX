@@ -7,6 +7,7 @@ import requests
 from ..models import User, ProjectFork, Project
 from ..analyse.compare_changes_crawler import fetch_commit_list, fetch_diff_code
 from ..analyse.analyser import get_active_forks
+from ..analyse.analyser import get_commit_number
 from rake_nltk import Rake
 
 programming_languages = ["html", "js", "json", "py", "php", "css", "md", "babel", "yml", "java", "python", "javascript"]
@@ -175,6 +176,7 @@ class ForkList(Resource):
                     "total_commit_number": fork["total_commit_number"],
                     "last_committed_time": str(fork["last_committed_time"]),
                     "created_time": str(fork["created_time"]),
+                    "commit_freq": get_commit_number(fork["fork_name"],  _user.github_access_token)
                 }
             )
 

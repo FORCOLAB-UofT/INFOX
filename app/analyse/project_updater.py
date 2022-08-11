@@ -15,7 +15,7 @@ from ..models import *
 DATABASE_UPDATE_MODE = True
 
 class ForkUpdater:
-    def __init__(self, project_name, author, fork_info, code_clone_crawler):
+    def __init__(self, project_name, author, fork_info, code_clone_crawler, access_token):
         self.project_name = project_name
         self.author = author
         self.fork_name = fork_info["full_name"]
@@ -24,6 +24,7 @@ class ForkUpdater:
         self.code_clone_crawler = code_clone_crawler
         self.diff_result_path = current_app.config['LOCAL_DATA_PATH'] + "/" + self.project_name + '/' + self.author + '/diff_result.json'
         self.all_tokens = []
+        self.access_token = access_token
         # self.all_stemmed_tokens = []
         self.all_lemmatize_tokens = []
     
@@ -87,9 +88,9 @@ class ForkUpdater:
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
                     compare_result = json.load(read_file)
-            else:
-                # local file not exist
-                return
+            # else:
+            #     # local file not exist
+            #     return
         else:
             # If the compare result is not crawled, start to crawl.
             splitForkName = self.fork_name.split("/")
@@ -175,7 +176,7 @@ def project_init(project_name, repo_info):
         analyser_progress="0%",
     ).save()
 
-def start_update(project_name, repo_info, forks_info):
+def start_update(project_name, repo_info, forks_info, access_token):
     Project.objects(project_name=project_name).update(activate_fork_number=get_activate_fork_number(forks_info))
     forks_number = len(forks_info)
     forks_count = 0
@@ -183,7 +184,7 @@ def start_update(project_name, repo_info, forks_info):
     for fork in forks_info:
         forks_count += 1
         try:
-            ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler).work()
+            ForkUpdater(project_name, fork["owner"]["login"], fork, code_clone_crawler, access_token).work()
         except Exception as inst:
             print(inst)
         finally:

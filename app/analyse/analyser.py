@@ -78,6 +78,20 @@ def get_active_forks(repo, access_token):
 
     return active_forks
 
+def get_commit_number(repo, access_token):
+    
+    request_url = "https://api.github.com/repos/%s/stats/participation" % repo
+
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    repo_info = res.json()
+    return repo_info['all']
+
 @celery.task
 def start_analyse(repo, access_token):
     """Start analyse on repo using github_api_caller(contains personal access token)
@@ -113,12 +127,12 @@ def start_analyse(repo, access_token):
         current_app.config["LOCAL_DATA_PATH"] + "/" + repo + "/forks_list.json"
     )
 
-    active_forks = get_active_forks(repo,access_token )
+    active_forks = get_active_forks(repo, access_token)
 
     if current_app.config["USE_LOCAL_FORKS_LIST"] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:
             repo_forks_list = json.load(read_file)
-            project_updater.start_update(repo, repo_info, repo_forks_list)
+            project_updater.start_update(repo, repo_info, repo_forks_list, access_token)
             return
     else:
         # repo_forks_list = github_api_caller.get("repos/%s/forks" % repo)
@@ -135,7 +149,7 @@ def start_analyse(repo, access_token):
 
     print("finish fetch fork list for %s" % repo)
 
-    project_updater.start_update(repo, repo_info, active_forks)
+    project_updater.start_update(repo, repo_info, active_forks, access_token)
 
     # TODO: Fix email sending functionality
     # temporarily commented out to get working on local - laith
