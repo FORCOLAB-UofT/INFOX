@@ -6,7 +6,7 @@ COPY client/package.json /usr/src/app
 WORKDIR /usr/src/app
 RUN npm install --legacy-peer-deps
 RUN npm install d3 --legacy-peer-deps
-
+RUN npm install react-select --legacy-peer-deps
 
 COPY client /usr/src/app
 RUN npm run build

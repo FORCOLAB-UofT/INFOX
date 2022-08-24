@@ -62,7 +62,7 @@ const Filter = ({ filters, setFilters, setSearch, externalKeyword, externalFileN
             type: checkedFilter.type,
             key: checkedFilter.key,
         }));
-
+        console.log(filtersSelected)
         const newSelected = differenceWith(filtersSelected, addedFilters, isEqual);
 
         setAddedFilters([...addedFilters, ...newSelected]);

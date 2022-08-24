@@ -175,7 +175,7 @@ def project_init(project_name, repo_info):
         analyser_progress="0%",
     ).save()
 
-def start_update(project_name, repo_info, forks_info, access_token):
+def start_update(project_name, repo_info, forks_info):
     Project.objects(project_name=project_name).update(activate_fork_number=get_activate_fork_number(forks_info))
     forks_number = len(forks_info)
     forks_count = 0

@@ -71,6 +71,9 @@ class FollowRepository(Resource):
         else:
             add_repo(_user.username, repo, res)
             db_followed_project(_user, repo)
+            print("lalalal zzzzzz")
+            r = db_find_project(repo)
+            print(r["analyser_progress"])
             msg = (
                 "The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait."
                 % repo
@@ -90,4 +93,5 @@ class FollowRepository(Resource):
                 "timesForked": res["forks_count"],
                 "repo": res["full_name"],
             },
+            "analyser_progress": db_find_project(repo)["analyser_progress"]
         }

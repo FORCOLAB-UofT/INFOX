@@ -29,6 +29,8 @@ import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
+import { getActiveForksNum } from "./repository";
+import { postProgress } from "./repository";
 import Loading from "./common/Loading"
 import Filter from "./common/Filter";
 import DialogTitle from '@mui/material/DialogTitle';
@@ -801,14 +803,34 @@ ComparisonDialogue.propTypes = {
 const ForkList = () => {
   const { repo1, repo2 } = useParams();
   const [data, setData] = useState(null);
+  const [activeForksNum, setActiveForksNum] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [counter, setCounter] = useState(0);
 
   const fetchForks = useCallback(async (repo) => {
     console.log('repo1',repo1);
     console.log('repo2', repo2);
-    const response = await getRepoForks(repo);
-    console.log("Fetching forks list for ", repo)
-    console.log("forks list response", response);
-    setData(response.data.forks);
+    // const response = await getRepoForks(repo);
+
+    //get total num of forks needs to be fetched
+    const active_fork_num = await getActiveForksNum(repo);
+    console.log("Active forks number is ", active_fork_num.data)
+    setActiveForksNum(active_fork_num.data)
+
+    let total_list = []
+    let i = 0
+    while (i < active_fork_num.data) {
+        let res = await postProgress(repo, i);
+        console.log(res.data.forks[0])
+        total_list.push(res.data.forks[0])
+        i += 1
+        setCounter(i)
+        setProgress(i/active_fork_num.data * 100)
+  }
+  console.log(total_list)
+  console.log("Fetching forks list for ", repo)
+  // console.log("forks list response", response);
+  setData(total_list);
   }, []);
 
   useEffect(() => {
@@ -817,7 +839,7 @@ const ForkList = () => {
   }, [fetchForks]);
 
   return (
-    <>{data ? <EnhancedTable data={data} /> : <Loading></Loading>}</>
+    <>{data ? <EnhancedTable data={data} /> : <Loading loadingMessage={"There are " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>}</>
   );
 };
 

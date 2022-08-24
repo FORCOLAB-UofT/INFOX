@@ -3,20 +3,19 @@ import * as d3 from 'd3';
 
 const ForkRank = ({
     data,
-    fork_names
+    forkNames,
+    interval
   }) => {
-
       const ref = React.useRef();
-
-      const weeks =  Array.from(Array(52).keys());
     
       React.useEffect(() => {
-          const height = 1000;
-          const width = 1500;
+          const height = 800;
+          const width = 1200;
           const padding = 25;
           const margin = {left: 105, right: 105, top: 20, bottom: 50};
 
         const svg = d3.select(ref.current);
+              svg.selectAll("*").remove();
         // const svg = d3.select('.plot-area');
 
         // draw dashed line
@@ -25,24 +24,24 @@ const ForkRank = ({
           
         
         const bx = d3.scalePoint()
-                .domain(seq(0, weeks.length))
+                .domain(seq(0, interval.length))
                 .range([0, width - margin.left - margin.right - padding * 2])
         
         
         //2. chart
-        const ti = new Map(fork_names.map((territory, i) => [territory, i]));
-        const qi = new Map(weeks.map((week, i) => [week, i]));  
+        const ti = new Map(forkNames.map((fork_name, i) => [fork_name, i]));
+        const qi = new Map(interval.map((week, i) => [week, i]));  
                    
-        const matrix = Array.from(ti, () => new Array(weeks.length).fill(null));  
-              for (const {territory, week, commits} of data) 
-                     matrix[ti.get(territory)][qi.get(week)] = {rank: 0, commits: +commits, next: null};
+        const matrix = Array.from(ti, () => new Array(interval.length).fill(null));  
+              for (const {fork_name, week, commits} of data) 
+                     matrix[ti.get(fork_name)][qi.get(week)] = {rank: 0, commits: +commits, next: null};
                    
                    matrix.forEach((d) => {
                        for (let i = 0; i<d.length - 1; i++) 
                          d[i].next = d[i + 1];
                    });
                    
-                   weeks.forEach((d, i) => {
+                   interval.forEach((d, i) => {
                      const array = [];
                      matrix.forEach((d) => array.push(d[i]));
                      array.sort((a, b) => b.commits - a.commits);
@@ -52,20 +51,20 @@ const ForkRank = ({
         //before step 2
         // get ranking           
         const chartData =  matrix;
-        const len = weeks.length - 1;
-        const ranking = chartData.map((d, i) => ({territory: fork_names[i], first: d[0].rank, last: d[len].rank}));
+        const len = interval.length - 1;
+        const ranking = chartData.map((d, i) => ({fork_name: forkNames[i], first: d[0].rank, last: d[len].rank}));
         // get color
         const color = d3.scaleOrdinal(d3.schemeTableau10)
                         .domain(seq(0, ranking.length))
     
-        const left = ranking.sort((a, b) => a.first - b.first).map((d) => d.territory);
-        const right = ranking.sort((a, b) => a.last - b.last).map((d) => d.territory);
+        const left = ranking.sort((a, b) => a.first - b.first).map((d) => d.fork_name);
+        const right = ranking.sort((a, b) => a.last - b.last).map((d) => d.fork_name);
 
         const strokeWidth = d3.scaleOrdinal()
                         .domain(["default", "transit", "compact"])
                         .range([5, bumpRadius * 2 + 2, 2]);
         const drawingStyle = 'default';
-        const bumpRadius = 13
+        const bumpRadius = 8
         const by = d3.scalePoint()
         .domain(seq(0, ranking.length))
         .range([margin.top, height - margin.bottom - padding])
@@ -89,7 +88,7 @@ const ForkRank = ({
             .transition().duration(500)
             .attr("fill", "#ddd").attr("stroke", "#ddd");
           markTick(leftY, 0);
-          markTick(rightY,  weeks.length - 1);
+          markTick(rightY,  interval.length - 1);
           
           function markTick(axis, pos) {
             axis.selectAll(".tick text").filter((s, i) => i === d[pos].rank)
@@ -103,7 +102,7 @@ const ForkRank = ({
           svg.append("g")
           .attr("transform", `translate(${margin.left + padding},0)`)
           .selectAll("path")
-          .data(seq(0, weeks.length))
+          .data(seq(0, interval.length))
           .join("path")
           .attr("stroke", "#ccc")
           .attr("stroke-width", 2)
@@ -134,17 +133,17 @@ const ForkRank = ({
           })
 
           const title = g => g.append("title")
-                        .text((d, i) => `${d.territory} - ${weeks[i]}\nRank: ${d.commits.rank + 1}\nProfit: ${d.commits.commits}`)
+                        .text((d, i) => `${d.fork_name} - ${interval[i]}\nRank: ${d.commits.rank + 1}\nProfit: ${d.commits.commits}`)
 
           const bumps = series.selectAll("g")
-          .data((d, i) => d.map(v => ({territory: fork_names[i], commits: v, first: d[0].rank})))
+          .data((d, i) => d.map(v => ({fork_name: forkNames[i], commits: v, first: d[0].rank})))
           .join("g")
           .attr("transform", (d, i) => `translate(${bx(i)},${by(d.commits.rank)})`)
-          //.call(g => g.append("title").text((d, i) => `${d.territory} - ${weeks[i]}\n${toCurrency(d.commits.commits)}`)); 
+          //.call(g => g.append("title").text((d, i) => `${d.fork_name} - ${interval[i]}\n${toCurrency(d.commits.commits)}`)); 
           .call(title);
 
         const ax = d3.scalePoint()
-                     .domain(weeks)
+                     .domain(interval)
                      .range([margin.left + padding, width - margin.right - padding]);
 
         const y = d3.scalePoint()  
@@ -187,8 +186,8 @@ const ForkRank = ({
         <svg
           ref={ref}
           style={{
-            height: 1000,
-            width:  1500,
+            height: 800,
+            width: 1200,
             marginRight: "0px",
             marginLeft: "0px",
           }}

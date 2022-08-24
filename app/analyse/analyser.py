@@ -78,7 +78,7 @@ def get_active_forks(repo, access_token):
 
     return active_forks
 
-def get_commit_number(repo, access_token):
+def get_commit_number_per_week(repo, access_token):
     
     request_url = "https://api.github.com/repos/%s/stats/participation" % repo
 
@@ -90,7 +90,25 @@ def get_commit_number(repo, access_token):
         },
     )
     commit_info = res.json()
-    return commit_info['all']
+    print(commit_info)
+    if ('all' in commit_info.keys()):
+        return commit_info['all']
+    else:
+        return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+def get_commit_number_per_hour(repo, access_token):
+    
+    request_url = "https://api.github.com/repos/%s/stats/commit_activity" % repo
+
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    commit_info = res.json()
+    return commit_info
 
 @celery.task
 def start_analyse(repo, access_token):

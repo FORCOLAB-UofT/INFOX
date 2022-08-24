@@ -12,7 +12,7 @@ const Loading = ({ loadingMessage }) => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      style={{ minHeight: "100%" }}
+      style={{ minHeight: "100%", padding: 10}}
     >
       <CircularProgress />
       <Box>
