@@ -9,8 +9,8 @@ http {
     uwsgi_send_timeout 86400;
   # redirect www -> non-www 
    server {
-    listen       3000;
-    server_name  localhost;
+    listen       80;
+    server_name  forks-insight.com;
 
     root   /usr/share/nginx/html;
     index index.html;
