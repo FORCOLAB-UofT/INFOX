@@ -89,7 +89,7 @@ class ForkList(Resource):
 
         request_url = "http://forks-insight.com/flask/follow"
         if not forks_info:
-            
+            return {"forks": []}
             response = requests.post(request_url, json={"repo":repo}, headers={"Authorization": request.headers.get("Authorization")})
             
 
