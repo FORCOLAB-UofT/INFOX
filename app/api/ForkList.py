@@ -103,41 +103,41 @@ class ForkList(Resource):
         active_forks = get_active_forks(repoName, _user.github_access_token)
         print("active fork")
         print(len(active_forks))
-#         alreadyAnalzyed = False
+        alreadyAnalzyed = False
 
-#         for fork in forks_info:
-#             if len(fork["key_words"]) > 0:
-#                 alreadyAnalzyed = True
-#                 break
-#         if not alreadyAnalzyed:
-#             for fork in active_forks:
-#                 fork_name = fork["full_name"][: -(len(fork["name"]) + 1)]
-#                 commit_msgs = fetch_commit_list(repoName, fork_name)
-#                 code_changes = fetch_diff_code(repoName, fork_name)
-#
-#                 sentences = []
-#                 for msg in commit_msgs:
-#                     sentences.append(msg["title"])
-#
-#                 for fork_info in code_changes:
-#                     if fork_info["file_full_name"]:
-#                         sentences.append(fork_info["file_full_name"])
-#
-#                     # if fork_info["added_code"]:
-#                     #     sentences.append(fork_info["added_code"])
-#
-#                 if sentences:
-#                     rake.extract_keywords_from_sentences(sentences)
-#                     key_words[fork_name] = rake.get_ranked_phrases()
-#                     print("key words found for ", fork_name, ":", key_words[fork_name])
-#                     ProjectFork.objects(fork_name=fork["full_name"]).update(
-#                         key_words=key_words[fork_name]
-#                     )
-#                 else:
-#                     print("No keywords found for", fork_name)
-#                     ProjectFork.objects(fork_name=fork["full_name"]).update(
-#                         key_words=[]
-#                     )
+        for fork in forks_info:
+            if len(fork["key_words"]) > 0:
+                alreadyAnalzyed = True
+                break
+        if not alreadyAnalzyed:
+            for fork in active_forks:
+                fork_name = fork["full_name"][: -(len(fork["name"]) + 1)]
+                commit_msgs = fetch_commit_list(repoName, fork_name)
+                code_changes = fetch_diff_code(repoName, fork_name)
+
+                sentences = []
+                for msg in commit_msgs:
+                    sentences.append(msg["title"])
+
+                for fork_info in code_changes:
+                    if fork_info["file_full_name"]:
+                        sentences.append(fork_info["file_full_name"])
+
+                    # if fork_info["added_code"]:
+                    #     sentences.append(fork_info["added_code"])
+
+                if sentences:
+                    rake.extract_keywords_from_sentences(sentences)
+                    key_words[fork_name] = rake.get_ranked_phrases()
+                    print("key words found for ", fork_name, ":", key_words[fork_name])
+                    ProjectFork.objects(fork_name=fork["full_name"]).update(
+                        key_words=key_words[fork_name]
+                    )
+                else:
+                    print("No keywords found for", fork_name)
+                    ProjectFork.objects(fork_name=fork["full_name"]).update(
+                        key_words=[]
+                    )
                 # for key, value in key_words.items():
                 #     for word in value:
                 #         if not word.isnumeric():
