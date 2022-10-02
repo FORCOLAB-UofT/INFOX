@@ -12,13 +12,13 @@ import ForkRank from "./ForkRank";
 const ForkGraph = () => {
 
   const options = [
-    { value: 'weekly', label: 'Weekly commits within last year' },
     { value: 'daily', label: 'Daily commits within last month' },
+    { value: 'weekly', label: 'Weekly commits within last year' },
   ];
   
   const { repo1, repo2 } = useParams();
   const [data, setData] = useState(null);
-  const [selection, setSelectionState] = useState("weekly");
+  const [selection, setSelectionState] = useState(null);
   const [interval, setIntervalState] = useState(null);
   const [forkNames, setForkNames] = useState(null);
   const [forkList, setForkList] = useState(null);
@@ -152,8 +152,9 @@ const fetchForks = useCallback(async (repo) => {
     data && forkNames ? 
     <div>
       <Select
-        value={selection}
         onChange={handleChange}
+        defaultValue={options[0]}
+        isClearable={true}
         options={options}
       />
       <ForkRank data={data} forkNames={forkNames} interval={interval}></ForkRank>
