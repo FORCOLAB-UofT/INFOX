@@ -65,7 +65,7 @@ const LoginModal = () => {
               variant="contained"
               onClick={() => {
                 window.location.href =
-                  "https://github.com/login/oauth/authorize?scope=user:email&client_id=9f23dab0d1f20bd6944b";
+                  "https://github.com/login/oauth/authorize?scope=user:email&client_id=b97b95129ce435e40a29";
               }}
             >
               <Box paddingRight={1}>
