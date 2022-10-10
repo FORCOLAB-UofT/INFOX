@@ -13,13 +13,25 @@ export const getUserFollowedRepositories = async () => {
   return response;
 };
 
-export const getRepoForks = async (value) => {
+export const getTotalForksNumber = async (value) => {
   const response = await axios({
     method: "GET",
     url: `http://forks-insight.com/flask/forklist?repo=${value}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
+  });
+  return response;
+};
+
+export const getRepoForks = async (value, i) => {
+  const response = await axios({
+    method: "POST",
+    url: `http://forks-insight.com/flask/forklist`,
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+    data: { repo: value, index: i },
   });
   return response;
 };
