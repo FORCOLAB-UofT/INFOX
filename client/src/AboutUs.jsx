@@ -37,6 +37,7 @@ const AboutUs = () => {
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/laithhanania/" target="_blank">Laith Hanania</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/johnperry99/" target="_blank">John Perry</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/cansin-varol-5b8532165/" target="_blank">Cansin Varol</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/xinyan-he/" target="_blank">Xinyan He</Link></Typography>
             </Card>
             <Card sx={{ padding: 2, width: 95 + "%" }}>
                 <Typography variant="h4">Publication</Typography>

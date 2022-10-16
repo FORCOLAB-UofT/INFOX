@@ -2,21 +2,20 @@ import os
 
 
 class Config:
-    # TODO: get mongo host from environment
-    # Database config.
-    # MONGODB_SETTINGS = {
-    #    "db": "infox",
-    #    "host": "127.0.0.1",
-    #    "port": 27017,
-    #    "connect": False,
-    #    # 'username': os.environ.get('INFOX_DATABASE_USERNAME'),
-    #    # 'password': os.environ.get('INFOX_DATABASE_PASSWORD'),
-    # }
-
+    # # TODO: get mongo host from environment
+    # # Database config.
     MONGODB_SETTINGS = {
-        "db": "forks-insights",
-        "host": "mongodb+srv://admin:f5U!g$hMXtZP4@forks-insights.wgrvb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true",  # Replace this with the host string mongodb+srv://....
+        # set it to the name of your local database
+        'db': 'infox',
+        'host': 'host.docker.internal',
+        'port': 27017,
+        "connect": False,
     }
+
+    # MONGODB_SETTINGS = {
+    #     "db": "forks-insights",
+    #     "host": "mongodb+srv://admin:f5U!g$hMXtZP4@forks-insights.wgrvb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&ssl=true",  # Replace this with the host string mongodb+srv://....
+    # }
 
     # TODO: get this from environment
     # LOCAL_DATA_PATH used for storing the raw data from crawling the github.
