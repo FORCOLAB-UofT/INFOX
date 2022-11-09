@@ -198,6 +198,18 @@ const FollowedRespositories = () => {
                 </Grid>
               </>
             ) : (
+            <>
+              <Box>
+                <SearchAndFilter
+                  filters={filtersWithValues}
+                  setFilters={(data) => {
+                    setFilters(data);
+                  }}
+                  setSearch={(data) => {
+                    setSearch(data);
+                  }}
+                />
+              </Box> 
               <Box>
                 <Grid
                   container
@@ -215,6 +227,7 @@ const FollowedRespositories = () => {
                   </Typography>
                 </Grid>
               </Box>
+            </>
             )}
           </Box>
         </Box>
