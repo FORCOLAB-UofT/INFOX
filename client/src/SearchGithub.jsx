@@ -24,54 +24,29 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const SearchGithub = () => {
-  const rows = [
-    {
-      language: "C++",
-      full_name: "tensorflow/tensorflow",
-      forks: 82444,
-      updated: "2020-08-21 16:03(UTC)",
-    },
-    {
-      language: "JavaScript",
-      full_name: "twbs/bootstrap",
-      forks: 71700,
-      updated: "2021-01-17 22:26(UTC)",
-    },
-    {
-      language: "JavaScript",
-      full_name: "nightscout/cgm-remote-monitor",
-      forks: 42548,
-      updated: "2020-07-25 21:12(UTC)",
-    },
-    {
-      language: "C++",
-      full_name: "opencv/opencv",
-      forks: 41764,
-      updated: "2020-12-23 06:49(UTC)",
-    },
-    {
-      language: "C",
-      full_name: "torvalds/linux",
-      forks: 33035,
-      updated: "2020-08-19 09:24(UTC)",
-    },
-    {
-      language: "Java",
-      full_name: "spring-projects",
-      forks: 31207,
-      updated: "2020-08-27 05:24(UTC)",
-    },
-  ];
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchValue, setSearchValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearching_freq, setIsSearching_freq] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
   const [followMsg, setFollowMsg] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [followedRepos, setFollowedRepos] = useState(null);
+  const [freqRepos, setfreqRepos] = useState([]);
+
+  const freqReposFunc = async (searchValues) => {
+    setIsSearching_freq(true);
+    var results = [];
+    for (var i = 0; i < searchValues.length; i++) {
+      var resp = await postSearchGithub(searchValues[i]);
+      var temp = resp.data.slice(0, 1);
+      results = results.concat(temp);
+    }
+    setfreqRepos(results);
+    setIsSearching_freq(false);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -105,6 +80,16 @@ const SearchGithub = () => {
   }, []);
 
   useEffect(() => {
+    if (!isSearching) {
+      var repos = [
+        "tensorflow",
+        "twbs/bootstrap",
+        "nightscout/cgm-remote-monitor",
+        "opencv/opencv",
+        "torvalds/linux",
+      ];
+      freqReposFunc(repos);
+    }
     fetchUserFollowedRepos();
   }, [fetchUserFollowedRepos]);
 
@@ -195,46 +180,51 @@ const SearchGithub = () => {
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
         <Typography variant="h5">Frequently Analyzed Repos on INFOX</Typography>
-        <Table>
-          <TableHead></TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <SearchGithubRow
-                    name={row.full_name}
-                    forks={row.forks}
-                    language={row.language}
-                    updated={row.updated}
-                    onFollow={(data) => {
-                      setFollowMsg(data.msg);
-                      setOpenSnackbar(true);
-                      setFollowedRepos([...followedRepos, data.repo]);
-                    }}
-                    followedRepos={followedRepos}
-                    onRemoveRepo={(value) => {
-                      setFollowedRepos(
-                        followedRepos.filter((repo) => repo.repo !== value)
+        {isSearching_freq ? (
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <Box>
+            {freqRepos ? (
+              <Box>
+                <Table>
+                  <TableHead />
+                  <TableBody>
+                    {freqRepos.map((result) => {
+                      return (
+                        <SearchGithubRow
+                          name={result.full_name}
+                          language={result.language}
+                          forks={result.forks}
+                          updated={result.updated_at}
+                          onFollow={(data) => {
+                            setFollowMsg(data.msg);
+                            setOpenSnackbar(true);
+                            setFollowedRepos([...followedRepos, data.repo]);
+                          }}
+                          followedRepos={followedRepos}
+                          onRemoveRepo={(value) => {
+                            setFollowedRepos(
+                              followedRepos.filter(
+                                (repo) => repo.repo !== value
+                              )
+                            );
+                          }}
+                        />
                       );
-                    }}
-                  ></SearchGithubRow>
-                );
-              })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 15]}
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+                    })}
+                  </TableBody>
+                </Table>
+              </Box>
+            ) : null}
+          </Box>
+        )}
       </Box>
       <Stack spacing={2} sx={{ width: "100%" }}>
         <Snackbar
