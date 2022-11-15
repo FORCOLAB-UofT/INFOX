@@ -81,7 +81,7 @@ const SearchGithub = () => {
 
   const init_state = async () => {
     if (!isSearching) {
-      var repos = [];
+      const repos = [];
       const topForksDB = `https://api.github.com/search/repositories?q=forks:%3E0&sort=forks&per_page=5`;
       const fetchRepos = await fetchFreqForkRepos(topForksDB);
       for(let i = 0; i < fetchRepos.length; i++) {
@@ -89,12 +89,12 @@ const SearchGithub = () => {
       }
       freqReposFunc(repos);
     }
-    fetchUserFollowedRepos();
   };
 
   useEffect(() => {
     init_state();
-  }, []);
+    fetchUserFollowedRepos();
+  }, [fetchUserFollowedRepos]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
