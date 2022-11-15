@@ -17,7 +17,7 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import SearchGithubRow from "./SearchGithubRow";
-import { postSearchGithub, getUserFollowedRepositories } from "./repository";
+import { postSearchGithub, getUserFollowedRepositories, fetchFreqForkRepos } from "./repository";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -79,19 +79,22 @@ const SearchGithub = () => {
     setFollowedRepos(res.data);
   }, []);
 
-  useEffect(() => {
+  const init_state = async () => {
     if (!isSearching) {
-      var repos = [
-        "tensorflow",
-        "twbs/bootstrap",
-        "nightscout/cgm-remote-monitor",
-        "opencv/opencv",
-        "torvalds/linux",
-      ];
+      var repos = [];
+      const topForksDB = `https://api.github.com/search/repositories?q=forks:%3E0&sort=forks&per_page=5`;
+      const fetchRepos = await fetchFreqForkRepos(topForksDB);
+      for(let i = 0; i < fetchRepos.length; i++) {
+        repos.push(fetchRepos[i].full_name);
+      }
       freqReposFunc(repos);
     }
     fetchUserFollowedRepos();
-  }, [fetchUserFollowedRepos]);
+  };
+
+  useEffect(() => {
+    init_state();
+  }, []);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
