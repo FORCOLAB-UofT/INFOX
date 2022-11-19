@@ -67,6 +67,12 @@ export const getUserLogin = async () => {
   return response;
 };
 
+// get 5 among the top forked repos on github
+export const fetchFreqForkRepos = async (apiEndpoint) => {
+  return await fetch(apiEndpoint).then((res) => res.json()).then((data) => data["items"]);
+  // return await axios.get(apiEndpoint).then((res) => res.json()).then((data) => data["items"]); // axios fields not filled, could fix later to use axios rather than fetch
+};
+
 export const postSearchGithub = async (value) => {
   const response = await axios({
     method: "POST",
