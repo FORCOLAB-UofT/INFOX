@@ -167,12 +167,12 @@ const FollowedRespositories = () => {
                 style={{ minHeight: "70vh" }}
               >
                   <Typography variant="h4">
-                    You are not following any repositories!
-                  </Typography>
-                  <Typography>
-                    Go to the "Search Github" tab to search for repositories to
-                    follow
-                  </Typography>
+                      You are not following any repositories!
+                    </Typography>
+                    <Typography>
+                      Go to the "Search Github" tab to search for repositories to
+                      follow
+                    </Typography>
                 </Grid>
               </Box>
             </>
@@ -241,12 +241,11 @@ const FollowedRespositories = () => {
                     style={{ minHeight: "70vh" }}
                   >
                     <Typography variant="h4">
-                      You are not following any repositories!
-                    </Typography>
-                    <Typography>
-                      Go to the "Search Github" tab to search for repositories to
-                      follow
-                    </Typography>
+                    Search result not found!
+                  </Typography>
+                  <Typography>
+                    Go to the "Search Github" tab to follow desired repositories
+                  </Typography>
                   </Grid>
                 </Box>
               </>
