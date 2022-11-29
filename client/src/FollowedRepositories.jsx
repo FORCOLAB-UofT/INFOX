@@ -156,6 +156,28 @@ const FollowedRespositories = () => {
         <Box width="100%">
           <Title text="Followed Repositories" />
           <Box paddingLeft="4px">
+            {isEmpty(followedRepositories) ? (
+              <>
+                <Box>
+                <Grid
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                style={{ minHeight: "70vh" }}
+              >
+                  <Typography variant="h4">
+                    You are not following any repositories!
+                  </Typography>
+                  <Typography>
+                    Go to the "Search Github" tab to search for repositories to
+                    follow
+                  </Typography>
+                </Grid>
+              </Box>
+            </>
+            ):(
+            <>
             {!isEmpty(paginatedData) ? (
               <>
                 <Box>
@@ -199,34 +221,36 @@ const FollowedRespositories = () => {
               </>
             ) : (
             <>
-              <Box>
-                <SearchAndFilter
-                  filters={filtersWithValues}
-                  setFilters={(data) => {
-                    setFilters(data);
-                  }}
-                  setSearch={(data) => {
-                    setSearch(data);
-                  }}
-                />
-              </Box> 
-              <Box>
-                <Grid
-                  container
-                  direction="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ minHeight: "70vh" }}
-                >
-                  <Typography variant="h4">
-                    You are not following any repositories!
-                  </Typography>
-                  <Typography>
-                    Go to the "Search Github" tab to search for repositories to
-                    follow
-                  </Typography>
-                </Grid>
-              </Box>
+               <Box>
+                  <SearchAndFilter
+                    filters={filtersWithValues}
+                    setFilters={(data) => {
+                      setFilters(data);
+                    }}
+                    setSearch={(data) => {
+                      setSearch(data);
+                    }}
+                  />
+                </Box> 
+                <Box>
+                  <Grid
+                    container
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ minHeight: "70vh" }}
+                  >
+                    <Typography variant="h4">
+                      You are not following any repositories!
+                    </Typography>
+                    <Typography>
+                      Go to the "Search Github" tab to search for repositories to
+                      follow
+                    </Typography>
+                  </Grid>
+                </Box>
+              </>
+            )}
             </>
             )}
           </Box>
