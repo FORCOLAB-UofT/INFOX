@@ -55,6 +55,7 @@ function createData(
   let parsed_words = [];
   for (let i = 0; i < key_words.length && i < 10; i++) {
     parsed_words.push(key_words[i].concat(", "));
+    console.log(`KeyWords: ${key_words[i]}`)
   }
 
   let parsed_files = [];
@@ -186,15 +187,15 @@ function EnhancedTableHead(props) {
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            // key={headCell.id}
+            // align={headCell.numeric ? "right" : "left"}
+            // padding={headCell.disablePadding ? "none" : "normal"}
+            // sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+              // active={orderBy === headCell.id}
+              // direction={orderBy === headCell.id ? order : "asc"}
+              // onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -292,10 +293,10 @@ const EnhancedTable = ({ data }) => {
     rows.push(
       createData(
         value.fork_name,
-        value.num_changed_files ?? 0,
+        value.num_changed_files ?? 69,
         value.changed_files,
-        value.num_changed_lines ?? 0,
-        value.total_commit_number ?? 0,
+        value.num_changed_lines ?? 69,
+        value.total_commit_number ?? 69,
         value.key_words,
         value.last_committed_time,
         value.created_time
@@ -823,7 +824,9 @@ const ForkList = () => {
         i += 1
         setCounter(i)
     }
+    console.log("QQQ")
     console.log(total_list)
+    console.log("QQQ2")
     setData(total_list);
   }, []);
 
@@ -833,7 +836,7 @@ const ForkList = () => {
   }, [fetchForks]);
 
   return (
-    <>{data ? <EnhancedTable data={data} /> : <Loading loadingMessage={"There are " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>}</>
+    <>{data ? <EnhancedTable data={data} /> : <Loading loadingMessage={"There are SHREK " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>}</>
   );
 };
 

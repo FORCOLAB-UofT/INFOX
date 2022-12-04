@@ -35,6 +35,8 @@ const SearchGithub = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [followedRepos, setFollowedRepos] = useState(null);
   const [freqRepos, setfreqRepos] = useState([]);
+  const [starRepos, setstarRepos] = useState([]);
+  const [isSearching_star, setIsSearching_star] = useState(false);
 
   const freqReposFunc = async (searchValues) => {
     setIsSearching_freq(true);
@@ -46,6 +48,18 @@ const SearchGithub = () => {
     }
     setfreqRepos(results);
     setIsSearching_freq(false);
+  };
+
+  const starReposFunc = async (searchValues) => {
+    setIsSearching_star(true);
+    var results = [];
+    for (var i = 0; i < searchValues.length; i++) {
+      var resp = await postSearchGithub(searchValues[i]);
+      var temp = resp.data.slice(0, 1);
+      results = results.concat(temp);
+    }
+    setstarRepos(results);
+    setIsSearching_star(false);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -82,12 +96,17 @@ const SearchGithub = () => {
   const init_state = async () => {
     if (!isSearching) {
       const repos = [];
+      const star_repos = [];
       const topForksDB = `https://api.github.com/search/repositories?q=forks:%3E0&sort=forks&per_page=5`;
+      const topStarsDB = `https://api.github.com/search/repositories?q=forks:%3E0&sort=stars&per_page=5`;
       const fetchRepos = await fetchFreqForkRepos(topForksDB);
+      const fetchStarRepos = await fetchFreqForkRepos(topStarsDB);
       for(let i = 0; i < fetchRepos.length; i++) {
         repos.push(fetchRepos[i].full_name);
+        star_repos.push(fetchStarRepos[i].full_name);
       }
       freqReposFunc(repos);
+      starReposFunc(star_repos);
     }
   };
 
@@ -182,7 +201,7 @@ const SearchGithub = () => {
         </Box>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
-        <Typography variant="h5">Frequently Analyzed Repos on INFOX</Typography>
+        <Typography variant="h5">Frequently SHREK Analyzed Repos on INFOX</Typography>
         {isSearching_freq ? (
           <Grid
             container
@@ -229,6 +248,56 @@ const SearchGithub = () => {
           </Box>
         )}
       </Box>
+
+      <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
+        <Typography variant="h5">Starred Repos</Typography>
+        {isSearching_star ? (
+          <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <Box>
+            {starRepos ? (
+              <Box>
+                <Table>
+                  <TableHead />
+                  <TableBody>
+                    {starRepos.map((result) => {
+                      return (
+                        <SearchGithubRow
+                          name={result.full_name}
+                          language={result.language}
+                          forks={result.forks}
+                          updated={result.updated_at}
+                          onFollow={(data) => {
+                            setFollowMsg(data.msg);
+                            setOpenSnackbar(true);
+                            setFollowedRepos([...followedRepos, data.repo]);
+                          }}
+                          followedRepos={followedRepos}
+                          onRemoveRepo={(value) => {
+                            setFollowedRepos(
+                              followedRepos.filter(
+                                (repo) => repo.repo !== value
+                              )
+                            );
+                          }}
+                        />
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Box>
+            ) : null}
+          </Box>
+        )}
+      </Box>
+
       <Stack spacing={2} sx={{ width: "100%" }}>
         <Snackbar
           open={openSnackbar}

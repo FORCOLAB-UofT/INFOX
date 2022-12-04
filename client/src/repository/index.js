@@ -21,6 +21,7 @@ export const getTotalForksNumber = async (value) => {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
   });
+  console.log(`SHREK: getTotalForksNumber: ${response.data}`)
   return response;
 };
 
@@ -33,6 +34,9 @@ export const getRepoForks = async (value, i) => {
     },
     data: { repo: value, index: i },
   });
+  console.log(`FSHREK: getRepoForks:`)
+  console.log(response.data)
+  console.log(`GSHREK: getRepoForks:`)
   return response;
 };
 

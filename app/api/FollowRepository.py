@@ -4,9 +4,15 @@ from flask import request, current_app
 from flask_restful import Resource
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-from ..models import User, Project, Permission, login_manager
+# from ..models import User, Project, Permission, login_manager
+from ..models import *
 from ..analyse import project_updater
 from ..analyse.analyser import check_waiting_list
+
+def db_delete_project(project_name):
+    Project.objects(project_name=project_name).delete()
+    ProjectFork.objects(project_name=project_name).delete()
+    ChangedFile.objects(project_name=project_name).delete()
 
 
 def db_find_project(project_name):
@@ -26,12 +32,23 @@ def db_followed_project(user, project_name):
     )
 
 
-def add_repo(username, repo, repo_info):
+def add_repo(username, repo, repo_info, access_token):
     User.objects(username=username).update_one(push_all__repo_waiting_list=[repo])
 
-    # First updata for quick view.
+    # First update for quick view.
 
     project_updater.project_init(repo, repo_info)
+    request_url = "https://api.github.com/repos/%s/forks" % repo
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    repo_forks_list = res.json()
+
+    project_updater.start_update(repo, repo_info, repo_forks_list)
 
     app = current_app._get_current_object()
     with app.app_context():
@@ -66,15 +83,23 @@ class FollowRepository(Resource):
         res = res.json()
 
         if db_find_project(repo) is not None:
-            db_followed_project(_user, repo)
-            msg = "The repo (%s) is already in INFOX. Followed successfully!" % (repo,)
-        else:
-            add_repo(_user.username, repo, res)
-            db_followed_project(_user, repo)
-            msg = (
-                "The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait."
-                % repo
-            )
+            db_delete_project(repo)
+        # add_repo(_user.username, repo, res)
+        add_repo(_user.username, repo, res, _user.github_access_token)
+        db_followed_project(_user, repo)
+        msg = "The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait." % repo
+
+        # if db_find_project(repo) is not None:
+        #     db_delete_project(repo)
+        #     db_followed_project(_user, repo)
+        #     msg = "The repo (%s) is already in INFOX. Followed successfully!" % (repo,)
+        # else:
+        #     add_repo(_user.username, repo, res)
+        #     db_followed_project(_user, repo)
+        #     msg = (
+        #         "The repo (%s) starts loading into INFOX. We will send you an email when it is finished. Please wait."
+        #         % repo
+        #     )
 
         project_list = Project.objects(
             project_name__nin=_user.followed_projects,
