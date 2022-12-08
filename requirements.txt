@@ -10,7 +10,7 @@ boto3==1.7.26
 botocore==1.10.26
 bs4==0.0.1
 bz2file==0.98
-certifi==2018.4.16
+certifi==2022.12.7
 chardet==3.0.4
 click==8.0.3
 cycler==0.10.0
