@@ -836,7 +836,7 @@ const ForkList = () => {
   }, [fetchForks]);
 
   return (
-    <>{data ? <EnhancedTable data={data} /> : <Loading loadingMessage={"There are SHREK " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>}</>
+    <>{data ? <EnhancedTable data={data} /> : <Loading loadingMessage={"There are " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>}</>
   );
 };
 

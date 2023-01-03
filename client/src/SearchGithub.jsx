@@ -18,6 +18,7 @@ import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import SearchGithubRow from "./SearchGithubRow";
 import { postSearchGithub, getUserFollowedRepositories, fetchFreqForkRepos } from "./repository";
+import { useNavigate } from "react-router";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -37,6 +38,13 @@ const SearchGithub = () => {
   const [freqRepos, setfreqRepos] = useState([]);
   const [starRepos, setstarRepos] = useState([]);
   const [isSearching_star, setIsSearching_star] = useState(false);
+
+  const navigate = useNavigate();
+
+  const navigateToFork = (repo) => {
+    console.log("repo nav", repo);
+    navigate(`/forks/${repo}`, { replace: true });
+  };
 
   const freqReposFunc = async (searchValues) => {
     setIsSearching_freq(true);
@@ -172,7 +180,10 @@ const SearchGithub = () => {
                       {searchResults.map((result) => {
                         return (
                           <SearchGithubRow
-                            name={result.full_name}
+                            name={<a style={{cursor: "pointer"}} onClick={() => {
+                              console.log("repo nav", result.full_name);
+                              navigateToFork(result.full_name)}
+                            }>{result.full_name}</a>}
                             language={result.language}
                             forks={result.forks}
                             updated={result.updated_at}
@@ -201,7 +212,7 @@ const SearchGithub = () => {
         </Box>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
-        <Typography variant="h5">Frequently SHREK Analyzed Repos on INFOX</Typography>
+        <Typography variant="h5">Frequently Analyzed Repos on INFOX</Typography>
         {isSearching_freq ? (
           <Grid
             container
@@ -221,7 +232,10 @@ const SearchGithub = () => {
                     {freqRepos.map((result) => {
                       return (
                         <SearchGithubRow
-                          name={result.full_name}
+                          name={<a style={{cursor: "pointer"}} onClick={() => {
+                            console.log("repo nav", result.full_name);
+                            navigateToFork(`${result.full_name}`)}
+                          }>{result.full_name}</a>}
                           language={result.language}
                           forks={result.forks}
                           updated={result.updated_at}
@@ -270,7 +284,10 @@ const SearchGithub = () => {
                     {starRepos.map((result) => {
                       return (
                         <SearchGithubRow
-                          name={result.full_name}
+                          name={<a style={{cursor: "pointer"}} onClick={() => {
+                            console.log("repo nav", result.full_name);
+                            navigateToFork(`${result.full_name}`)}
+                          }>{result.full_name}</a>}
                           language={result.language}
                           forks={result.forks}
                           updated={result.updated_at}
