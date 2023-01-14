@@ -21,16 +21,22 @@ def fetch_commit_list(repo, fork, default_branch="master"):
     s.mount("https://github.com", HTTPAdapter(max_retries=5))
 
     try:
-        diff_page = s.get(url, timeout=250)
+        diff_page = s.get(url, timeout=1000)
+        print("=============================== check status")
+        print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+        print("=============================== check status")
         if diff_page.status_code != requests.codes.ok:
             raise Exception("error on fetch compare page on %s!" % repo)
     except:
         # raise Exception("error on fetch compare page on %s!" % repo)
         return []
     diff_page_soup = BeautifulSoup(diff_page.content, "html.parser")
+    i = 0
     for commit in diff_page_soup.find_all(
         "a", {"class": "Link--primary text-bold js-navigation-open markdown-title"}
     ):
+        i+=1
+        print(f"++++++++++++++++++++entering for loop! Commit: {commit}: {i} times!~",flush=True)
         href = commit.get("href")
         if "https://" not in href:
             href = "https://github.com" + href
