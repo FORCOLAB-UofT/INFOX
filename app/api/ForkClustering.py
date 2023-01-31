@@ -19,6 +19,7 @@ from os import path
 from PIL import Image
 from random import shuffle
 from ..celery import celery
+import spacy
 
 programming_languages = ['html', 'js', 'json', 'py', 'php', 'css','md', 'babel', 'yml']
 common_programming_words = ['if', 'else','for', 'return', 'and', 'or', 'merge']
@@ -145,13 +146,53 @@ class ForkClustering(Resource):
                 rake.extract_keywords_from_sentences(sentences)
                 key_words[fork_name] = rake.get_ranked_phrases()
 
+        # flipping dictionary
+        keyword_list = []
         for key, value in key_words.items():
             for word in value:
                 if not word.isnumeric():
+                    #check keyword_list to see the synonym
                     if word not in common_words:
                         common_words[word] = [key]
                     else:
                         common_words[word].append(key)
+
+        nlp = spacy.load('en_core_web_md')
+        # group by synonyms
+        feature_list = {}
+        for word, forks in common_words.items():
+            already_added = False
+            # check if a synonym of current 'word' already in feature_list key
+            for w in feature_list.keys():
+                token1 = nlp(w)
+                token2 = nlp(word)
+                if token1.similarity(token2) > 0.3:
+                    already_added = True
+                    for fork in forks:
+                        feature_list[w].append(fork)
+            if not already_added:
+                feature_list[word] = forks
+
+        print("======= FEATURE LIST ========")
+        print(feature_list)
+        print("======= FEATURE LIST ========")
+
+        word1 = 'updated todo'
+        word2 = 'todo'
+
+        # convert the strings to spaCy Token objects
+        
+        token1 = nlp(word1)[1]
+        print(nlp(word1)[0])
+        print(nlp(word1)[1])
+        token2 = nlp(word2)[0]
+
+        print("UPDATED TODO:")
+        print(token1.similarity(token2))
+                        
+        print("========== COMMON WORDS =========")
+        print(f'common words: {common_words}')
+        print("========== COMMON WORDS =========")
 
         top_common_words = dict(sorted(common_words.items(), key= lambda x: len(x[1]), reverse=True)[:20])
 
