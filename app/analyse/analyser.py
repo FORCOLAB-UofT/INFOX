@@ -53,8 +53,8 @@ def get_active_forks(repo, access_token):
     result_length = 100
     page = 1
 
-    while result_length == 100 and page < 20:
-        request_url = "https://api.github.com/repos/%s/forks?per_page=100&page=%d" % (
+    while result_length == 100 and page < 2:
+        request_url = "https://api.github.com/repos/%s/forks?per_page=100&sort=stargazers&page=%d" % (
             repo,
             page,
         )

@@ -7,39 +7,57 @@ from bs4 import BeautifulSoup
 from .util import language_tool
 
 
-def fetch_commit_list(repo, fork, default_branch="master"):
+def fetch_commit_list(repo, fork, default_branch="master", repo_default_branch="master"):
     commit_list = []
     # todo find correct url for different branches. Here we make the assumption we are comparing master branches
     # later on might have to change to main
     url = "https://github.com/%s/compare/%s...%s:%s" % (
         repo,
-        default_branch,
+        repo_default_branch,
         fork,
         default_branch
     )
+    print(f"url:{url}")
     s = requests.Session()
     s.mount("https://github.com", HTTPAdapter(max_retries=5))
 
     try:
-        diff_page = s.get(url, timeout=250)
+        diff_page = s.get(url, timeout=1000)
+        print("=============================== check status")
+        print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+        print("=============================== check status")
         if diff_page.status_code != requests.codes.ok:
             raise Exception("error on fetch compare page on %s!" % repo)
     except:
         # raise Exception("error on fetch compare page on %s!" % repo)
         return []
     diff_page_soup = BeautifulSoup(diff_page.content, "html.parser")
+    i = 0
+    ignore_next = False
     for commit in diff_page_soup.find_all(
         "a", {"class": "Link--primary text-bold js-navigation-open markdown-title"}
     ):
+        i+=1
+        print(f"++++++++++++++++++++entering for loop! Commit: {commit}: {i} times!~",flush=True)
         href = commit.get("href")
         if "https://" not in href:
             href = "https://github.com" + href
         title = commit.text
+        
+        # This passes the edge case where it would skip merge pull request commits with zero code changes
+        if 'Merge pull request' == title:
+            ignore_next= True
+            continue
+
+        if ignore_next == True:
+            ignore_next = False
+            continue
+
         commit_list.append({"title": title, "link": href})
     return commit_list
 
 
-def fetch_diff_code(repo, fork, default_branch="master"):
+def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="master"):
     """
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -55,7 +73,7 @@ def fetch_diff_code(repo, fork, default_branch="master"):
     file_list = []
     url = "https://github.com/%s/compare/%s...%s:%s" % (
         repo,
-        default_branch,
+        repo_default_branch,
         fork,
         default_branch
     )

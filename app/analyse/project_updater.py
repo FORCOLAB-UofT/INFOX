@@ -94,10 +94,11 @@ class ForkUpdater:
             # If the compare result is not crawled, start to crawl.
             splitForkName = self.fork_name.split("/")
             compare_result = compare_changes_crawler.fetch_compare_page(self.project_name, splitForkName[0])
-            if compare_result is not None:
+            # if compare_result is not None:
+            if (compare_result is not None) and (len(compare_result["commit_list"]) != 0):
                 localfile_tool.write_to_file(self.diff_result_path, compare_result)
             else:
-                return
+                return             
         # Update time first.
         ProjectFork(
             full_name=self.project_name + '/' + self.fork_name,

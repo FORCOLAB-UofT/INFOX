@@ -435,6 +435,11 @@ const EnhancedTable = ({ data }) => {
     setOpen(false);
   }
 
+  function getCurrentURL () {
+    return window.location.href
+  }
+  
+
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -622,6 +627,9 @@ const EnhancedTable = ({ data }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
+      <Typography variant="h3"
+                  sx={{m:2}}>
+        {window.location.pathname.split("/")[2].concat('/').concat(window.location.pathname.split("/")[3])}</Typography>
       <Paper sx={{ width: "100%", mb: 2, mt:1 }}>
         <Box>
           {!isEmpty(filtersWithValues) ?

@@ -209,7 +209,7 @@ const SearchGithub = () => {
         </Box>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
-        <Typography variant="h5">Frequently Analyzed Repos on INFOX</Typography>
+        <Typography variant="h5">Most Forked Repositories</Typography>
         {isSearching_freq ? (
           <Grid
             container
@@ -258,7 +258,7 @@ const SearchGithub = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", padding: 3 }}>
-        <Typography variant="h5">Starred Repos</Typography>
+        <Typography variant="h5">Most Starred Repositories</Typography>
         {isSearching_star ? (
           <Grid
             container
