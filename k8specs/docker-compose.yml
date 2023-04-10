@@ -1,0 +1,88 @@
+# To convert to Kubernetes yaml files, run 'kompose convert'
+# Make sure images in Docker Hub are updated
+
+# To run, run the following commands
+# 'minikube start --nodes 2 -p infox'
+# 'kubectl apply -f backend-service.yaml,
+#   client-tcp-service.yaml,
+#   redis-service.yaml,
+#   web-tcp-service.yaml,
+#   worker-service.yaml,
+#   backend-deployment.yaml,
+#   infox-default-networkpolicy.yaml,
+#   client-deployment.yaml,
+#   redis-deployment.yaml,
+#   env-configmap.yaml,
+#   redis-persistentvolumeclaim.yaml,
+#   web-deployment.yaml,
+#   web-claim0-persistentvolumeclaim.yaml,
+#   worker-deployment.yaml,
+#   worker-claim0-persistentvolumeclaim.yaml'
+# 'kubectl get pods -o wide' to verify it's running
+
+version: "3.4"
+
+services:
+  backend:
+    container_name: backend
+    ports:
+      - "5001:5001"
+    image: johnmesp/infox-backend
+    
+  client:
+    ports:
+      - "3000:3000"
+    labels:
+      kompose.service.type: loadbalancer
+    image: johnmesp/infox-client
+
+  redis:
+    env_file:
+      - ".env"
+    image: "redis:5.0.4-stretch"
+    restart: "unless-stopped"
+    stop_grace_period: "3s"
+    volumes:
+      - "redis:/data"
+    ports:
+      - '6379:6379'
+
+  web:
+    depends_on:
+      - "redis"
+    env_file:
+      - ".env"
+    healthcheck:
+      test: "curl localhost:5000/healthy"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+    ports:
+      - "5000:5000"
+    restart: "unless-stopped"
+    stop_grace_period: "3s"
+    volumes:
+      - "./public:/app/public"
+    labels:
+      kompose.service.type: loadbalancer
+    image: johnmesp/infox-web
+
+  worker:
+    command: celery -A celery_worker.celery worker 
+    depends_on:
+      - "redis"
+    env_file:
+      - ".env"
+    restart: "unless-stopped"
+    stop_grace_period: "3s"
+    volumes:
+      - "./public:/app/public"
+    links:
+      - redis
+    ports:
+      - "3001:3001"
+    image: johnmesp/infox-worker
+
+volumes:
+  redis: {}
