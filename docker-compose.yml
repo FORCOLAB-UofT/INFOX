@@ -3,80 +3,72 @@ version: "3.4"
 services:
   backend:
     container_name: backend
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.api
-    ports:
-      - "5001:5001"
-    image: johnmesp/infox-backend
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: react-flask-app-api
     
   client:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.client
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: react-flask-app-client
     ports:
       - "3000:3000"
-    labels:
-      kompose.service.type: loadbalancer
-    image: johnmesp/infox-client
 
   redis:
     env_file:
       - ".env"
     image: "redis:5.0.4-stretch"
-    restart: "unless-stopped"
-    stop_grace_period: "3s"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
     volumes:
       - "redis:/data"
+    expose:
+      - '6379'
     ports:
       - '6379:6379'
 
   web:
-    # build:
-    #   dockerfile: Dockerfile.api
-    #   context: "."
-    #   args:
-    #     - "FLASK_ENV=${FLASK_ENV:-production}"
+    build:
+      dockerfile: Dockerfile.api
+      context: "."
+      args:
+        - "FLASK_ENV=${FLASK_ENV:-production}"
     depends_on:
       - "redis"
     env_file:
       - ".env"
     healthcheck:
-      test: "curl localhost:5000/healthy"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:5000/healthy}"
       interval: "60s"
       timeout: "3s"
       start_period: "5s"
       retries: 3
     ports:
-      - "5000:5000"
-    restart: "unless-stopped"
-    stop_grace_period: "3s"
+      - "${DOCKER_WEB_PORT:-127.0.0.1:5000}:5000"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
     volumes:
-      - "./public:/app/public"
-    labels:
-      kompose.service.type: loadbalancer
-    image: johnmesp/infox-web
+      - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
 
   worker:
-    # build:
-    #   dockerfile: Dockerfile.api
-    #   context: "."
-    #   args:
-    #     - "FLASK_ENV=${FLASK_ENV:-production}"
+    build:
+      dockerfile: Dockerfile.api
+      context: "."
+      args:
+        - "FLASK_ENV=${FLASK_ENV:-production}"
     command: celery -A celery_worker.celery worker 
     depends_on:
       - "redis"
     env_file:
       - ".env"
-    restart: "unless-stopped"
-    stop_grace_period: "3s"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
     volumes:
-      - "./public:/app/public"
+      - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
     links:
       - redis
-    ports:
-      - "3001:3001"
-    image: johnmesp/infox-worker
 
 volumes:
   redis: {}
