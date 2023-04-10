@@ -16,6 +16,8 @@ services:
     #   dockerfile: Dockerfile.client
     ports:
       - "3000:3000"
+    labels:
+      kompose.service.type: loadbalancer
     image: johnmesp/infox-client
 
   redis:
@@ -26,8 +28,6 @@ services:
     stop_grace_period: "3s"
     volumes:
       - "redis:/data"
-    expose:
-      - '6379'
     ports:
       - '6379:6379'
 
@@ -53,6 +53,8 @@ services:
     stop_grace_period: "3s"
     volumes:
       - "./public:/app/public"
+    labels:
+      kompose.service.type: loadbalancer
     image: johnmesp/infox-web
 
   worker:
