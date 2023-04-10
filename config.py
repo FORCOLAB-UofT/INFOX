@@ -15,7 +15,7 @@ class Config:
 
     MONGODB_SETTINGS = {
         "db": "forks-insights",
-        "host": "mongodb+srv://admin:infox123@forks-insights.lktn4iv.mongodb.net/INFOX",  # Replace this with the host string mongodb+srv://....
+        "host": "mongodb+srv://admin:infox123@forks-insights.lktn4iv.mongodb.net/INFOX?retryWrites=true&w=majority&ssl=true",  # Replace this with the host string mongodb+srv://....
     }
 
     # TODO: get this from environment

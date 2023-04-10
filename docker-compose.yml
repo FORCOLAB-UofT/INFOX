@@ -6,15 +6,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
-    image: johnmesp/react-flask-app-api
+    # image: johnmesp/react-flask-app-api
     
   client:
     build:
       context: .
       dockerfile: Dockerfile.client
-    image: johnmesp/react-flask-app-client
     ports:
       - "3000:3000"
+    # image: johnmesp/react-flask-app-client
 
   redis:
     env_file:
@@ -51,7 +51,7 @@ services:
     stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
     volumes:
       - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
-    image: johnmesp/web
+    # image: johnmesp/web
 
   worker:
     build:
@@ -70,7 +70,7 @@ services:
       - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
     links:
       - redis
-    image: johnmesp/worker
+    # image: johnmesp/worker
 
 volumes:
   redis: {}
