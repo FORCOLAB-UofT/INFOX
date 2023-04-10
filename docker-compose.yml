@@ -3,18 +3,18 @@ version: "3.4"
 services:
   backend:
     container_name: backend
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    # image: johnmesp/react-flask-app-api
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.api
+    image: johnmesp/infox-backend
     
   client:
-    build:
-      context: .
-      dockerfile: Dockerfile.client
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.client
     ports:
       - "3000:3000"
-    # image: johnmesp/react-flask-app-client
+    image: johnmesp/infox-client
 
   redis:
     env_file:
@@ -30,11 +30,11 @@ services:
       - '6379:6379'
 
   web:
-    build:
-      dockerfile: Dockerfile.api
-      context: "."
-      args:
-        - "FLASK_ENV=${FLASK_ENV:-production}"
+    # build:
+    #   dockerfile: Dockerfile.api
+    #   context: "."
+    #   args:
+    #     - "FLASK_ENV=${FLASK_ENV:-production}"
     depends_on:
       - "redis"
     env_file:
@@ -51,14 +51,14 @@ services:
     stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
     volumes:
       - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
-    # image: johnmesp/web
+    image: johnmesp/infox-web
 
   worker:
-    build:
-      dockerfile: Dockerfile.api
-      context: "."
-      args:
-        - "FLASK_ENV=${FLASK_ENV:-production}"
+    # build:
+    #   dockerfile: Dockerfile.api
+    #   context: "."
+    #   args:
+    #     - "FLASK_ENV=${FLASK_ENV:-production}"
     command: celery -A celery_worker.celery worker 
     depends_on:
       - "redis"
@@ -70,7 +70,7 @@ services:
       - "${DOCKER_WEB_VOLUME:-./public:/app/public}"
     links:
       - redis
-    # image: johnmesp/worker
+    image: johnmesp/infox-worker
 
 volumes:
   redis: {}
