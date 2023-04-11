@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from .util import language_tool
 
 
-def fetch_commit_list(repo, fork, default_branch="master", repo_default_branch="master"):
+def fetch_commit_list(repo, fork, default_branch="master", repo_default_branch="master"):  
     commit_list = []
     # todo find correct url for different branches. Here we make the assumption we are comparing master branches
     # later on might have to change to main
@@ -17,23 +17,83 @@ def fetch_commit_list(repo, fork, default_branch="master", repo_default_branch="
         fork,
         default_branch
     )
+
+    alternative_url = "https://github.com/%s/compare/%s...%s:%s" % (
+        repo,
+        'main',
+        fork,
+        default_branch
+    )
+
+    alternative_url_2 = "https://github.com/%s/compare/%s...%s:%s" % (
+        repo,
+        repo_default_branch,
+        fork,
+        'main'
+    )
+
+    alternative_url_3 = "https://github.com/%s/compare/%s...%s:%s" % (
+        repo,
+        'main',
+        fork,
+        'main' 
+    )
     print(f"url:{url}")
     s = requests.Session()
     s.mount("https://github.com", HTTPAdapter(max_retries=5))
+    
+    working_url = None
 
     try:
         diff_page = s.get(url, timeout=1000)
         print("=============================== check status")
         print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+        if diff_page.status_code == requests.codes.ok:
+                     working_url = url
         print("=============================== check status")
         if diff_page.status_code != requests.codes.ok:
-            raise Exception("error on fetch compare page on %s!" % repo)
+            try:
+                diff_page = s.get(alternative_url, timeout=1000)
+                print("=============================== check status")
+                print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+                if diff_page.status_code == requests.codes.ok:
+                     working_url = alternative_url
+                print("=============================== check status")
+                if diff_page.status_code != requests.codes.ok:
+                    try:
+                        diff_page = s.get(alternative_url_2, timeout=1000)
+                        print("=============================== check status")
+                        print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+                        if diff_page.status_code == requests.codes.ok:
+                            working_url = alternative_url_2
+                        print("=============================== check status")
+                        if diff_page.status_code != requests.codes.ok:
+                            try:
+                                diff_page = s.get(alternative_url_3, timeout=1000)
+                                print("=============================== check status")
+                                print(f"++++++++++++++++++++{diff_page.status_code}",flush=True)
+                                if diff_page.status_code == requests.codes.ok:
+                                    working_url = alternative_url_3
+                                print("=============================== check status")
+
+                            except:
+                                raise Exception("error on fetch compare page on %s!" % repo) 
+                    except:
+                                raise Exception("error on fetch compare page on %s!" % repo) 
+            except:
+                                raise Exception("error on fetch compare page on %s!" % repo) 
+        # elif diff_page.status_code != requests.codes.ok:
+        # else:
+        #     raise Exception("error on fetch compare page on %s!" % repo)
     except:
         # raise Exception("error on fetch compare page on %s!" % repo)
         return []
     diff_page_soup = BeautifulSoup(diff_page.content, "html.parser")
     i = 0
     ignore_next = False
+    print("+======###$@#%@%@#% START OF FINDING",flush=True)
+    print(diff_page_soup.find_all(
+        "a", class_="Link--primary text-bold js-navigation-open markdown-title"),flush=True)
     for commit in diff_page_soup.find_all(
         "a", {"class": "Link--primary text-bold js-navigation-open markdown-title"}
     ):
@@ -54,10 +114,12 @@ def fetch_commit_list(repo, fork, default_branch="master", repo_default_branch="
             continue
 
         commit_list.append({"title": title, "link": href})
-    return commit_list
+    print(f"working url: {working_url}")
+    print(f"commit_list: {commit_list}")
+    return commit_list, working_url
 
 
-def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="master"):
+def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="master", working_url=None):
     """
     Args:
         project_full_name: for example: 'NeilBetham/Smoothieware'
@@ -71,12 +133,18 @@ def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="ma
         }
     """
     file_list = []
-    url = "https://github.com/%s/compare/%s...%s:%s" % (
-        repo,
-        repo_default_branch,
-        fork,
-        default_branch
-    )
+    if working_url:
+        url = working_url
+    else:
+        url = "https://github.com/%s/compare/%s...%s:%s" % (
+            repo,
+            repo_default_branch,
+            fork,
+            default_branch
+        )
+    print("===========$$$$$$$$",flush=True)
+    print(working_url,flush=True)
+    
     # It will first jump to https://github.com/author/repo/compare/version...author:repo,
     # then fetch from https://github.com/author/repo/compare/version...author:repo.patch
     try:
@@ -87,6 +155,7 @@ def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="ma
     except:
         #raise Exception("error on fetch compare page on %s!" % repo)
         return []
+        
 
     diff_list = r.text.split("diff --git")
     for diff in diff_list[1:]:
@@ -97,6 +166,7 @@ def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="ma
             continue
 
         if not language_tool.is_text(file_full_name):
+            print('NOT LANGUAGE TOOL TEXT',flush=True)
             file_list.append(
                 {
                     "file_full_name": file_full_name,
@@ -147,6 +217,9 @@ def fetch_diff_code(repo, fork, default_branch="master", repo_default_branch="ma
                 "added_code": diff_code,
             }
         )
+        
+        # print(file_list)
+        
     return file_list
 
 
@@ -161,8 +234,8 @@ def fetch_compare_page(repo_name, fork_name):
     """
     print("START fetch fork: ", fork_name)
     try:
-        commit_list = fetch_commit_list(repo_name, fork_name)
-        file_list = fetch_diff_code(repo_name, fork_name)
+        commit_list, working_url = fetch_commit_list(repo_name, fork_name)
+        file_list = fetch_diff_code(repo_name, fork_name,working_url=working_url)
     except:
         print("FAILED on fetch fork: ", fork_name)
         return None

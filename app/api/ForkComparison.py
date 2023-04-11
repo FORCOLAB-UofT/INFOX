@@ -38,7 +38,7 @@ class ForkComparison(Resource):
         active_forks = get_active_forks(repoName, _user.github_access_token)
         for fork in active_forks:
             fork_name = fork["full_name"][: -(len(fork["name"]) + 1)]
-            commit_msgs = fetch_commit_list(repoName, fork_name)
+            commit_msgs, dummy = fetch_commit_list(repoName, fork_name)
             code_changes = fetch_diff_code(repoName, fork_name)
 
             sentences = []

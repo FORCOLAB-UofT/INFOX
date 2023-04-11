@@ -181,6 +181,7 @@ const SearchGithub = () => {
                         return (
                           <SearchGithubRow
                             name={result.full_name}
+                            // name={<a onClick={() => navigateToFork(result.full_name)}>{result.full_name}</a>}
                             language={result.language}
                             forks={result.forks}
                             updated={result.updated_at}
@@ -230,6 +231,10 @@ const SearchGithub = () => {
                       return (
                         <SearchGithubRow
                           name={result.full_name}
+                          // name={<a style={{cursor: "pointer"}} onClick={() => {
+                          //   console.log("repo nav", result.full_name);
+                          //   navigateToFork(`${result.full_name}`)}
+                          // }>{result.full_name}</a>}
                           language={result.language}
                           forks={result.forks}
                           updated={result.updated_at}
@@ -279,6 +284,10 @@ const SearchGithub = () => {
                       return (
                         <SearchGithubRow
                           name={result.full_name}
+                          // name={<a style={{cursor: "pointer"}} onClick={() => {
+                          //   console.log("repo nav", result.full_name);
+                          //   navigateToFork(`${result.full_name}`)}
+                          // }>{result.full_name}</a>}
                           language={result.language}
                           forks={result.forks}
                           updated={result.updated_at}

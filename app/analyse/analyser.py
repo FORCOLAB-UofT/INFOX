@@ -12,6 +12,8 @@ from ..models import *
 from ..celery import celery
 from flask_mail import Message
 from .. import mail
+from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
 
 
 def send_mail(to, subject, template, **kwargs):
@@ -52,29 +54,69 @@ def get_active_forks(repo, access_token):
     active_forks = []
     result_length = 100
     page = 1
+    # # while result_length == 100 and page < 2:
+    # # request_url = "https://api.github.com/repos/%s/forks?per_page=100&sort=stargazers&page=%d" % (
+    # request_url = "https://api.github.com/repos/%s/forks?per_page=75&sort=stargazers&page=1" % (
+    #     repo,
+    # )
 
-    while result_length == 100 and page < 2:
-        request_url = "https://api.github.com/repos/%s/forks?per_page=100&sort=stargazers&page=%d" % (
-            repo,
-            page,
-        )
+    # res = requests.get(
+    #     url=request_url,
+    #     headers={
+    #         "Accept": "application/json",
+    #         "Authorization": "token {}".format(access_token),
+    #     },
+    # )
 
+    # forks = res.json()
+    # # print(forks,flush=True)
+    # result_length = len(forks)
+
+    # for fork in forks:
+
+    #     if fork["pushed_at"] > fork["created_at"]:
+    #         active_forks.append(fork)
+
+    #     # page += 1
+
+    # active_forks = active_forks[:25]
+
+    url = "https://github.com/%s/forks?include=active&page=1&period=1y&sort_by=stargazer_counts" % (
+        repo,
+    )
+    active_fork_name = []
+
+    print(f"url:{url}")
+    s = requests.Session()
+    s.mount("https://github.com", HTTPAdapter(max_retries=5))
+
+    try:
+        forks_page = s.get(url, timeout=1000)
+        print("=============================== check status")
+        print(f"++++++++++++++++++++{forks_page.status_code}",flush=True)
+        print("=============================== check status")
+        if forks_page.status_code != requests.codes.ok:
+            raise Exception("error on fetch forks page on %s!" % repo)
+    except:
+        # raise Exception("error on fetch forks page on %s!" % repo)
+        return []
+    active_forks_page = BeautifulSoup(forks_page.content, "html.parser")
+
+    for active_fork in active_forks_page.find_all("a", {"class":"no-underline f4"}):
+        active_fork_name.append(active_fork.get('href'))
+
+    for name in active_fork_name:
+        request_url = 'https://api.github.com/repos' + name
         res = requests.get(
             url=request_url,
             headers={
                 "Accept": "application/json",
                 "Authorization": "token {}".format(access_token),
             },
-        )
+        ) 
+        active_forks.append(res.json())
 
-        forks = res.json()
-        result_length = len(forks)
-
-        for fork in forks:
-            if fork["pushed_at"] > fork["created_at"]:
-                active_forks.append(fork)
-
-        page += 1
+    # print(active_forks)
 
     return active_forks
 
