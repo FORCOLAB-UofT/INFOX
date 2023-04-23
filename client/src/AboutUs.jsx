@@ -34,9 +34,14 @@ const AboutUs = () => {
                 <Typography variant="body1"><Link href="https://www.cs.cmu.edu/~shuruiz/" target="_blank">Shurui Zhou</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.cs.cmu.edu/~ckaestne/" target="_blank">Christian Kästner</Link></Typography>
                 <Typography variant="body1"><Link href="http://www.itu.dk/people/wasowski/" target="_blank">Andrzej Wąsowski</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/xinyan-he/" target="_blank">Xinyan He</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/laithhanania/" target="_blank">Laith Hanania</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/johnperry99/" target="_blank">John Perry</Link></Typography>
                 <Typography variant="body1"><Link href="https://www.linkedin.com/in/cansin-varol-5b8532165/" target="_blank">Cansin Varol</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/john-espedido/" target="_blank">John Melric Espedido</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/ron-hu-8aba60177/" target="_blank">Ron Hu</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/andrew-minyoung-kim/" target="_blank">Andrew Kim</Link></Typography>
+                <Typography variant="body1"><Link href="https://www.linkedin.com/in/ron-thomas-9260bb1b0/" target="_blank">Ron Thomas</Link></Typography>
             </Card>
             <Card sx={{ padding: 2, width: 95 + "%" }}>
                 <Typography variant="h4">Publication</Typography>

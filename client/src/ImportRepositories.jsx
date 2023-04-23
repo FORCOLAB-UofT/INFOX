@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import { getUserFollowedRepositories, getUserImportRepositories } from "./repository";
 import { LOADING_HEIGHT } from "./common/constants";
@@ -148,43 +148,53 @@ const ImportRepositories = () => {
         <Box width="100%">
           <Title text="Import Repositories" />
           <Box paddingLeft="4px">
-            <Box>
-              <SearchAndFilter
-                filters={filtersWithValues}
-                setFilters={(data) => {
-                  setFilters(data);
-                }}
-                setSearch={(data) => {
-                  setSearch(data);
-                }}
-              />
-            </Box>
-            <Box>
-              {filteredRepositories?.map(
-                ({ repo, language, description, updated, timesForked }) => (
-                  <ImportRepositoryCard
-                    key={repo}
-                    name={repo}
-                    language={language}
-                    description={description}
-                    timesForked={timesForked}
-                    onFollow={(data) => {
-                      setFollowMsg(data.msg);
-                      setOpenSnackbar(true);
-                      setFollowedRepositories([...followedRepositories, data.repo]);
+            {!isEmpty(importRepositories) ? (
+              <>
+                <Box>
+                  <SearchAndFilter
+                    filters={filtersWithValues}
+                    setFilters={(data) => {
+                      setFilters(data);
                     }}
-                    onRemoveRepo={(value) => {
-                      setFollowedRepositories(
-                        followedRepositories.filter(
-                          (repo) => repo.repo !== value
-                        )
-                      );
+                    setSearch={(data) => {
+                      setSearch(data);
                     }}
-                    followedRepos={followedRepositories}
                   />
-                )
-              )}
-            </Box>
+                </Box>
+                <Box>
+                  {filteredRepositories?.map(
+                    ({ repo, language, description, updated, timesForked }) => (
+                      <ImportRepositoryCard
+                        key={repo}
+                        name={repo}
+                        language={language}
+                        description={description}
+                        timesForked={timesForked}
+                        onFollow={(data) => {
+                          setFollowMsg(data.msg);
+                          setOpenSnackbar(true);
+                          setFollowedRepositories([...followedRepositories, data.repo]);
+                        }}
+                        onRemoveRepo={(value) => {
+                          setFollowedRepositories(
+                            followedRepositories.filter(
+                              (repo) => repo.repo !== value
+                            )
+                          );
+                        }}
+                        followedRepos={followedRepositories}
+                      />
+                    )
+                  )}
+                </Box>
+              </>
+            ) : (
+              <>
+                <Box>
+                  <Typography variant="h5" textAlign="center">No public repositories found in account.</Typography>
+                </Box>
+              </>
+            )}
           </Box>
         </Box>
       )}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getForkClustering } from "./repository";
-import { ResponsiveNetworkCanvas } from "@nivo/network";
+import { ResponsiveNetworkCanvas,ResponsiveNetwork } from "@nivo/network";
 import ReactWordcloud from "react-wordcloud";
 import {
   Box,
@@ -14,13 +14,16 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid';
 import Loading from "./common/Loading";
 import FilterBubble from "./common/SearchAndFilter";
 import { isEmpty, words } from "lodash";
 import Bubble from "./Bubble";
+import { useNavigate } from "react-router-dom";
 
 const options = {
-  colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
+  // colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
+  colors: ["#A31FF0", "#FAF061", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
   enableTooltip: true,
   deterministic: false,
   fontSizes: [20, 100],
@@ -42,11 +45,26 @@ const ForkCluster = () => {
   const [analyzeCode, setAnalyzeCode] = useState(true);
   const [analyzeFiles, setAnalyzeFiles] = useState(true);
   const [analyzeCommits, setAnalyzeCommits] = useState(true);
+  const [updatedData, setUpdatedData] = useState(false);
   const [clusterNumber, setClusterNumber] = useState(10);
   const [userInputWords, setUserInputWords] = useState([]);
   const [userInputEx, setUserInputEx] = useState("");
   const [wordcloudWords, setWordcloudWords] = useState({});
   const [error, setError] = useState(false);
+
+  const onClickRecluster = async (event) => {
+    event.preventDefault();
+    console.log("This has been reached");
+  }
+
+  const navigate = useNavigate();
+
+  const navigateToFork = (userInputWords) => {
+    console.log(userInputWords)
+    let userInput = userInputWords
+    let start_url = '/forks/'
+    navigate(start_url.concat(userInput));
+  };
 
   const onClickSearch = async (event) => {
     event.preventDefault();
@@ -58,6 +76,7 @@ const ForkCluster = () => {
       analyzeFiles: analyzeFiles,
       analyzeCommits: analyzeCommits,
       clusterNumber: clusterNumber,
+      updatedData: updatedData,
       userInputWords: userInputWords,
     };
 
@@ -83,12 +102,14 @@ const ForkCluster = () => {
           });
         }
       });
+      console.log("Here 2");
       setAnnotations(ann);
       let wordcloud_words = {};
       wordcloud_words = response.data.wordcloud.map((x) => ({
         text: x.slice(0)[0],
         value: x.slice(-1)[0].length,
       }));
+      console.log("Here 3");
       setWordcloudWords(wordcloud_words);
       setError(false);
     } catch {
@@ -161,6 +182,21 @@ const ForkCluster = () => {
                     </Grid>
                     <Grid item marginTop={1}>
                       <Typography>Analyze Commit Messages</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item>
+                  <Grid container>
+                    <Grid item>
+                      <Checkbox
+                        checked={updatedData}
+                        onChange={(e) => {
+                          setUpdatedData(e.target.checked);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item marginTop={1}>
+                      <Typography>Use Most Recent Data to Cluster</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -238,8 +274,7 @@ const ForkCluster = () => {
         </Box>
       ) : error ? (
         <Box>
-          Could not cluster repository. This is a work in progress and we will
-          address this issue soon!.
+          Clustering in progess! Please check back soon...
         </Box>
       ) : data ? (
         <div
@@ -247,14 +282,21 @@ const ForkCluster = () => {
             height: "100vh",
           }}
         >
-          <ResponsiveNetworkCanvas
+          <Button
+            variant="outlined"
+            onClick= {()=>navigateToFork(data.repo)}
+            sx={{ m:2 }}
+          >
+            Go to fork list
+          </Button>
+          <ResponsiveNetwork
             data={data}
             margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
             linkDistance={function (e) {
               return e.distance;
             }}
             centeringStrength={0.4}
-            repulsivity={300}
+            repulsivity={500}
             iterations={260}
             nodeColor={function (e) {
               return e.color;
@@ -268,10 +310,20 @@ const ForkCluster = () => {
               return 2 + 2 * n.target.data.height;
             }}
             annotations={annotations}
+            motionConfig={'wobbly'}
           />
+
+          <DataGrid
+            columns={data.table_columns}
+            rows={data.table_rows}
+            autoHeight={true}
+          />
+
           <Grid>
             <ReactWordcloud options={options} words={wordcloudWords} />
           </Grid>
+
+
         </div>
       ) : null}
     </Box>
@@ -279,3 +331,66 @@ const ForkCluster = () => {
 };
 
 export default ForkCluster;
+
+
+// <table border="1" class="styled-table">
+//   <thead>
+//     <tr style="text-align: right;">
+//       <th></th>
+//       <th>Keywords</th>
+//       <th>Repositories</th>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <th>0</th>
+//       <td>log (" mongo connected !"); })</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>1</th>
+//       <td>err ); res</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>2</th>
+//       <td>render (" pages</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>3</th>
+//       <td>signin ",</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>4</th>
+//       <td>logout (); res</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>5</th>
+//       <td>req , res</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>6</th>
+//       <td>true })</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>7</th>
+//       <td>log</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>8</th>
+//       <td>function ()</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//     <tr>
+//       <th>9</th>
+//       <td>err</td>
+//       <td>malhotrakartik , AmanJha199 , parth-verma</td>
+//     </tr>
+//   </tbody>
+// </table>

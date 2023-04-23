@@ -82,6 +82,7 @@ class ProjectCluster(db.Document):
     links = db.ListField(db.DictField())
     key_words = db.DictField()
     top_common_words = db.DictField()
+    timestamp = db.DateTimeField()
 
 
 class ForkTag(db.Document):

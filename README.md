@@ -91,6 +91,29 @@ https://stackoverflow.com/questions/51639652/how-to-configure-docker-to-use-redi
 https://stackoverflow.com/questions/57461129/error-connecting-celery-to-redis-when-using-docker 
 
 
+# Restarting Project on Server
+
+1. Login to eecg.utoronto.ca server
+```
+ssh <username>@anubis.eecg.utoronto.ca
+```
+
+2. Login to INFOX server
+```
+ssh infoxadm@torrent.eecg.utoronto.ca
+```
+
+3. Change directory to INFOX folder
+```
+cd INFOX/
+```
+
+4. Restart docker containers
+```
+docker-compose up --build
+```
+
+
 # Architecture Overview:
 
 ![code_architecture](./app/static/img/code_architecture.png)

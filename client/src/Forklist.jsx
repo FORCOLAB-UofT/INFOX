@@ -31,6 +31,7 @@ import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
 import { getActiveForksNum } from "./repository";
 import { postProgress } from "./repository";
+import { getTotalForksNumber } from "./repository";
 import Loading from "./common/Loading"
 import Filter from "./common/Filter";
 import DialogTitle from '@mui/material/DialogTitle';
@@ -437,6 +438,11 @@ const EnhancedTable = ({ data }) => {
     setOpen(false);
   }
 
+  function getCurrentURL () {
+    return window.location.href
+  }
+  
+
   const isSelected = (fork) => selected.indexOf(fork) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -624,6 +630,9 @@ const EnhancedTable = ({ data }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
+      <Typography variant="h3"
+                  sx={{m:2}}>
+        {window.location.pathname.split("/")[2].concat('/').concat(window.location.pathname.split("/")[3])}</Typography>
       <Paper sx={{ width: "100%", mb: 2, mt:1 }}>
         <Box>
           {!isEmpty(filtersWithValues) ?
@@ -804,34 +813,29 @@ ComparisonDialogue.propTypes = {
 const ForkList = () => {
   const { repo1, repo2 } = useParams();
   const [data, setData] = useState(null);
-  const [activeForksNum, setActiveForksNum] = useState(0);
-  const [progress, setProgress] = useState(0);
+  //counter for forks analyzed 
   const [counter, setCounter] = useState(0);
+  const [activeForksNum, setActiveForksNum] = useState(0);
 
   const fetchForks = useCallback(async (repo) => {
     console.log('repo1',repo1);
     console.log('repo2', repo2);
-    // const response = await getRepoForks(repo);
-
+    
     //get total num of forks needs to be fetched
-    const active_fork_num = await getActiveForksNum(repo);
+    const active_fork_num = await getTotalForksNumber(repo);
     console.log("Active forks number is ", active_fork_num.data)
     setActiveForksNum(active_fork_num.data)
 
     let total_list = []
     let i = 0
     while (i < active_fork_num.data) {
-        let res = await postProgress(repo, i);
-        console.log(res.data.forks[0])
+        let res = await getRepoForks(repo, i);
         total_list.push(res.data.forks[0])
         i += 1
         setCounter(i)
-        setProgress(i/active_fork_num.data * 100)
-  }
-  console.log(total_list)
-  console.log("Fetching forks list for ", repo)
-  // console.log("forks list response", response);
-  setData(total_list);
+    }
+    console.log(total_list)
+    setData(total_list);
   }, []);
 
   useEffect(() => {

@@ -13,7 +13,7 @@ export const getUserFollowedRepositories = async () => {
   return response;
 };
 
-export const getRepoForks = async (value) => {
+export const getTotalForksNumber = async (value) => {
   const response = await axios({
     method: "GET",
     url: `http://localhost:3000/flask/forklist?repo=${value}`,
@@ -24,21 +24,10 @@ export const getRepoForks = async (value) => {
   return response;
 };
 
-export const getActiveForksNum = async (value) => {
-  const response = await axios({
-    method: "GET",
-    url: `http://localhost:3000/flask/progress?repo=${value}`,
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("access_token"),
-    },
-  });
-  return response;
-};
-
-export const postProgress = async (value, i) => {
+export const getRepoForks = async (value, i) => {
   const response = await axios({
     method: "POST",
-    url: `http://localhost:3000/flask/progress`,
+    url: `http://localhost:3000/flask/forklist`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
@@ -76,6 +65,12 @@ export const getUserLogin = async () => {
   });
 
   return response;
+};
+
+// get 5 among the top forked repos on github
+export const fetchFreqForkRepos = async (apiEndpoint) => {
+  return await fetch(apiEndpoint).then((res) => res.json()).then((data) => data["items"]);
+  // return await axios.get(apiEndpoint).then((res) => res.json()).then((data) => data["items"]); // axios fields not filled, could fix later to use axios rather than fetch
 };
 
 export const postSearchGithub = async (value) => {
@@ -123,11 +118,12 @@ export const getForkClustering = async ({
   analyzeFiles,
   analyzeCommits,
   clusterNumber,
+  updatedData,
   userInputWords,
 }) => {
   const response = await axios({
     method: "GET",
-    url: `flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}&userInputWords=${userInputWords}`,
+    url: `flask/cluster?repo=${repo}&analyzeCode=${analyzeCode}&analyzeFiles=${analyzeFiles}&analyzeCommits=${analyzeCommits}&clusterNumber=${clusterNumber}&updateData=${updatedData}&userInputWords=${userInputWords}`,
     headers: {
       Authorization: "Bearer " + localStorage.getItem("access_token"),
     },
