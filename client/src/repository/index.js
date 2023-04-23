@@ -36,6 +36,29 @@ export const getRepoForks = async (value, i) => {
   return response;
 };
 
+export const getActiveForksNum = async (value) => {
+  const response = await axios({
+    method: "GET",
+    url: `http://localhost:3000/flask/progress?repo=${value}`,
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+  });
+  return response;
+};
+
+export const postProgress = async (value, i) => {
+  const response = await axios({
+    method: "POST",
+    url: `http://localhost:3000/flask/progress`,
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    },
+    data: { repo: value, index: i },
+  });
+  return response;
+};
+
 export const getUserImportRepositories = async () => {
   const response = await axios({
     method: "GET",
