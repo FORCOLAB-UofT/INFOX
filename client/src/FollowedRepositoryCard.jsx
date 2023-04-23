@@ -56,10 +56,10 @@ const FollowedRepositoryCard = ({
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
           <Grid container direction="row" alignItems="center" spacing={0.5}>
-            <Grid item xs={8}>
+            <Grid item xs={8.6}>
               <Typography color="white">{repo}</Typography>
             </Grid>
-            <Grid item xs={1.5}>
+            <Grid item xs={1.2}>
                 <Button
                   color="inherit"
                   startIcon={<SignalCellularAltIcon />}
@@ -69,7 +69,7 @@ const FollowedRepositoryCard = ({
                   View Forks
                 </Button>
             </Grid>
-            <Grid item xs={1.5}>
+            <Grid item xs={1.2}>
                 <Button
                   color="inherit"
                   startIcon={<Assessment />}

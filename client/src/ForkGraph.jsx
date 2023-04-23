@@ -2,11 +2,10 @@
 import React, { useState, forwardRef, useEffect, useCallback } from "react";
 import Select from 'react-select';
 import { useParams } from "react-router-dom";
-import * as d3 from 'd3';
-import { getRepoForks } from "./repository";
+import { Box, Typography, Card } from "@mui/material";
 import { getActiveForksNum } from "./repository";
 import { postProgress } from "./repository";
-import LinearLoading from "./common/LinearLoading"
+import Loading from "./common/Loading"
 import ForkRank from "./ForkRank";
 
 const ForkGraph = () => {
@@ -50,7 +49,7 @@ const getDailyCommit = (forks_list) => {
   for (let i = 0; i < forks_list.length; i++) {
     let fork = forks_list[i]
     let commit_list;
-    if (Object.keys(fork["hourly_commit_freq"]).length === 0){
+    if (Object.keys(fork["hourly_commit_freq"]).length !== 52){
       commit_list = [{"days": new Array(7).fill(0)},
       {"days": new Array(7).fill(0)},
       {"days": new Array(7).fill(0)},
@@ -151,19 +150,34 @@ const fetchForks = useCallback(async (repo) => {
   return (
     data && forkNames ? 
     <div>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <Card sx={{ padding: 2, marginBottom: 1, marginTop: 1}}>
+        <Typography variant="h4" align="center">Fork Activeness Visualization</Typography>
+        <Typography paragraph variant="body1">
+        </Typography>
+        <Typography paragraph variant="body1"> 
+        Given the overwhelming numbers of forks in many popular repositories,
+        INFOX applied a bump graph to visualize each fork's activeness. The number inside each bump represents the
+        number of commits rank for this fork within a specific time interval. Currently the visualization graph supports
+        two time interval options, the weekly commits rank within last year and daily commits rank within last month.
+        </Typography>
+        <Typography paragraph variant="body1">
+        The specific commit number within that day/week could be shown when hovering over the specifc bump.
+        </Typography>
+        </Card>
+      </Box>
       <Select
         onChange={handleChange}
         defaultValue={options[0]}
         isClearable={true}
         options={options}
-      />
-      <ForkRank data={data} forkNames={forkNames} interval={interval}></ForkRank>
+        sx={{padding: 2, marginBottom: 1}}/>
+            
+      <div className="fork-rank">
+        <ForkRank data={data} forkNames={forkNames} interval={interval}></ForkRank>
+      </div>
     </div>
-   : <LinearLoading 
-    loadingMessage={"There are " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}
-    progress={progress}>
-
-    </LinearLoading>
+   : <Loading loadingMessage={"There are " + activeForksNum + " active forks in total, currently " + counter+ " analyzed."}></Loading>
   );
 }
 

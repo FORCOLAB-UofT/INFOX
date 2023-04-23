@@ -10,9 +10,9 @@ const ForkRank = ({
     
       React.useEffect(() => {
           const height = 800;
-          const width = 1200;
-          const padding = 25;
-          const margin = {left: 105, right: 105, top: 20, bottom: 50};
+          const width = 1300;
+          const padding = 20;
+          const margin = {left: 220, right: 105, top: 20, bottom: 20};
 
         const svg = d3.select(ref.current);
               svg.selectAll("*").remove();
@@ -133,7 +133,7 @@ const ForkRank = ({
           })
 
           const title = g => g.append("title")
-                        .text((d, i) => `${d.fork_name} - ${interval[i]}\nRank: ${d.commits.rank + 1}\nProfit: ${d.commits.commits}`)
+                        .text((d, i) => `${d.fork_name} - ${interval[i]}\nRank: ${d.commits.rank + 1}\nCommits: ${d.commits.commits}`)
 
           const bumps = series.selectAll("g")
           .data((d, i) => d.map(v => ({fork_name: forkNames[i], commits: v, first: d[0].rank})))
@@ -166,7 +166,7 @@ const ForkRank = ({
             g.attr("transform", `translate(${x},${y})`)
                 .call(axis)
                 .selectAll(".tick text")
-                .attr("font-size", "12px");
+                .attr("font-size", "11px");
                 
             if (!domain) g.select(".domain").remove();
         }
@@ -187,9 +187,10 @@ const ForkRank = ({
           ref={ref}
           style={{
             height: 800,
-            width: 1200,
+            width: 1400,
             marginRight: "0px",
             marginLeft: "0px",
+            marginTop: "20px",
           }}
         >
           <g className="plot-area" />

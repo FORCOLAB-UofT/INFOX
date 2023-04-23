@@ -359,6 +359,7 @@ const EnhancedTable = ({ data }) => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    console.log(newPage)
   };
 
   const handleChangeRowsPerPage = (event) => {
