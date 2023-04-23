@@ -108,9 +108,14 @@ ssh infoxadm@torrent.eecg.utoronto.ca
 cd INFOX/
 ```
 
-4. Restart docker containers
+4. Deploy the code changes
 ```
-docker-compose up --build
+docker-compose build
+```
+
+5. Restart docker containers
+```
+docker-compose up
 ```
 
 
