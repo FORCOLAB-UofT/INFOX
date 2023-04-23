@@ -29,6 +29,8 @@ import MuiAlert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { differenceWith, intersectionWith, isEqual } from "lodash";
 import { getRepoForks } from "./repository";
+import { getActiveForksNum } from "./repository";
+import { postProgress } from "./repository";
 import { getTotalForksNumber } from "./repository";
 import Loading from "./common/Loading"
 import Filter from "./common/Filter";
@@ -358,6 +360,7 @@ const EnhancedTable = ({ data }) => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    console.log(newPage)
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -817,7 +820,7 @@ const ForkList = () => {
   const fetchForks = useCallback(async (repo) => {
     console.log('repo1',repo1);
     console.log('repo2', repo2);
-
+    
     //get total num of forks needs to be fetched
     const active_fork_num = await getTotalForksNumber(repo);
     console.log("Active forks number is ", active_fork_num.data)

@@ -14,6 +14,7 @@ import RemoveButton from "./common/RemoveButton";
 import { SECONDARY, TERTIARY } from "./common/constants";
 import { deleteUserRepository } from "./repository";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
+import Assessment from "@mui/icons-material/Assessment";
 import { useNavigate } from "react-router";
 import { PRIMARY, REMOVE } from "./common/constants";
 
@@ -42,6 +43,11 @@ const FollowedRepositoryCard = ({
     navigateToFork();
   };
 
+  const setForkGraph = () => {
+    console.log("repo nav", repo);
+    navigate(`/visual/${repo}`, { replace: true });
+  };
+
   return (
     <Box paddingY={1}>
       <Accordion>
@@ -49,12 +55,11 @@ const FollowedRepositoryCard = ({
           style={{ background: SECONDARY }}
           expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
         >
-          <Grid container direction="row" alignItems="center">
-            <Grid item xs={9}>
+          <Grid container direction="row" alignItems="center" spacing={0.5}>
+            <Grid item xs={8.6}>
               <Typography color="white">{repo}</Typography>
             </Grid>
-            <Grid item xs={2}>
-              <Box style={{ textAlign: "right" }}>
+            <Grid item xs={1.2}>
                 <Button
                   color="inherit"
                   startIcon={<SignalCellularAltIcon />}
@@ -63,12 +68,19 @@ const FollowedRepositoryCard = ({
                 >
                   View Forks
                 </Button>
-              </Box>
+            </Grid>
+            <Grid item xs={1.2}>
+                <Button
+                  color="inherit"
+                  startIcon={<Assessment />}
+                  onClick={setForkGraph}
+                  style={{ background: REMOVE }}
+                >
+                  View Graph
+                </Button>
             </Grid>
             <Grid item xs={1}>
-              <Box style={{ textAlign: "center" }}>
                 <RemoveButton onClickRemove={onRemove} />
-              </Box>
             </Grid>
           </Grid>
         </AccordionSummary>

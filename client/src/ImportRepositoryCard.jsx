@@ -35,8 +35,12 @@ const ImportRepositoryCard = ({ name, description, language, timesForked, follow
                   onClick={async (event) => {
                     event.stopPropagation();
                     setIsLoading(true);
-                    const res = await postFollowRepository(name);
+                    let res = await postFollowRepository(name);
                     console.log("res", res);
+                    while (res.data.analyser_progress !== "100%"){
+                      res = await postFollowRepository(name);
+                      console.log("res", res);
+                    }
                     onFollow(res.data);
                     setIsLoading(false);
                   }}

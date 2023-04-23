@@ -20,6 +20,7 @@ const SearchGithubRow = ({
   followedRepos,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState("0%");
 
   return (
     <TableRow>
@@ -48,14 +49,18 @@ const SearchGithubRow = ({
             variant="outlined"
             onClick={async () => {
               setIsLoading(true);
-              const res = await postFollowRepository(name);
+              let res = await postFollowRepository(name);
+              while (res.data.analyser_progress !== "100%") {
+                res = await postFollowRepository(name);
+                setProgress(res.data.analyser_progress)
+              }
               console.log("res", res);
               onFollow(res.data);
               setIsLoading(false);
             }}
             disabled={isLoading}
           >
-            {isLoading ? "Following..." : "Follow"}
+            {isLoading ? "Following..., progress is " + progress : "Follow"}
           </Button>
         ) : (
           <Button

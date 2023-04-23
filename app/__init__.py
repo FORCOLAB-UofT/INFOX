@@ -13,6 +13,7 @@ from .api.SearchGithub import SearchGithub
 from .api.FollowRepository import FollowRepository
 from .api.Auth import Auth
 from .api.ForkList import ForkList
+from .api.Progress import Progress
 from .api.ForkClustering import ForkClustering
 from .db import initialize_db
 from .loginmanager import login_manager
@@ -102,6 +103,12 @@ def create_app(config_name):
     api.add_resource(
         ForkList,
         "/flask/forklist",
+        resource_class_kwargs={"jwt": jwt},
+    )
+
+    api.add_resource(
+        Progress,
+        "/flask/progress",
         resource_class_kwargs={"jwt": jwt},
     )
 

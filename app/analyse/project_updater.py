@@ -87,9 +87,9 @@ class ForkUpdater:
             if os.path.exists(self.diff_result_path):
                 with open(self.diff_result_path) as read_file:
                     compare_result = json.load(read_file)
-            else:
-                # local file not exist
-                return
+            # else:
+            #     # local file not exist
+            #     return
         else:
             # If the compare result is not crawled, start to crawl.
             splitForkName = self.fork_name.split("/")

@@ -198,7 +198,7 @@ class ForkList(Resource):
         forks_info = ProjectFork.objects(project_name=repo)
         fork = forks_info[index]
         return_list = []
-
+        
         return_list.append(
             {
                 "fork_name": fork["fork_name"],
