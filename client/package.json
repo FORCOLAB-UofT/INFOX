@@ -24,7 +24,7 @@
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.7.1",
     "react-router-dom": "^6.0.2",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.1",
     "react-wordcloud": "^1.2.7",
     "recoil": "^0.5.2",
     "web-vitals": "^1.1.2",
