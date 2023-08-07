@@ -33,7 +33,7 @@ Flask-Script==2.0.6
 Flask-WTF==0.14.2
 flask_jwt_extended
 flask_bcrypt
-flower==0.9.2
+flower==1.2.0
 gensim==3.4.0
 GitHub-Flask==3.2.0
 gunicorn==19.7.1
