@@ -22,6 +22,7 @@ import LoginModal from "./LoginModal";
 import ForkCluster from "./ForkCluster";
 import { getUserLogin } from "./repository";
 import Forklist from "./Forklist";
+import ForkGraph from "./ForkGraph";
 import DrawerCard from "./DrawerCard";
 
 const theme = createTheme({
@@ -158,6 +159,16 @@ const App = () => {
               element={
                 !isEmpty(currentUser) ? (
                   <ForkCluster />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/visual/:repo1/:repo2"
+              element={
+                !isEmpty(currentUser) ? (
+                  <ForkGraph />
                 ) : (
                   <Navigate to="/login" />
                 )

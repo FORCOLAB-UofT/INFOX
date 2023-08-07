@@ -151,6 +151,38 @@ def get_commit_number_per_hour(repo, access_token):
     commit_info = res.json()
     return commit_info
 
+def get_commit_number_per_week(repo, access_token):
+    
+    request_url = "https://api.github.com/repos/%s/stats/participation" % repo
+
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    commit_info = res.json()
+    print(commit_info)
+    if ('all' in commit_info.keys()):
+        return commit_info['all']
+    else:
+        return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+def get_commit_number_per_hour(repo, access_token):
+    
+    request_url = "https://api.github.com/repos/%s/stats/commit_activity" % repo
+
+    res = requests.get(
+        url=request_url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": "token {}".format(access_token),
+        },
+    )
+    commit_info = res.json()
+    return commit_info
+
 @celery.task
 def start_analyse(repo, access_token):
     """Start analyse on repo using github_api_caller(contains personal access token)
@@ -186,7 +218,7 @@ def start_analyse(repo, access_token):
         current_app.config["LOCAL_DATA_PATH"] + "/" + repo + "/forks_list.json"
     )
 
-    active_forks = get_active_forks(repo,access_token )
+    active_forks = get_active_forks(repo, access_token)
 
     if current_app.config["USE_LOCAL_FORKS_LIST"] and os.path.exists(forks_list_path):
         with open(forks_list_path) as read_file:

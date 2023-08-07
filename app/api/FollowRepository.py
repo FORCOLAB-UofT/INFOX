@@ -115,4 +115,5 @@ class FollowRepository(Resource):
                 "timesForked": res["forks_count"],
                 "repo": res["full_name"],
             },
+            "analyser_progress": db_find_project(repo)["analyser_progress"]
         }
