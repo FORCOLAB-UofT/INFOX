@@ -20,7 +20,7 @@ dill
 docutils
 dominate
 entrypoints
-Flask
+flask==2.2.5
 Flask-Bootstrap
 Flask-Celery-Helper
 Flask-DebugToolbar
