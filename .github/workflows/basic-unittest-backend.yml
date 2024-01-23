@@ -21,4 +21,6 @@ jobs:
       - name: set up the backend app
         run: export FLASK_APP=app
       - run: export PYTHONPATH=$(pwd)
+      - run: env
+      - run: echo $(PYTHONPATH)
       - run: python3 app/tests/test_basics.py
