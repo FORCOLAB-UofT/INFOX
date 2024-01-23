@@ -91,7 +91,7 @@ selenium
 Send2Trash
 simplegeneric
 six
-sklearn
+scikit-learn
 smart-open
 spacy
 style
