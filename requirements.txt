@@ -20,7 +20,6 @@ dill==0.2.8.2
 docutils==0.14
 dominate==2.3.1
 entrypoints==0.2.3
-cymem==2.0.8
 Flask==1.0.2
 Flask-Bootstrap==3.3.7.1
 Flask-Celery-Helper
@@ -114,7 +113,6 @@ wcwidth==0.1.7
 webencodings==0.5
 Werkzeug==0.15.5
 widgetsnbextension==3.2.1
-#wmd
 wrapt==1.10.11
 WTForms==2.1
 dnspython
