@@ -1,5 +1,0 @@
-.h
-.c
-.cc
-.cpp
-.hpp

@@ -1,7 +1,0 @@
-.idea
-.DS_Store
-.vscode
-ghostdriver.log
-*.pyc
-.coverage
-venv
