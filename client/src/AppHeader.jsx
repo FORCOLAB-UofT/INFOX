@@ -48,12 +48,12 @@ const AppHeader = ({ onOpenDrawer }) => {
             color="inherit"
             startIcon={<CloudUploadIcon />}
           />
-          <ButtonLink
+          {/*<ButtonLink
             to="/search"
             linkText="Search Github"
             color="inherit"
             startIcon={<SearchIcon />}
-          />
+  />*/}
           <ButtonLink
             to="/aboutus"
             linkText="About Us"

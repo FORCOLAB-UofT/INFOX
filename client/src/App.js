@@ -23,6 +23,7 @@ import ForkCluster from "./ForkCluster";
 import { getUserLogin } from "./repository";
 import Forklist from "./Forklist";
 import DrawerCard from "./DrawerCard";
+import "./static/css/App.css";
 
 const theme = createTheme({
   typography: {
@@ -64,6 +65,11 @@ const App = () => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  // useEffect(() => {
+  //   document.html.style.width = 600;
+  //   document.html.style.height = 600;
+  // }, []);
 
   const handleCloseDrawer = () => {
     setOpenDrawer(false);

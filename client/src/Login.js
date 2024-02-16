@@ -15,7 +15,6 @@ const Login = () => {
     const hasCode = newUrl.includes("?code=");
 
     console.log("hasCode", hasCode);
-
     if (hasCode) {
       const url = newUrl.split("?code=")[1];
       //const data = {
@@ -48,8 +47,35 @@ const Login = () => {
   };
 
   const onClickLogin = () => {
-    window.location.href =
-      "https://github.com/login/oauth/authorize?scope=user:email&client_id=2d8e058ac0d5cf153c9e";
+        let authURL = `https://github.com/login/oauth/authorize?scope=user:email&scope=repo&client_id=a23cbec4da1d5270a30d`;
+        console.log(authURL);
+        // console.log(chrome);
+        chrome.identity.launchWebAuthFlow({
+            url: authURL,
+            interactive: true
+        }, function(redirectURL) {
+            console.log(redirectURL);
+            fetch('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: "a23cbec4da1d5270a30d",
+                    client_secret: "secret",
+                    code: redirectURL.slice(redirectURL.indexOf("?code=") + 6)
+                })
+            }).then(response => {
+                response.json().then(result => {
+                    console.log(result);
+                    localStorage.setItem("access_token", result.access_token);
+                    localStorage.setItem("username", result.username);
+                    setUser({ username: result.username });
+                    navigate("/");
+                });
+            });
+        });
   };
 
   return (

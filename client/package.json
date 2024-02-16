@@ -1,7 +1,8 @@
 {
-  "name": "client",
+  "name": "ceclient",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000/",
   "dependencies": {
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
@@ -28,11 +29,16 @@
     "react-wordcloud": "^1.2.7",
     "recoil": "^0.5.2",
     "web-vitals": "^1.1.2",
-    "react-bootstrap": "2.7.2"
+    "react-bootstrap": "2.7.2",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-merge": "^4.2.2",
+    "@babel/preset-env": "7.23.3",
+    "@babel/preset-react": "7.23.3"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "webpack --config webpack.dev.js",
     "test": "react-scripts test --coverage",
     "eject": "react-scripts eject"
   },
@@ -53,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
   }
 }
